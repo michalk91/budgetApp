@@ -31,7 +31,8 @@ const Register = () => {
   };
 
   useEffect(() => {
-    if (registerStatus === "succeeded") router.push("/", { scroll: false });
+    if (registerStatus === "succeeded")
+      router.push("/login", { scroll: false });
   }, [registerStatus, router]);
 
   return (
@@ -93,6 +94,12 @@ const Register = () => {
               Sign in
             </Link>
           </p>
+          {registerStatus === "failed" && (
+            <p>
+              Username and email are probably taken. Use a different email and
+              username.
+            </p>
+          )}
         </div>
       </section>
     </main>
