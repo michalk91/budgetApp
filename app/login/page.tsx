@@ -1,31 +1,30 @@
 "use client";
 
-import React, { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase/config";
+import React, { useEffect, useState } from "react";
 import { SyntheticEvent } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useAppSelector } from "../redux/hooks";
+import { useAppDispatch } from "../redux/hooks";
+import { loginUser } from "../redux/usersSlice";
 
 const Login = () => {
+  const dispatch = useAppDispatch();
+  const loginStatus = useAppSelector((state) => state.user.user.loginStatus);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const router = useRouter();
 
-  const onLogin = (e: SyntheticEvent) => {
+  const onLogin = async (e: SyntheticEvent) => {
     e.preventDefault();
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        alert("Singed in sucessfully");
-        router.push("/", { scroll: false });
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-      });
+    dispatch(loginUser({ email: email, password: password }));
   };
+
+  useEffect(() => {
+    if (loginStatus === "succeeded") router.push("/", { scroll: false });
+  }, [loginStatus, router]);
 
   return (
     <>
@@ -67,13 +66,14 @@ const Login = () => {
           </form>
           <p className="text-sm text-white text-center">
             No account yet?
-            <a
+            <Link
               className="text-blue-500 text-2xl hover:text-blue-800"
               href="/register"
             >
               Register
-            </a>
+            </Link>
           </p>
+          {loginStatus === "failed" && <p>Wrong email or password</p>}
         </section>
       </main>
     </>

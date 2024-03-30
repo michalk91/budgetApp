@@ -1,35 +1,38 @@
 "use client";
 
-import { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase/config";
+import { useEffect, useState } from "react";
 import { SyntheticEvent } from "react";
 import { useRouter } from "next/navigation";
+import { registerUser } from "../redux/usersSlice";
+import { useAppDispatch } from "../redux/hooks";
+import { useAppSelector } from "../redux/hooks";
+import Link from "next/link";
 
 const Register = () => {
+  const dispatch = useAppDispatch();
+  const registerStatus = useAppSelector(
+    (state) => state.user.user.registeredStatus
+  );
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
 
   const router = useRouter();
 
   const onSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
-
-    await createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        console.log(user);
-        alert("Account created sucessfully");
-        router.push("/login", { scroll: false });
-        // ...
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // ..
-      });
+    const user = {
+      email: email,
+      password: password,
+      username: username,
+    };
+    dispatch(registerUser(user));
   };
+
+  useEffect(() => {
+    if (registerStatus === "succeeded") router.push("/", { scroll: false });
+  }, [registerStatus, router]);
 
   return (
     <main>
@@ -37,11 +40,22 @@ const Register = () => {
         <div>
           <form className="text-center">
             <div className="p-4">
+              <label htmlFor="username">Username: </label>
+              <input
+                className="w-full"
+                id="username"
+                name="username"
+                type="username"
+                required
+                placeholder="username"
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+            <div className="p-4">
               <label htmlFor="email-address">Email address: </label>
               <input
                 className="w-full"
                 type="email"
-                //   label="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -54,7 +68,6 @@ const Register = () => {
               <input
                 className="w-full"
                 type="password"
-                //   label="Create password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -73,12 +86,12 @@ const Register = () => {
 
           <p className="text-sm text-white text-center">
             Already have an account?
-            <a
+            <Link
               className="text-blue-500 text-2xl hover:text-blue-800"
               href="/login"
             >
               Sign in
-            </a>
+            </Link>
           </p>
         </div>
       </section>
