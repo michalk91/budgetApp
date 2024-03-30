@@ -1,4 +1,15 @@
+import { useEffect } from "react";
+import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { fetchData } from "../redux/usersSlice";
+
 export default function Dashboard() {
+  const budget = useAppSelector((state) => state.user.user.budget);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchData());
+  }, [dispatch]);
+
   return (
     <>
       <h2>Dashboard</h2>
@@ -17,6 +28,7 @@ export default function Dashboard() {
           confrim
         </button>
       </div>
+      <span>Current budget: {budget} $</span>
     </>
   );
 }
