@@ -2,7 +2,7 @@ export default function Dashboard() {
   return (
     <>
       <h2>Dashboard</h2>
-      <div className="flex m-4 item-center justify-center">
+      <div className="flex m-4 items-center justify-center">
         <p>Add budget: </p>
 
         <input
