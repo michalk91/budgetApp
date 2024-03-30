@@ -73,7 +73,6 @@ const Login = () => {
               Register
             </Link>
           </p>
-          {loginStatus === "failed" && <p>Wrong email or password</p>}
         </section>
       </main>
     </>

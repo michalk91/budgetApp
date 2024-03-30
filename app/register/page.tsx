@@ -94,12 +94,6 @@ const Register = () => {
               Sign in
             </Link>
           </p>
-          {registerStatus === "failed" && (
-            <p>
-              Username and email are probably taken. Use a different email and
-              username.
-            </p>
-          )}
         </div>
       </section>
     </main>

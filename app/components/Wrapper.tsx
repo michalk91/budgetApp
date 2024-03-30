@@ -20,14 +20,21 @@ export default function Wrapper({
   const notifyLoggedIn = () => toast.success("You have successfully logged in");
   const notifyLoggedOut = () =>
     toast.success("You have successfully logged out");
+  const notifyFailedLogin = () => toast.error("Wrong email or password");
+  const notifyFailedRegister = () =>
+    toast.error(
+      "Username and email are probably taken. Use a different email and username."
+    );
 
   useEffect(() => {
     if (loginStatus === "succeeded") notifyLoggedIn();
     else if (loginStatus === "idle") notifyLoggedOut();
+    else if (loginStatus === "failed") notifyFailedLogin();
   }, [loginStatus]);
 
   useEffect(() => {
     if (registerStatus === "succeeded") notifyRegistered();
+    else if (registerStatus === "failed") notifyFailedRegister();
   }, [registerStatus]);
 
   return (
