@@ -10,6 +10,7 @@ export default function Header() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const loginStatus = useAppSelector((state) => state.user.user.loginStatus);
+  const userName = useAppSelector((state) => state.user.user.username);
 
   const singOut = () => {
     dispatch(logoutUser());
@@ -20,6 +21,9 @@ export default function Header() {
   }, [loginStatus, router]);
   return (
     <header className="fixed w-full bg-slate-300 p-6">
+      {loginStatus === "succeeded" && (
+        <p className="absolute text-2xl">Welcome {`${userName}`}</p>
+      )}
       <ul className="flex justify-end">
         <li className="mr-6"></li>
 

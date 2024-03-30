@@ -20,6 +20,7 @@ interface State {
     loginStatus: "idle" | "loading" | "succeeded" | "failed";
     error: string | undefined;
     userID: null | string;
+    username: null | string;
     budget: number;
   };
 }
@@ -123,6 +124,9 @@ const userSlice = createSlice({
         if (userIndex !== -1) {
           (state.user as DocumentData).budget =
             action.payload[userIndex].user.budget;
+
+          (state.user as DocumentData).username =
+            action.payload[userIndex].user.displayName;
         }
       });
   },
