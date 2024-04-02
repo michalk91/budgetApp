@@ -12,17 +12,16 @@ import {
   getDocs,
   collection,
   DocumentData,
+  updateDoc,
 } from "firebase/firestore";
 
 interface State {
-  user: {
-    registeredStatus: "idle" | "loading" | "succeeded" | "failed";
-    loginStatus: "idle" | "loading" | "succeeded" | "failed";
-    error: string | undefined;
-    userID: null | string;
-    username: null | string;
-    budget: number;
-  };
+  registeredStatus: "idle" | "loading" | "succeeded" | "failed";
+  loginStatus: "idle" | "loading" | "succeeded" | "failed";
+  error: string | undefined;
+  userID: null | string;
+  username: null | string;
+  budget: number;
 }
 
 interface User {
@@ -31,7 +30,7 @@ interface User {
   username?: string;
 }
 
-export const fetchData = createAsyncThunk("books/fetchData", async () => {
+export const fetchData = createAsyncThunk("users/fetchData", async () => {
   const querySnapshot = await getDocs(collection(db, "users"));
   const userData = querySnapshot.docs.map((doc) => ({
     id: doc.id,
@@ -39,6 +38,23 @@ export const fetchData = createAsyncThunk("books/fetchData", async () => {
   }));
   return userData;
 });
+
+export const updateBudget = createAsyncThunk(
+  "users/updateBudget",
+  async (editedBudget: number, { getState }: DocumentData) => {
+    console.log(editedBudget);
+
+    const state = getState();
+
+    const currentUserID = state.user.userID;
+
+    await updateDoc(doc(db, "users", currentUserID), {
+      budget: editedBudget,
+    });
+
+    return editedBudget;
+  }
+);
 
 export const registerUser = createAsyncThunk(
   "users/registerUser",
@@ -81,53 +97,58 @@ export const logoutUser = createAsyncThunk("users/logoutUser", async () => {
 const userSlice = createSlice({
   name: "user",
   initialState: {
-    user: { registeredStatus: "idle", loginStatus: "idle", error: undefined },
+    registeredStatus: "idle",
+    loginStatus: "idle",
+    error: undefined,
   } as State,
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending, (state) => {
-        state.user.registeredStatus = "loading";
+        state.registeredStatus = "loading";
       })
       .addCase(registerUser.fulfilled, (state) => {
-        state.user.registeredStatus = "succeeded";
+        state.registeredStatus = "succeeded";
       })
       .addCase(registerUser.rejected, (state, action) => {
-        state.user.registeredStatus = "failed";
-        state.user.error = action.error.message;
+        state.registeredStatus = "failed";
+        state.error = action.error.message;
       })
 
       //-----------------------------------------------------------------------------------------
 
       .addCase(loginUser.pending, (state) => {
-        state.user.loginStatus = "loading";
+        state.loginStatus = "loading";
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.user.loginStatus = "succeeded";
-        state.user.userID = action.payload.userID;
+        state.loginStatus = "succeeded";
+        state.userID = action.payload.userID;
       })
       .addCase(loginUser.rejected, (state, action) => {
-        state.user.loginStatus = "failed";
-        state.user.error = action.error.message;
+        state.loginStatus = "failed";
+        state.error = action.error.message;
       })
 
       //------------------------------------------------------------------------------
       .addCase(logoutUser.fulfilled, (state) => {
-        state.user.loginStatus = "idle";
+        state.loginStatus = "idle";
       })
 
       //-----------------------------------------------------------------------------------
       .addCase(fetchData.fulfilled, (state, action) => {
         const userIndex = action.payload.findIndex(
-          (user) => user.id === state.user.userID
+          (user) => user.id === state.userID
         );
         if (userIndex !== -1) {
-          (state.user as DocumentData).budget =
-            action.payload[userIndex].user.budget;
-
-          (state.user as DocumentData).username =
-            action.payload[userIndex].user.displayName;
+          state.budget = action.payload[userIndex].user.budget;
+          state.username = action.payload[userIndex].user.displayName;
         }
+      })
+
+      //-------------------------------------------------
+
+      .addCase(updateBudget.fulfilled, (state, action) => {
+        state.budget = action.payload;
       });
   },
 });
