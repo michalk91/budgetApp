@@ -42,8 +42,6 @@ export const fetchData = createAsyncThunk("users/fetchData", async () => {
 export const updateBudget = createAsyncThunk(
   "users/updateBudget",
   async (editedBudget: number, { getState }: DocumentData) => {
-    console.log(editedBudget);
-
     const state = getState();
 
     const currentUserID = state.user.userID;
