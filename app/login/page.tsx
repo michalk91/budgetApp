@@ -10,7 +10,7 @@ import { loginUser } from "../redux/usersSlice";
 
 const Login = () => {
   const dispatch = useAppDispatch();
-  const loginStatus = useAppSelector((state) => state.user.user.loginStatus);
+  const loginStatus = useAppSelector((state) => state.user.loginStatus);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

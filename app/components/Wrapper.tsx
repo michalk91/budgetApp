@@ -11,10 +11,8 @@ export default function Wrapper({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const registerStatus = useAppSelector(
-    (state) => state.user.user.registeredStatus
-  );
-  const loginStatus = useAppSelector((state) => state.user.user.loginStatus);
+  const registerStatus = useAppSelector((state) => state.user.registeredStatus);
+  const loginStatus = useAppSelector((state) => state.user.loginStatus);
   const notifyRegistered = () =>
     toast.success("You have successfully created your account");
   const notifyLoggedIn = () => toast.success("You have successfully logged in");

@@ -9,8 +9,8 @@ import { useRouter } from "next/navigation";
 export default function Header() {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const loginStatus = useAppSelector((state) => state.user.user.loginStatus);
-  const userName = useAppSelector((state) => state.user.user.username);
+  const loginStatus = useAppSelector((state) => state.user.loginStatus);
+  const userName = useAppSelector((state) => state.user.username);
 
   const singOut = () => {
     dispatch(logoutUser());

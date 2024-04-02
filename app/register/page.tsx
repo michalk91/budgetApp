@@ -10,9 +10,7 @@ import Link from "next/link";
 
 const Register = () => {
   const dispatch = useAppDispatch();
-  const registerStatus = useAppSelector(
-    (state) => state.user.user.registeredStatus
-  );
+  const registerStatus = useAppSelector((state) => state.user.registeredStatus);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

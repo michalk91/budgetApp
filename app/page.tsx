@@ -5,7 +5,7 @@ import Dashboard from "./components/Dashboard";
 
 export default function Home() {
   const path = usePathname();
-  const loginStatus = useAppSelector((state) => state.user.user.loginStatus);
+  const loginStatus = useAppSelector((state) => state.user.loginStatus);
 
   return (
     <main className="flex min-h-screen flex-col items-center p-24">
