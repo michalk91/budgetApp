@@ -21,7 +21,7 @@ export default function Header() {
   }, [loginStatus, router]);
   return (
     <header className="fixed w-full bg-slate-300 p-6">
-      {loginStatus === "succeeded" && (
+      {loginStatus === "succeeded" && userName && (
         <p className="absolute text-2xl">Welcome {`${userName}`}</p>
       )}
       <ul className="flex justify-end">
