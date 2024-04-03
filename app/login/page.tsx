@@ -27,55 +27,65 @@ const Login = () => {
   }, [loginStatus, router]);
 
   return (
-    <>
-      <main>
-        <section className="flex flex-col w-full h-screen max-h-full justify-center items-center">
-          <form className="text-center">
-            <div className="p-4">
-              <label htmlFor="email-address">Email address: </label>
-              <input
-                className="w-full"
-                id="email-address"
-                name="email"
-                type="email"
-                required
-                placeholder="Email address"
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
+    <section className="flex flex-col w-full h-screen max-h-full justify-center items-center">
+      <form className="rounded-md p-10 text-center border-solid border-2 border-blue-400 shadow-xl">
+        <div className="p-2">
+          <label
+            htmlFor="email-address"
+            className="inline-block w-full text-sm font-medium text-gray-500 transition-all duration-200 ease-in-out group-focus-within:text-blue-400"
+          >
+            Your e-mail address:
+          </label>
+          <div className="relative flex items-center">
+            <input
+              id="email-address"
+              name="email"
+              type="email"
+              required
+              placeholder="Email address"
+              onChange={(e) => setEmail(e.target.value)}
+              className="peer h-10 w-full rounded-md bg-gray-50 px-4 font-thin outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+        </div>
 
-            <div className="p-4">
-              <label htmlFor="password">Password: </label>
-              <input
-                className="w-full"
-                id="password"
-                name="password"
-                type="password"
-                required
-                placeholder="Password"
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+        <div className="p-2">
+          <label
+            htmlFor="password"
+            className="inline-block w-full text-sm font-medium text-gray-500 transition-all duration-200 ease-in-out group-focus-within:text-blue-400"
+          >
+            Your password:
+          </label>
+          <div className="relative flex items-center">
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+              className="peer h-10 w-full rounded-md bg-gray-50 px-4 font-thin outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+        </div>
 
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded "
-              onClick={onLogin}
-            >
-              Login
-            </button>
-          </form>
-          <p className="text-sm text-white text-center">
-            No account yet?
-            <Link
-              className="text-blue-500 text-2xl hover:text-blue-800"
-              href="/register"
-            >
-              Register
-            </Link>
-          </p>
-        </section>
-      </main>
-    </>
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full "
+          onClick={onLogin}
+        >
+          Login
+        </button>
+        <p className="text-m text-center mt-4">
+          No account yet?
+          <Link
+            className="text-blue-500 text-xl hover:text-blue-800 m-2"
+            href="/register"
+          >
+            Register
+          </Link>
+        </p>
+      </form>
+    </section>
   );
 };
 
