@@ -32,8 +32,8 @@ export default function Header() {
             Home
           </Link>
         </li>
-        <li className="mr-6">
-          {loginStatus === "succeeded" && (
+        {loginStatus === "succeeded" && (
+          <li className="mr-6">
             <Link
               onClick={singOut}
               className="text-blue-500 text-2xl hover:text-blue-800"
@@ -41,28 +41,29 @@ export default function Header() {
             >
               Logout
             </Link>
-          )}
-        </li>
-        <li className="mr-6">
-          {loginStatus !== "succeeded" && (
+          </li>
+        )}
+        {loginStatus !== "succeeded" && (
+          <li className="mr-6">
             <Link
               className="text-blue-500 text-2xl hover:text-blue-800"
               href="/register"
             >
               Regitster
             </Link>
-          )}
-        </li>
-        <li className="mr-6">
-          {loginStatus !== "succeeded" && (
+          </li>
+        )}
+
+        {loginStatus !== "succeeded" && (
+          <li className="mr-6">
             <Link
               className="text-blue-500 text-2xl hover:text-blue-800"
               href="/login"
             >
               Login in
             </Link>
-          )}
-        </li>
+          </li>
+        )}
       </ul>
     </header>
   );
