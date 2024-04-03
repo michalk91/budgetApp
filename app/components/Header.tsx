@@ -60,7 +60,7 @@ export default function Header() {
               className="text-blue-500 text-2xl hover:text-blue-800"
               href="/login"
             >
-              Login in
+              Login
             </Link>
           </li>
         )}
