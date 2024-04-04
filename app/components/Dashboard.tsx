@@ -12,6 +12,8 @@ export default function Dashboard() {
     e.preventDefault();
 
     dispatch(updateBudget(Number(budgetFromInput)));
+
+    setBudgetFromInput("");
   };
 
   useEffect(() => {
@@ -21,12 +23,13 @@ export default function Dashboard() {
   return (
     <>
       <h2>Dashboard</h2>
-      <div className="flex m-4 items-center justify-center">
+      <form className="flex m-4 items-center justify-center">
         <p>Add budget: </p>
 
         <input
           type="number"
           placeholder="0.00"
+          value={budgetFromInput}
           className="py-3 px-2 text-md border border-blue-lighter rounded-r"
           onChange={(e) => setBudgetFromInput(e.target.value)}
         />
@@ -40,7 +43,7 @@ export default function Dashboard() {
         >
           confrim
         </button>
-      </div>
+      </form>
       <span>Current budget: {budgetFromStore} $</span>
     </>
   );
