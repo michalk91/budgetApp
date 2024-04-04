@@ -37,7 +37,7 @@ export default function Dashboard() {
           $
         </div>
         <button
-          type="submit"
+          type="button"
           onClick={handleUpdateBudget}
           className="rounded-lg px-4 py-2 border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-gray-100 duration-300"
         >
