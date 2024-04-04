@@ -44,7 +44,7 @@ const Login = () => {
               required
               placeholder="Email address"
               onChange={(e) => setEmail(e.target.value)}
-              className="peer h-10 w-full rounded-md bg-gray-50 px-4 font-thin outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
+              className="peer h-10 w-full rounded-md bg-gray-50 px-4  outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
             />
           </div>
         </div>
@@ -64,7 +64,7 @@ const Login = () => {
               required
               placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
-              className="peer h-10 w-full rounded-md bg-gray-50 px-4 font-thin outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
+              className="peer h-10 w-full rounded-md bg-gray-50 px-4  outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
             />
           </div>
         </div>

@@ -45,7 +45,7 @@ const Register = () => {
           </label>
           <div className="relative flex items-center">
             <input
-              className="peer h-10 w-full rounded-md bg-gray-50 px-4 font-thin outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
+              className="peer h-10 w-full rounded-md bg-gray-50 px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
               id="username"
               name="username"
               type="username"
@@ -64,7 +64,7 @@ const Register = () => {
           </label>
           <div className="relative flex items-center">
             <input
-              className="peer h-10 w-full rounded-md bg-gray-50 px-4 font-thin outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
+              className="peer h-10 w-full rounded-md bg-gray-50 px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -83,7 +83,7 @@ const Register = () => {
           </label>
           <div className="relative flex items-center">
             <input
-              className="peer h-10 w-full rounded-md bg-gray-50 px-4 font-thin outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
+              className="peer h-10 w-full rounded-md bg-gray-50 px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
