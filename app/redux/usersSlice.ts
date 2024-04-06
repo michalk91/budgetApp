@@ -13,7 +13,19 @@ import {
   collection,
   DocumentData,
   updateDoc,
+  arrayUnion,
+  Timestamp,
+  increment,
 } from "firebase/firestore";
+
+interface Expense {
+  category: string;
+  amount: number;
+}
+
+interface Expenses {
+  [index: number]: Expense;
+}
 
 interface State {
   registeredStatus: "idle" | "loading" | "succeeded" | "failed";
@@ -22,6 +34,7 @@ interface State {
   userID: null | string;
   username: null | string;
   budget: number;
+  expenses?: Expenses[];
 }
 
 interface User {
@@ -53,6 +66,41 @@ export const updateBudget = createAsyncThunk(
     return editedBudget;
   }
 );
+export const decrementBudget = createAsyncThunk(
+  "users/decrementBudget",
+  async (decrementValue: number, { getState }: DocumentData) => {
+    const state = getState();
+
+    const currentUserID = state.user.userID;
+
+    await updateDoc(doc(db, "users", currentUserID), {
+      budget: increment(-decrementValue),
+    });
+
+    return decrementValue;
+  }
+);
+
+export const addExpense = createAsyncThunk(
+  "users/expenses/addExpense",
+  async (expense: Expense, { getState }: DocumentData) => {
+    const state = getState();
+
+    const currentUserID = state.user.userID;
+
+    const currentDate = new Date(Timestamp.now().seconds * 1000);
+    const expenseData = {
+      ...expense,
+      date: currentDate,
+    };
+
+    await updateDoc(doc(db, "users", currentUserID), {
+      expenses: arrayUnion(expenseData),
+    });
+
+    return expenseData;
+  }
+);
 
 export const registerUser = createAsyncThunk(
   "users/registerUser",
@@ -64,10 +112,10 @@ export const registerUser = createAsyncThunk(
     );
     const currentUser = userCredential.user;
     await setDoc(doc(db, "users", currentUser.uid), {
-      uid: currentUser.uid,
       email: currentUser.email,
       displayName: user.username,
       budget: 0,
+      expenses: [],
     });
   }
 );
@@ -147,6 +195,15 @@ const userSlice = createSlice({
 
       .addCase(updateBudget.fulfilled, (state, action) => {
         state.budget = action.payload;
+      })
+      //------------------------------------------------------
+
+      .addCase(decrementBudget.fulfilled, (state, action) => {
+        state.budget -= action.payload;
+      })
+      //---------------------------------------------------------
+      .addCase(addExpense.fulfilled, (state, action) => {
+        state.expenses?.push(action.payload);
       });
   },
 });
