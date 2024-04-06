@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { fetchData } from "../redux/usersSlice";
+import AddExpense from "./AddExpense";
 import UpdateBudget from "./UpdateBudget";
 
 export default function Dashboard() {
@@ -16,6 +17,7 @@ export default function Dashboard() {
       <h2>Dashboard</h2>
       <UpdateBudget />
       <span>Current budget: {budgetFromStore} $</span>
+      <AddExpense />
     </>
   );
 }
