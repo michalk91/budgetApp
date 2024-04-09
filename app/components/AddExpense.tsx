@@ -13,10 +13,8 @@ export default function AddExpense() {
   const { amount, category } = expenseFromInput;
 
   const addNewExpense = () => {
-    dispatch(
-      addExpense({ category: "English lesson", amount: Number(amount) })
-    );
-    dispatch(decrementBudget(100));
+    dispatch(addExpense({ category, amount: Number(amount) }));
+    dispatch(decrementBudget(Number(amount)));
   };
 
   return (
