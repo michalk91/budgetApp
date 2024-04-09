@@ -11,11 +11,11 @@ import {
   doc,
   getDocs,
   collection,
-  DocumentData,
   updateDoc,
   arrayUnion,
   Timestamp,
   increment,
+  getDoc,
 } from "firebase/firestore";
 
 interface Expense {
@@ -34,7 +34,7 @@ interface State {
   userID: null | string;
   username: null | string;
   budget: number;
-  expenses?: Expenses[];
+  expenses: Expenses[];
 }
 
 interface User {
@@ -44,20 +44,22 @@ interface User {
 }
 
 export const fetchData = createAsyncThunk("users/fetchData", async () => {
-  const querySnapshot = await getDocs(collection(db, "users"));
-  const userData = querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    user: doc.data(),
-  }));
-  return userData;
+  const currentUserID = auth.currentUser?.uid;
+
+  const docRef = doc(db, "users", `${currentUserID}`);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data();
+  }
 });
 
 export const updateBudget = createAsyncThunk(
   "users/updateBudget",
-  async (editedBudget: number, { getState }: DocumentData) => {
-    const state = getState();
+  async (editedBudget: number) => {
+    const currentUserID = auth.currentUser?.uid;
 
-    const currentUserID = state.user.userID;
+    if (!currentUserID) return;
 
     await updateDoc(doc(db, "users", currentUserID), {
       budget: editedBudget,
@@ -68,10 +70,10 @@ export const updateBudget = createAsyncThunk(
 );
 export const decrementBudget = createAsyncThunk(
   "users/decrementBudget",
-  async (decrementValue: number, { getState }: DocumentData) => {
-    const state = getState();
+  async (decrementValue: number) => {
+    const currentUserID = auth.currentUser?.uid;
 
-    const currentUserID = state.user.userID;
+    if (!currentUserID) return;
 
     await updateDoc(doc(db, "users", currentUserID), {
       budget: increment(-decrementValue),
@@ -83,12 +85,15 @@ export const decrementBudget = createAsyncThunk(
 
 export const addExpense = createAsyncThunk(
   "users/expenses/addExpense",
-  async (expense: Expense, { getState }: DocumentData) => {
-    const state = getState();
+  async (expense: Expense) => {
+    const currentUserID = auth.currentUser?.uid;
 
-    const currentUserID = state.user.userID;
+    if (!currentUserID) return;
 
-    const currentDate = new Date(Timestamp.now().seconds * 1000);
+    const currentDate = new Date(
+      Timestamp.now().seconds * 1000
+    ).toLocaleString();
+
     const expenseData = {
       ...expense,
       date: currentDate,
@@ -182,27 +187,31 @@ const userSlice = createSlice({
 
       //-----------------------------------------------------------------------------------
       .addCase(fetchData.fulfilled, (state, action) => {
-        const userIndex = action.payload.findIndex(
-          (user) => user.id === state.userID
-        );
-        if (userIndex !== -1) {
-          state.budget = action.payload[userIndex].user.budget;
-          state.username = action.payload[userIndex].user.displayName;
-        }
+        if (!action.payload) return;
+
+        state.budget = action.payload.budget;
+        state.username = action.payload.displayName;
+        state.expenses = action.payload.expenses;
       })
 
       //-------------------------------------------------
 
       .addCase(updateBudget.fulfilled, (state, action) => {
+        if (!action.payload) return;
+
         state.budget = action.payload;
       })
       //------------------------------------------------------
 
       .addCase(decrementBudget.fulfilled, (state, action) => {
+        if (!action.payload) return;
+
         state.budget -= action.payload;
       })
       //---------------------------------------------------------
       .addCase(addExpense.fulfilled, (state, action) => {
+        if (!action.payload) return;
+
         state.expenses?.push(action.payload);
       });
   },
