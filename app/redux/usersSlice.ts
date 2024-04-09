@@ -9,39 +9,13 @@ import { auth, db } from "../firebase/config";
 import {
   setDoc,
   doc,
-  getDocs,
-  collection,
   updateDoc,
   arrayUnion,
   Timestamp,
   increment,
   getDoc,
 } from "firebase/firestore";
-
-interface Expense {
-  category: string;
-  amount: number;
-}
-
-interface Expenses {
-  [index: number]: Expense;
-}
-
-interface State {
-  registeredStatus: "idle" | "loading" | "succeeded" | "failed";
-  loginStatus: "idle" | "loading" | "succeeded" | "failed";
-  error: string | undefined;
-  userID: null | string;
-  username: null | string;
-  budget: number;
-  expenses: Expenses[];
-}
-
-interface User {
-  email: string;
-  password: string;
-  username?: string;
-}
+import type { State, User, Expense } from "../types";
 
 export const fetchData = createAsyncThunk("users/fetchData", async () => {
   const currentUserID = auth.currentUser?.uid;
