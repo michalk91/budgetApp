@@ -14,6 +14,7 @@ import {
   Timestamp,
   increment,
   getDoc,
+  arrayRemove,
 } from "firebase/firestore";
 import type { State, User, Expense } from "../types";
 
@@ -54,6 +55,25 @@ export const decrementBudget = createAsyncThunk(
     });
 
     return decrementValue;
+  }
+);
+
+export const deleteExpense = createAsyncThunk(
+  "users/expenses/deleteExpense",
+  async (expense: Expense) => {
+    const currentUserID = auth.currentUser?.uid;
+
+    if (!currentUserID) return;
+
+    await updateDoc(doc(db, "users", currentUserID), {
+      expenses: arrayRemove({
+        amount: expense.amount,
+        category: expense.category,
+        date: expense.date,
+      }),
+    });
+
+    return expense.date;
   }
 );
 
@@ -187,6 +207,15 @@ const userSlice = createSlice({
         if (!action.payload) return;
 
         state.expenses?.push(action.payload);
+      })
+
+      //------------------------------------------------------------------------
+      .addCase(deleteExpense.fulfilled, (state, action) => {
+        if (!action.payload) return;
+
+        state.expenses = state.expenses.filter(
+          (expense) => expense.date !== action.payload
+        );
       });
   },
 });
