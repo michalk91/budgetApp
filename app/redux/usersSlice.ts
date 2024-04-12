@@ -10,24 +10,49 @@ import {
   setDoc,
   doc,
   updateDoc,
-  arrayUnion,
   Timestamp,
   increment,
   getDoc,
-  arrayRemove,
+  deleteDoc,
+  addDoc,
+  collection,
+  getDocs,
 } from "firebase/firestore";
 import type { State, User, Expense } from "../types";
 
-export const fetchData = createAsyncThunk("users/fetchData", async () => {
-  const currentUserID = auth.currentUser?.uid;
+export const fetchUserData = createAsyncThunk(
+  "users/fetchUserData",
+  async () => {
+    const currentUserID = auth.currentUser?.uid;
 
-  const docRef = doc(db, "users", `${currentUserID}`);
-  const docSnap = await getDoc(docRef);
+    const docRef = doc(db, "users", `${currentUserID}`);
+    const docSnap = await getDoc(docRef);
 
-  if (docSnap.exists()) {
-    return docSnap.data();
+    if (docSnap.exists()) {
+      return docSnap.data();
+    }
   }
-});
+);
+
+export const fetchExpenses = createAsyncThunk(
+  "users/fetchExpenses",
+  async () => {
+    const currentUserID = auth.currentUser?.uid;
+
+    const querySnapshot = await getDocs(
+      collection(db, `users/${currentUserID}/expenses`)
+    );
+    const expenses = querySnapshot.docs.map(
+      (doc) =>
+        ({
+          id: doc.id,
+          ...doc.data(),
+        } as Expense)
+    );
+
+    return expenses;
+  }
+);
 
 export const updateBudget = createAsyncThunk(
   "users/updateBudget",
@@ -60,20 +85,21 @@ export const decrementBudget = createAsyncThunk(
 
 export const deleteExpense = createAsyncThunk(
   "users/expenses/deleteExpense",
-  async (expense: Expense) => {
+  async (id: string) => {
     const currentUserID = auth.currentUser?.uid;
 
     if (!currentUserID) return;
 
-    await updateDoc(doc(db, "users", currentUserID), {
-      expenses: arrayRemove({
-        amount: expense.amount,
-        category: expense.category,
-        date: expense.date,
-      }),
-    });
+    const expenses = await getDocs(
+      collection(db, `users/${currentUserID}/expenses`)
+    );
 
-    return expense.date;
+    for (const expense of expenses.docs) {
+      if (expense.id === id) {
+        await deleteDoc(doc(db, `users/${currentUserID}/expenses`, expense.id));
+      }
+    }
+    return id;
   }
 );
 
@@ -93,11 +119,14 @@ export const addExpense = createAsyncThunk(
       date: currentDate,
     };
 
-    await updateDoc(doc(db, "users", currentUserID), {
-      expenses: arrayUnion(expenseData),
-    });
+    const addExpenseRef = await addDoc(
+      collection(db, "users", currentUserID, "expenses"),
+      expenseData
+    );
 
-    return expenseData;
+    const newExpense = Object.assign({ id: addExpenseRef.id }, expenseData);
+
+    return newExpense;
   }
 );
 
@@ -180,12 +209,18 @@ const userSlice = createSlice({
       })
 
       //-----------------------------------------------------------------------------------
-      .addCase(fetchData.fulfilled, (state, action) => {
+      .addCase(fetchUserData.fulfilled, (state, action) => {
         if (!action.payload) return;
 
         state.budget = action.payload.budget;
         state.username = action.payload.displayName;
-        state.expenses = action.payload.expenses;
+      })
+      //----------------------------------------------------
+
+      .addCase(fetchExpenses.fulfilled, (state, action) => {
+        if (!action.payload) return;
+
+        state.expenses = action.payload;
       })
 
       //-------------------------------------------------
@@ -205,7 +240,6 @@ const userSlice = createSlice({
       //---------------------------------------------------------
       .addCase(addExpense.fulfilled, (state, action) => {
         if (!action.payload) return;
-
         state.expenses?.push(action.payload);
       })
 
@@ -214,7 +248,7 @@ const userSlice = createSlice({
         if (!action.payload) return;
 
         state.expenses = state.expenses.filter(
-          (expense) => expense.date !== action.payload
+          (expense) => expense.id !== action.payload
         );
       });
   },
