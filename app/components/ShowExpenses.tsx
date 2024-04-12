@@ -1,13 +1,17 @@
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { deleteExpense } from "../redux/usersSlice";
-import type { Expense } from "../types";
+import { fetchExpenses } from "../redux/usersSlice";
+import { useEffect } from "react";
 
 export default function ShowExpenses() {
   const dispatch = useAppDispatch();
   const expenses = useAppSelector((state) => state.user.expenses);
 
-  const handleDeleteExpense = ({ category, amount, date }: Expense) => {
-    dispatch(deleteExpense({ category, amount: Number(amount), date: date }));
+  useEffect(() => {
+    dispatch(fetchExpenses());
+  }, [dispatch]);
+  const handleDeleteExpense = (id: string) => {
+    dispatch(deleteExpense(id));
   };
 
   return (
@@ -30,24 +34,17 @@ export default function ShowExpenses() {
           </thead>
           <tbody>
             {expenses?.length > 0 &&
-              expenses.map((item) => (
+              expenses.map((expense) => (
                 <tr
-                  key={item.date}
+                  key={expense.id}
                   className="hover:bg-gray-100 bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                 >
-                  <td className="px-8 py-6">{item.date} </td>
-                  <td className="px-8 py-6">{item.category}</td>
-                  <td className="px-8 py-6">{`${item.amount} $`}</td>
+                  <td className="px-8 py-6">{expense.date} </td>
+                  <td className="px-8 py-6">{expense.category}</td>
+                  <td className="px-8 py-6">{`${expense.amount} $`}</td>
 
                   <button
-                    onClick={() =>
-                      item.date &&
-                      handleDeleteExpense({
-                        date: item.date,
-                        amount: item.amount,
-                        category: item.category,
-                      })
-                    }
+                    onClick={() => expense && handleDeleteExpense(expense.id)}
                     className="px-8 py-6"
                   >
                     Delete

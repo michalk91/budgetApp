@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
-import { fetchData } from "../redux/usersSlice";
+import { fetchUserData } from "../redux/usersSlice";
 import AddExpense from "./AddExpense";
 import UpdateBudget from "./UpdateBudget";
 import ShowExpenses from "./ShowExpenses";
@@ -11,7 +11,7 @@ export default function Dashboard() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchData());
+    dispatch(fetchUserData());
   }, [dispatch]);
 
   return (
