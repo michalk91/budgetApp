@@ -68,20 +68,6 @@ export const updateBudget = createAsyncThunk(
     return editedBudget;
   }
 );
-export const decrementBudget = createAsyncThunk(
-  "users/decrementBudget",
-  async (decrementValue: number) => {
-    const currentUserID = auth.currentUser?.uid;
-
-    if (!currentUserID) return;
-
-    await updateDoc(doc(db, "users", currentUserID), {
-      budget: increment(-decrementValue),
-    });
-
-    return decrementValue;
-  }
-);
 
 export const deleteExpense = createAsyncThunk(
   "users/expenses/deleteExpense",
@@ -125,6 +111,10 @@ export const addExpense = createAsyncThunk(
     );
 
     const newExpense = Object.assign({ id: addExpenseRef.id }, expenseData);
+
+    await updateDoc(doc(db, "users", currentUserID), {
+      budget: increment(-expense.amount),
+    });
 
     return newExpense;
   }
@@ -230,17 +220,12 @@ const userSlice = createSlice({
 
         state.budget = action.payload;
       })
-      //------------------------------------------------------
 
-      .addCase(decrementBudget.fulfilled, (state, action) => {
-        if (!action.payload) return;
-
-        state.budget -= action.payload;
-      })
       //---------------------------------------------------------
       .addCase(addExpense.fulfilled, (state, action) => {
         if (!action.payload) return;
         state.expenses?.push(action.payload);
+        state.budget -= action.payload.amount;
       })
 
       //------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { addExpense, decrementBudget } from "../redux/usersSlice";
+import { addExpense } from "../redux/usersSlice";
 import { useAppDispatch } from "../redux/hooks";
 
 export default function AddExpense() {
@@ -14,7 +14,6 @@ export default function AddExpense() {
 
   const addNewExpense = () => {
     dispatch(addExpense({ category, amount: Number(amount) }));
-    dispatch(decrementBudget(Number(amount)));
   };
 
   return (
