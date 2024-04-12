@@ -17,6 +17,7 @@ import {
   addDoc,
   collection,
   getDocs,
+  DocumentData,
 } from "firebase/firestore";
 import type { State, User, Expense } from "../types";
 
@@ -80,12 +81,20 @@ export const deleteExpense = createAsyncThunk(
       collection(db, `users/${currentUserID}/expenses`)
     );
 
+    let expenseAmount = 0;
+
     for (const expense of expenses.docs) {
       if (expense.id === id) {
         await deleteDoc(doc(db, `users/${currentUserID}/expenses`, expense.id));
+
+        expenseAmount = expense.data().amount;
+
+        await updateDoc(doc(db, "users", currentUserID), {
+          budget: increment(expenseAmount),
+        });
       }
     }
-    return id;
+    return { id, expenseAmount };
   }
 );
 
@@ -233,8 +242,10 @@ const userSlice = createSlice({
         if (!action.payload) return;
 
         state.expenses = state.expenses.filter(
-          (expense) => expense.id !== action.payload
+          (expense) => expense.id !== action.payload?.id
         );
+
+        state.budget += action.payload.expenseAmount;
       });
   },
 });
