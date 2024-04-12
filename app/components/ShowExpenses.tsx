@@ -44,7 +44,9 @@ export default function ShowExpenses() {
                   <td className="px-8 py-6">{`${expense.amount} $`}</td>
 
                   <button
-                    onClick={() => expense && handleDeleteExpense(expense.id)}
+                    onClick={() =>
+                      expense.id && handleDeleteExpense(expense.id)
+                    }
                     className="px-8 py-6"
                   >
                     Delete
