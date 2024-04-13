@@ -47,9 +47,9 @@ export default function ShowExpenses() {
 
   return (
     <div className="w-full">
-      <span className="font-bold text-xl mx-auto"> Expenses</span>
-      <div className="relative overflow-x-auto">
-        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 border-2 border-slate-300">
+      <span className="ml-2 font-bold text-xl mx-auto"> Expenses</span>
+      <div className="relative overflow-x-auto border-2 border-slate-300 rounded-lg">
+        <table className="table-fixed w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
           <thead className="text-xs text-gray-700 uppercase  dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">
@@ -79,9 +79,7 @@ export default function ShowExpenses() {
                 >
                   <td className="px-6 py-6">
                     <p>created: {expense.date}</p>
-                    {expense.editDate && (
-                      <p>last modified: {expense.editDate}</p>
-                    )}
+                    {expense.editDate && <p>modified: {expense.editDate}</p>}
                   </td>
 
                   <td className="px-6 py-6">
@@ -96,7 +94,7 @@ export default function ShowExpenses() {
                           }))
                         }
                         defaultValue={expense.category}
-                        className="px-2 py-1"
+                        className="px-2 py-1 rounded-lg -ml-2"
                       ></input>
                     )}
                   </td>
@@ -113,18 +111,18 @@ export default function ShowExpenses() {
                           }))
                         }
                         defaultValue={expense.amount}
-                        className="px-2 py-1"
+                        className="px-2 py-1 rounded-lg -ml-2"
                       ></input>
                     )}
                   </td>
 
                   {editedExpense.id !== expense.id ? (
-                    <>
+                    <td>
                       <button
                         onClick={() =>
                           expense.id && handleDeleteExpense(expense.id)
                         }
-                        className="px-6 py-6"
+                        className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 m-2 px-6 rounded-full "
                       >
                         Delete
                       </button>
@@ -132,27 +130,30 @@ export default function ShowExpenses() {
                         onClick={() =>
                           expense.id && handleStartEdit(expense.id)
                         }
-                        className="px-6 py-6"
+                        className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 m-2 px-6 rounded-full "
                       >
                         Edit
                       </button>
-                    </>
+                    </td>
                   ) : (
-                    <>
+                    <td>
                       <button
                         onClick={() =>
                           expense.id &&
                           expense.date &&
                           handleEditExpense(expense.id, expense.date)
                         }
-                        className="px-6 py-6"
+                        className="bg-green-700 hover:bg-green-900 text-white font-bold py-2 m-2 px-6 rounded-full "
                       >
                         Confirm
                       </button>
-                      <button onClick={handleCancelEdit} className="px-5 py-6">
+                      <button
+                        onClick={handleCancelEdit}
+                        className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 m-2 px-6 rounded-full "
+                      >
                         Cancel
                       </button>
-                    </>
+                    </td>
                   )}
                 </tr>
               ))}
