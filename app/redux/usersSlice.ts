@@ -17,7 +17,6 @@ import {
   addDoc,
   collection,
   getDocs,
-  DocumentData,
 } from "firebase/firestore";
 import type { State, User, Expense } from "../types";
 
@@ -81,20 +80,18 @@ export const deleteExpense = createAsyncThunk(
       collection(db, `users/${currentUserID}/expenses`)
     );
 
-    let expenseAmount = 0;
-
     for (const expense of expenses.docs) {
       if (expense.id === id) {
         await deleteDoc(doc(db, `users/${currentUserID}/expenses`, expense.id));
 
-        expenseAmount = expense.data().amount;
+        const expenseAmount = expense.data().amount;
 
         await updateDoc(doc(db, "users", currentUserID), {
           budget: increment(expenseAmount),
         });
+        return { id, expenseAmount };
       }
     }
-    return { id, expenseAmount };
   }
 );
 
@@ -126,6 +123,62 @@ export const addExpense = createAsyncThunk(
     });
 
     return newExpense;
+  }
+);
+
+export const updateExpense = createAsyncThunk(
+  "users/expenses/updateExpense",
+  async (editedExpense: Expense) => {
+    const currentUserID = auth.currentUser?.uid;
+
+    if (!currentUserID) return;
+
+    let budgetDiff = 0;
+
+    const expenses = await getDocs(
+      collection(db, "users", currentUserID, "expenses")
+    );
+
+    const currentDate = new Date(
+      Timestamp.now().seconds * 1000
+    ).toLocaleString();
+
+    for (const expense of expenses.docs) {
+      if (expense.id === editedExpense.id) {
+        const expenseRef = doc(
+          db,
+          "users",
+          currentUserID,
+          "expenses",
+          expense.id
+        );
+
+        const validatedEditedExpense = {
+          id: editedExpense.id,
+          date: editedExpense.date,
+          editDate: currentDate,
+          category:
+            editedExpense.category !== ""
+              ? editedExpense.category
+              : expense.data().category,
+          amount:
+            editedExpense.amount !== 0
+              ? editedExpense.amount
+              : expense.data().amount,
+        };
+
+        await updateDoc(expenseRef, validatedEditedExpense);
+
+        if (expense.data().amount !== validatedEditedExpense.amount) {
+          budgetDiff = expense.data().amount - validatedEditedExpense.amount;
+
+          await updateDoc(doc(db, "users", currentUserID), {
+            budget: increment(budgetDiff),
+          });
+        }
+        return { validatedEditedExpense, budgetDiff };
+      }
+    }
   }
 );
 
@@ -246,6 +299,21 @@ const userSlice = createSlice({
         );
 
         state.budget += action.payload.expenseAmount;
+      })
+
+      //-------------------------------------------------
+      .addCase(updateExpense.fulfilled, (state, action) => {
+        if (!action.payload) return;
+
+        const { validatedEditedExpense, budgetDiff } = action.payload;
+
+        const expenseIndex = state.expenses.findIndex(
+          (expense) => expense.id === validatedEditedExpense.id
+        );
+        if (expenseIndex !== -1) {
+          state.expenses[expenseIndex] = validatedEditedExpense;
+          state.budget += budgetDiff;
+        }
       });
   },
 });

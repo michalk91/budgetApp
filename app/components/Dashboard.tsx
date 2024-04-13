@@ -18,7 +18,14 @@ export default function Dashboard() {
     <>
       <h2>Dashboard</h2>
       <UpdateBudget />
-      <span>Current budget: {budgetFromStore} $</span>
+      <span className="p-5 text-xl">
+        Current budget:
+        <b
+          className={budgetFromStore > 0 ? " text-lime-600" : " text-rose-500"}
+        >
+          {` ${budgetFromStore} $`}
+        </b>
+      </span>
       <AddExpense />
       <ShowExpenses />
     </>
