@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useAppSelector } from "../redux/hooks";
 import { useAppDispatch } from "../redux/hooks";
 import { loginUser } from "../redux/usersSlice";
+import Loader from "../components/Loader";
 
 const Login = () => {
   const dispatch = useAppDispatch();
@@ -69,12 +70,21 @@ const Login = () => {
           </div>
         </div>
 
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full "
-          onClick={onLogin}
-        >
-          Login
-        </button>
+        {loginStatus !== "loading" ? (
+          <button
+            className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full "
+            onClick={onLogin}
+          >
+            Login
+          </button>
+        ) : (
+          <button
+            className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full "
+            onClick={onLogin}
+          >
+            <Loader />
+          </button>
+        )}
         <p className="text-m text-center mt-4">
           No account yet?
           <Link
