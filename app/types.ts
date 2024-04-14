@@ -13,6 +13,7 @@ export interface State {
   userID: null | string;
   username: null | string;
   budget: number;
+  currencyType: string;
   expenses: Expense[];
 }
 

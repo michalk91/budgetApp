@@ -195,6 +195,7 @@ export const registerUser = createAsyncThunk(
       email: currentUser.email,
       displayName: user.username,
       budget: 0,
+      currencyType: "USD",
       expenses: [],
     });
   }
@@ -266,6 +267,7 @@ const userSlice = createSlice({
 
         state.budget = action.payload.budget;
         state.username = action.payload.displayName;
+        state.currencyType = action.payload.currencyType;
       })
       //----------------------------------------------------
 
