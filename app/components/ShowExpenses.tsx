@@ -76,7 +76,7 @@ export default function ShowExpenses() {
                   key={expense.id}
                   className={
                     editedExpense.id === expense.id
-                      ? "bg-gray-100 bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                      ? "bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700"
                       : "hover:bg-gray-100 bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                   }
                 >

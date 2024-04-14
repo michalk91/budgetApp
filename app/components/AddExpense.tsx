@@ -21,9 +21,7 @@ export default function AddExpense({ setAddExpense }: AddExpenseProps) {
 
   return (
     <tr
-      className={
-        "bg-gray-100 bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-      }
+      className={"bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700"}
     >
       <td className="px-6 py-6">
         <span className="ml-2 font-bold text-xl mx-auto">New expense</span>
@@ -37,6 +35,7 @@ export default function AddExpense({ setAddExpense }: AddExpenseProps) {
               category: e.target.value,
             }))
           }
+          type="text"
           value={category}
           placeholder="category"
           required
@@ -53,6 +52,7 @@ export default function AddExpense({ setAddExpense }: AddExpenseProps) {
             }))
           }
           required
+          type="number"
           value={amount}
           placeholder="amount"
           className="px-2 py-1 rounded-lg -ml-2"
@@ -61,7 +61,7 @@ export default function AddExpense({ setAddExpense }: AddExpenseProps) {
 
       <td>
         <button
-          type="button"
+          type="submit"
           onClick={addNewExpense}
           className="bg-green-700 hover:bg-green-900 text-white font-bold py-2 m-2 px-6 rounded-full "
         >
