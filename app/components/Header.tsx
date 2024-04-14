@@ -20,7 +20,7 @@ export default function Header() {
     if (loginStatus !== "succeeded") router.push("/login", { scroll: false });
   }, [loginStatus, router]);
   return (
-    <header className="fixed w-full bg-slate-300 p-6">
+    <header className="fixed w-full bg-slate-300 p-6 z-10">
       {loginStatus === "succeeded" && userName && (
         <p className="absolute text-2xl">Welcome {`${userName}`}</p>
       )}
