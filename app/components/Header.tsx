@@ -29,7 +29,7 @@ export default function Header() {
 
         <li className="mr-6">
           <Link className="text-blue-500 text-2xl hover:text-blue-800" href="/">
-            Home
+            Dashboard
           </Link>
         </li>
         {loginStatus === "succeeded" && (
