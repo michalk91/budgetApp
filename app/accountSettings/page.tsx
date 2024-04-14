@@ -5,6 +5,7 @@ import { changeCurrencyType } from "../redux/usersSlice";
 
 export default function Account() {
   const currencyType = useAppSelector((state) => state.user.currencyType);
+  const categories = useAppSelector((state) => state.user.categories);
 
   const dispatch = useAppDispatch();
 
@@ -22,6 +23,7 @@ export default function Account() {
         <p>
           {`Currency Type: `}
           <select
+            className="px-2 py-1 rounded-lg "
             onChange={(e: SyntheticEvent) => {
               setEdit((state) => ({
                 ...state,
@@ -36,6 +38,17 @@ export default function Account() {
             <option value="EUR">EUR</option>
           </select>
         </p>
+        <span>Categories: </span>
+        <div className="flex flex-wrap">
+          {categories?.map((category) => (
+            <p
+              key={category}
+              className="border-solid border-2 border-blue-400 p-2 m-1 rounded-lg"
+            >
+              {category}
+            </p>
+          ))}
+        </div>
       </form>
     </section>
   );
