@@ -13,6 +13,7 @@ export default function ShowExpenses() {
   const dispatch = useAppDispatch();
   const expenses = useAppSelector((state) => state.user.expenses);
   const currencyType = useAppSelector((state) => state.user.currencyType);
+  const categories = useAppSelector((state) => state.user.categories);
 
   const [addExpense, setAddExpense] = useState(false);
 
@@ -92,16 +93,23 @@ export default function ShowExpenses() {
                   {editedExpense.id !== expense.id ? (
                     expense.category
                   ) : (
-                    <input
+                    <select
                       onChange={(e) =>
                         setEditedExpense((state) => ({
                           ...state,
                           category: e.target.value,
                         }))
                       }
-                      defaultValue={expense.category}
                       className="px-2 py-1 rounded-lg -ml-2"
-                    ></input>
+                      defaultValue={expense.category}
+                      name="choice"
+                    >
+                      {categories.map((category) => (
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
                   )}
                 </td>
 
