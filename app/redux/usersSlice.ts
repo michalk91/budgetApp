@@ -17,6 +17,7 @@ import {
   addDoc,
   collection,
   getDocs,
+  arrayUnion,
 } from "firebase/firestore";
 import type { State, User, Expense } from "../types";
 
@@ -66,6 +67,21 @@ export const updateBudget = createAsyncThunk(
     });
 
     return editedBudget;
+  }
+);
+
+export const addCategory = createAsyncThunk(
+  "users/addCategory",
+  async (category: string) => {
+    const currentUserID = auth.currentUser?.uid;
+
+    if (!currentUserID) return;
+
+    await updateDoc(doc(db, "users", currentUserID), {
+      categories: arrayUnion(category),
+    });
+
+    return category;
   }
 );
 
@@ -309,6 +325,16 @@ const userSlice = createSlice({
         state.budget = action.payload;
       })
 
+      //--------------------------------------------------------------
+      .addCase(addCategory.fulfilled, (state, action) => {
+        if (!action.payload) return;
+
+        const categoryIndex = state.categories.findIndex(
+          (category) => category === action.payload
+        );
+
+        if (categoryIndex === -1) state.categories.push(action.payload);
+      })
       //----------------------------------------------------------
 
       .addCase(changeCurrencyType.fulfilled, (state, action) => {
