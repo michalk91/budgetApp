@@ -69,6 +69,21 @@ export const updateBudget = createAsyncThunk(
   }
 );
 
+export const changeCurrencyType = createAsyncThunk(
+  "users/changeCurrencyType",
+  async (editedCurrencyType: string) => {
+    const currentUserID = auth.currentUser?.uid;
+
+    if (!currentUserID) return;
+
+    await updateDoc(doc(db, "users", currentUserID), {
+      currencyType: editedCurrencyType,
+    });
+
+    return editedCurrencyType;
+  }
+);
+
 export const deleteExpense = createAsyncThunk(
   "users/expenses/deleteExpense",
   async (id: string) => {
@@ -283,6 +298,14 @@ const userSlice = createSlice({
         if (!action.payload) return;
 
         state.budget = action.payload;
+      })
+
+      //----------------------------------------------------------
+
+      .addCase(changeCurrencyType.fulfilled, (state, action) => {
+        if (!action.payload) return;
+
+        state.currencyType = action.payload;
       })
 
       //---------------------------------------------------------
