@@ -18,6 +18,7 @@ import {
   collection,
   getDocs,
   arrayUnion,
+  arrayRemove,
 } from "firebase/firestore";
 import type { State, User, Expense } from "../types";
 
@@ -79,6 +80,21 @@ export const addCategory = createAsyncThunk(
 
     await updateDoc(doc(db, "users", currentUserID), {
       categories: arrayUnion(category),
+    });
+
+    return category;
+  }
+);
+
+export const deleteCategory = createAsyncThunk(
+  "users/deleteCategory",
+  async (category: string) => {
+    const currentUserID = auth.currentUser?.uid;
+
+    if (!currentUserID) return;
+
+    await updateDoc(doc(db, "users", currentUserID), {
+      categories: arrayRemove(category),
     });
 
     return category;
@@ -335,6 +351,15 @@ const userSlice = createSlice({
 
         if (categoryIndex === -1) state.categories.push(action.payload);
       })
+      //----------------------------------------------------------
+      .addCase(deleteCategory.fulfilled, (state, action) => {
+        if (!action.payload) return;
+
+        state.categories = state.categories.filter(
+          (category) => category !== action.payload
+        );
+      })
+
       //----------------------------------------------------------
 
       .addCase(changeCurrencyType.fulfilled, (state, action) => {
