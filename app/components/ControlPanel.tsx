@@ -1,11 +1,10 @@
 import { useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { fetchUserData } from "../redux/usersSlice";
-import AddExpense from "./AddExpense";
 import UpdateBudget from "./UpdateBudget";
 import ShowExpenses from "./ShowExpenses";
 
-export default function Dashboard() {
+export default function ControlPanel() {
   const budgetFromStore = useAppSelector((state) => state.user.budget);
 
   const dispatch = useAppDispatch();
@@ -23,10 +22,9 @@ export default function Dashboard() {
         <b
           className={budgetFromStore > 0 ? " text-lime-600" : " text-rose-500"}
         >
-          {` ${budgetFromStore} $`}
+          {` ${budgetFromStore}`}
         </b>
       </span>
-      <AddExpense />
       <ShowExpenses />
     </>
   );
