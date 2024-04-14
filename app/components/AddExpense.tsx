@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { addExpense } from "../redux/usersSlice";
 import { useAppDispatch } from "../redux/hooks";
+import type { AddExpenseProps } from "../types";
 
-export default function AddExpense() {
+export default function AddExpense({ setAddExpense }: AddExpenseProps) {
   const dispatch = useAppDispatch();
 
   const [expenseFromInput, setExpenseFromInput] = useState({
@@ -14,46 +15,65 @@ export default function AddExpense() {
 
   const addNewExpense = () => {
     dispatch(addExpense({ category, amount: Number(amount) }));
+
+    setAddExpense(false);
   };
 
   return (
-    <form className="flex m-4 items-center justify-center">
-      <p>Add Expense Category: </p>
+    <tr
+      className={
+        "bg-gray-100 bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+      }
+    >
+      <td className="px-6 py-6">
+        <span className="ml-2 font-bold text-xl mx-auto">New expense</span>
+      </td>
 
-      <input
-        type="text"
-        placeholder="category"
-        value={category}
-        className="py-3 px-2 text-md border border-blue-lighter rounded-r"
-        onChange={(e) =>
-          setExpenseFromInput((state) => ({
-            ...state,
-            category: e.target.value,
-          }))
-        }
-      />
+      <td className="px-6 py-6">
+        <input
+          onChange={(e) =>
+            setExpenseFromInput((state) => ({
+              ...state,
+              category: e.target.value,
+            }))
+          }
+          value={category}
+          placeholder="category"
+          required
+          className="px-2 py-1 rounded-lg -ml-2"
+        ></input>
+      </td>
 
-      <p className="ps-8">Add Expense Amount: </p>
+      <td className="px-6 py-6">
+        <input
+          onChange={(e) =>
+            setExpenseFromInput((state) => ({
+              ...state,
+              amount: e.target.value,
+            }))
+          }
+          required
+          value={amount}
+          placeholder="amount"
+          className="px-2 py-1 rounded-lg -ml-2"
+        ></input>
+      </td>
 
-      <input
-        type="number"
-        placeholder="0.00"
-        value={amount}
-        className="py-3 px-2 text-md border border-blue-lighter rounded-r"
-        onChange={(e) =>
-          setExpenseFromInput((state) => ({ ...state, amount: e.target.value }))
-        }
-      />
-      <div className="w-8 flex align-center bg-blue-lighter border-t border-l border-b border-blue-lighter rounded-l text-blue-dark">
-        $
-      </div>
-      <button
-        type="button"
-        onClick={addNewExpense}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full "
-      >
-        confrim
-      </button>
-    </form>
+      <td>
+        <button
+          type="button"
+          onClick={addNewExpense}
+          className="bg-green-700 hover:bg-green-900 text-white font-bold py-2 m-2 px-6 rounded-full "
+        >
+          Add
+        </button>
+        <button
+          onClick={() => setAddExpense(false)}
+          className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 m-2 px-6 rounded-full "
+        >
+          Cancel
+        </button>
+      </td>
+    </tr>
   );
 }

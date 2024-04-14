@@ -21,3 +21,7 @@ export interface User {
   password: string;
   username?: string;
 }
+
+export interface AddExpenseProps {
+  setAddExpense: (value: boolean) => void;
+}

@@ -6,10 +6,13 @@ import {
 } from "../redux/usersSlice";
 
 import { useEffect, useState } from "react";
+import AddExpense from "./AddExpense";
 
 export default function ShowExpenses() {
   const dispatch = useAppDispatch();
   const expenses = useAppSelector((state) => state.user.expenses);
+
+  const [addExpense, setAddExpense] = useState(false);
 
   const [editedExpense, setEditedExpense] = useState({
     id: "",
@@ -122,7 +125,7 @@ export default function ShowExpenses() {
                         onClick={() =>
                           expense.id && handleDeleteExpense(expense.id)
                         }
-                        className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 m-2 px-6 rounded-full "
+                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 m-2 px-6 rounded-full "
                       >
                         Delete
                       </button>
@@ -130,7 +133,7 @@ export default function ShowExpenses() {
                         onClick={() =>
                           expense.id && handleStartEdit(expense.id)
                         }
-                        className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 m-2 px-6 rounded-full "
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 m-2 px-6 rounded-full "
                       >
                         Edit
                       </button>
@@ -157,8 +160,20 @@ export default function ShowExpenses() {
                   )}
                 </tr>
               ))}
+
+            {addExpense && <AddExpense setAddExpense={setAddExpense} />}
           </tbody>
         </table>
+      </div>
+      <div className="text-center">
+        {!addExpense && (
+          <button
+            onClick={() => setAddExpense(true)}
+            className="bg-green-700 hover:bg-green-900 text-white font-bold py-2 m-5 px-6 rounded-full "
+          >
+            Add expense
+          </button>
+        )}
       </div>
     </div>
   );
