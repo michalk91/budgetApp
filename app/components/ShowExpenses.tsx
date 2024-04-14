@@ -183,15 +183,21 @@ export default function ShowExpenses() {
               </tr>
             ))}
 
-            {addExpense && <AddExpense setAddExpense={setAddExpense} />}
+            {editedExpense.id === "" && addExpense && (
+              <AddExpense setAddExpense={setAddExpense} />
+            )}
           </tbody>
         </table>
       </div>
       <div className="text-center">
         {!addExpense && (
           <button
-            onClick={() => setAddExpense(true)}
-            className="bg-green-700 hover:bg-green-900 text-white font-bold py-2 m-5 px-6 rounded-full "
+            onClick={() => editedExpense.id === "" && setAddExpense(true)}
+            className={
+              editedExpense.id === ""
+                ? "bg-green-700 hover:bg-green-900 text-white font-bold py-2 m-5 px-6 rounded-full "
+                : "bg-green-300  text-white font-bold py-2 m-5 px-6 rounded-full cursor-not-allowed"
+            }
           >
             Add expense
           </button>
