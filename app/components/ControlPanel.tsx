@@ -3,15 +3,20 @@ import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { fetchUserData } from "../redux/usersSlice";
 import UpdateBudget from "./UpdateBudget";
 import ShowExpenses from "./ShowExpenses";
+import useFormatter from "../hooks/useFormatter";
 
 export default function ControlPanel() {
   const budgetFromStore = useAppSelector((state) => state.user.budget);
+  const currencyType = useAppSelector((state) => state.user.currencyType);
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(fetchUserData());
   }, [dispatch]);
+
+  console.log(currencyType);
+  const formattedBudget = useFormatter(budgetFromStore, currencyType);
 
   return (
     <>
@@ -22,7 +27,7 @@ export default function ControlPanel() {
         <b
           className={budgetFromStore > 0 ? " text-lime-600" : " text-rose-500"}
         >
-          {` ${budgetFromStore}`}
+          {formattedBudget}
         </b>
       </span>
       <ShowExpenses />
