@@ -118,6 +118,7 @@ export default function ShowExpenses() {
                     formatter(expense.amount, currencyType)
                   ) : (
                     <input
+                      type="number"
                       onChange={(e) =>
                         setEditedExpense((state) => ({
                           ...state,
