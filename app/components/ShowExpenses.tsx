@@ -7,10 +7,12 @@ import {
 
 import { useEffect, useState } from "react";
 import AddExpense from "./AddExpense";
+import useFormatter from "../hooks/useFormatter";
 
 export default function ShowExpenses() {
   const dispatch = useAppDispatch();
   const expenses = useAppSelector((state) => state.user.expenses);
+  const currencyType = useAppSelector((state) => state.user.currencyType);
 
   const [addExpense, setAddExpense] = useState(false);
 
@@ -19,6 +21,8 @@ export default function ShowExpenses() {
     category: "",
     amount: "",
   });
+
+  const formatter = useFormatter();
 
   useEffect(() => {
     dispatch(fetchExpenses());
@@ -104,7 +108,7 @@ export default function ShowExpenses() {
 
                   <td className="px-6 py-6">
                     {editedExpense.id !== expense.id ? (
-                      `${expense.amount} $`
+                      formatter(expense.amount, currencyType)
                     ) : (
                       <input
                         onChange={(e) =>

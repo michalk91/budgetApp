@@ -16,7 +16,7 @@ export default function ControlPanel() {
   }, [dispatch]);
 
   console.log(currencyType);
-  const formattedBudget = useFormatter(budgetFromStore, currencyType);
+  const formatCurrency = useFormatter();
 
   return (
     <>
@@ -27,7 +27,7 @@ export default function ControlPanel() {
         <b
           className={budgetFromStore > 0 ? " text-lime-600" : " text-rose-500"}
         >
-          {formattedBudget}
+          {formatCurrency(budgetFromStore, currencyType)}
         </b>
       </span>
       <ShowExpenses />

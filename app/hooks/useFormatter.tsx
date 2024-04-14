@@ -1,12 +1,16 @@
-const useFormatter = (amount: number, currency: string) => {
-  if (!currency) return;
+const useFormatter = () => {
+  const formatCurrency = (amount: number, currency: string) => {
+    if (!currency) return;
 
-  const formatter = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-  });
+    const formatter = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency,
+    });
 
-  return formatter.format(amount);
+    return formatter.format(amount);
+  };
+
+  return formatCurrency;
 };
 
 export default useFormatter;
