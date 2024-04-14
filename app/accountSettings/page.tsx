@@ -1,11 +1,5 @@
 "use client";
-import {
-  SyntheticEvent,
-  useEffect,
-  useState,
-  useRef,
-  MutableRefObject,
-} from "react";
+import { SyntheticEvent, useEffect, useState, useRef } from "react";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import {
   changeCurrencyType,
@@ -34,7 +28,7 @@ export default function Account() {
       <form onSubmit={(e) => (e.target as HTMLFormElement).reset()}>
         <span>Categories: </span>
         <div className="py-2">
-          <div className="flex flex-wrap">
+          <div className="flex flex-wrap -ml-1">
             {categories?.map((category) => (
               <p
                 key={category}
