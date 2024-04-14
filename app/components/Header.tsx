@@ -33,15 +33,25 @@ export default function Header() {
           </Link>
         </li>
         {loginStatus === "succeeded" && (
-          <li className="mr-6">
-            <Link
-              onClick={singOut}
-              className="text-blue-500 text-2xl hover:text-blue-800"
-              href="/"
-            >
-              Logout
-            </Link>
-          </li>
+          <>
+            <li className="mr-6">
+              <Link
+                className="text-blue-500 text-2xl hover:text-blue-800"
+                href="/accountSettings"
+              >
+                Account
+              </Link>
+            </li>
+            <li className="mr-6">
+              <Link
+                onClick={singOut}
+                className="text-blue-500 text-2xl hover:text-blue-800"
+                href="/"
+              >
+                Logout
+              </Link>
+            </li>
+          </>
         )}
         {loginStatus !== "succeeded" && (
           <li className="mr-6">
