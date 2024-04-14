@@ -114,8 +114,8 @@ export default function Account() {
             value={currency}
             name="choice"
           >
-            <option value="USD">USD</option>
             <option value="PLN">PLN</option>
+            <option value="USD">USD</option>
             <option value="EUR">EUR</option>
           </select>
         </p>

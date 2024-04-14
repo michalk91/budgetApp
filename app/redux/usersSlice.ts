@@ -242,7 +242,7 @@ export const registerUser = createAsyncThunk(
       email: currentUser.email,
       displayName: user.username,
       budget: 0,
-      currencyType: "USD",
+      currencyType: "PLN",
       categories: [
         "Shops",
         "Food",
