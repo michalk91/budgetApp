@@ -135,15 +135,27 @@ export default function ShowExpenses() {
                   <td>
                     <button
                       onClick={() =>
-                        expense.id && handleDeleteExpense(expense.id)
+                        !addExpense &&
+                        expense.id &&
+                        handleDeleteExpense(expense.id)
                       }
-                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 m-2 px-6 rounded-full "
+                      className={
+                        !addExpense
+                          ? "bg-red-500 hover:bg-red-700 text-white font-bold py-2 m-2 px-6 rounded-full"
+                          : "bg-red-200  text-white font-bold py-2 m-2 px-6 rounded-full cursor-not-allowed"
+                      }
                     >
                       Delete
                     </button>
                     <button
-                      onClick={() => expense.id && handleStartEdit(expense.id)}
-                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 m-2 px-6 rounded-full "
+                      onClick={() =>
+                        !addExpense && expense.id && handleStartEdit(expense.id)
+                      }
+                      className={
+                        !addExpense
+                          ? "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 m-2 px-6 rounded-full "
+                          : "bg-blue-200  text-white font-bold py-2 m-2 px-6 rounded-full cursor-not-allowed"
+                      }
                     >
                       Edit
                     </button>
