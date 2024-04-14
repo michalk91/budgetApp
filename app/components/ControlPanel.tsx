@@ -15,7 +15,6 @@ export default function ControlPanel() {
     dispatch(fetchUserData());
   }, [dispatch]);
 
-  console.log(currencyType);
   const formatCurrency = useFormatter();
 
   return (

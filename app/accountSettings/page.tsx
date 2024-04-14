@@ -5,6 +5,7 @@ import { changeCurrencyType } from "../redux/usersSlice";
 
 export default function Account() {
   const currencyType = useAppSelector((state) => state.user.currencyType);
+
   const dispatch = useAppDispatch();
 
   const [edit, setEdit] = useState({
@@ -31,9 +32,7 @@ export default function Account() {
             name="choice"
           >
             <option value="USD">USD</option>
-            <option value="PLN" selected>
-              PLN
-            </option>
+            <option value="PLN">PLN</option>
             <option value="EUR">EUR</option>
           </select>
         </p>

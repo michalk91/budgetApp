@@ -74,96 +74,93 @@ export default function ShowExpenses() {
             </tr>
           </thead>
           <tbody>
-            {expenses?.length > 0 &&
-              expenses.map((expense) => (
-                <tr
-                  key={expense.id}
-                  className={
-                    editedExpense.id === expense.id
-                      ? "bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700"
-                      : "hover:bg-gray-100 bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                  }
-                >
-                  <td className="px-6 py-6">
-                    <p>created: {expense.date}</p>
-                    {expense.editDate && <p>modified: {expense.editDate}</p>}
-                  </td>
+            {expenses?.map((expense) => (
+              <tr
+                key={expense.id}
+                className={
+                  editedExpense.id === expense.id
+                    ? "bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700"
+                    : "hover:bg-gray-100 bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                }
+              >
+                <td className="px-6 py-6">
+                  <p>created: {expense.date}</p>
+                  {expense.editDate && <p>modified: {expense.editDate}</p>}
+                </td>
 
-                  <td className="px-6 py-6">
-                    {editedExpense.id !== expense.id ? (
-                      expense.category
-                    ) : (
-                      <input
-                        onChange={(e) =>
-                          setEditedExpense((state) => ({
-                            ...state,
-                            category: e.target.value,
-                          }))
-                        }
-                        defaultValue={expense.category}
-                        className="px-2 py-1 rounded-lg -ml-2"
-                      ></input>
-                    )}
-                  </td>
-
-                  <td className="px-6 py-6">
-                    {editedExpense.id !== expense.id ? (
-                      formatter(expense.amount, currencyType)
-                    ) : (
-                      <input
-                        onChange={(e) =>
-                          setEditedExpense((state) => ({
-                            ...state,
-                            amount: e.target.value,
-                          }))
-                        }
-                        defaultValue={expense.amount}
-                        className="px-2 py-1 rounded-lg -ml-2"
-                      ></input>
-                    )}
-                  </td>
-
+                <td className="px-6 py-6">
                   {editedExpense.id !== expense.id ? (
-                    <td>
-                      <button
-                        onClick={() =>
-                          expense.id && handleDeleteExpense(expense.id)
-                        }
-                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 m-2 px-6 rounded-full "
-                      >
-                        Delete
-                      </button>
-                      <button
-                        onClick={() =>
-                          expense.id && handleStartEdit(expense.id)
-                        }
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 m-2 px-6 rounded-full "
-                      >
-                        Edit
-                      </button>
-                    </td>
+                    expense.category
                   ) : (
-                    <td>
-                      <button
-                        onClick={() =>
-                          expense.id &&
-                          expense.date &&
-                          handleEditExpense(expense.id, expense.date)
-                        }
-                        className="bg-green-700 hover:bg-green-900 text-white font-bold py-2 m-2 px-6 rounded-full "
-                      >
-                        Confirm
-                      </button>
-                      <button
-                        onClick={handleCancelEdit}
-                        className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 m-2 px-6 rounded-full "
-                      >
-                        Cancel
-                      </button>
-                    </td>
+                    <input
+                      onChange={(e) =>
+                        setEditedExpense((state) => ({
+                          ...state,
+                          category: e.target.value,
+                        }))
+                      }
+                      defaultValue={expense.category}
+                      className="px-2 py-1 rounded-lg -ml-2"
+                    ></input>
                   )}
-                </tr>
-              ))}
+                </td>
+
+                <td className="px-6 py-6">
+                  {editedExpense.id !== expense.id ? (
+                    formatter(expense.amount, currencyType)
+                  ) : (
+                    <input
+                      onChange={(e) =>
+                        setEditedExpense((state) => ({
+                          ...state,
+                          amount: e.target.value,
+                        }))
+                      }
+                      defaultValue={expense.amount}
+                      className="px-2 py-1 rounded-lg -ml-2"
+                    ></input>
+                  )}
+                </td>
+
+                {editedExpense.id !== expense.id ? (
+                  <td>
+                    <button
+                      onClick={() =>
+                        expense.id && handleDeleteExpense(expense.id)
+                      }
+                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 m-2 px-6 rounded-full "
+                    >
+                      Delete
+                    </button>
+                    <button
+                      onClick={() => expense.id && handleStartEdit(expense.id)}
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 m-2 px-6 rounded-full "
+                    >
+                      Edit
+                    </button>
+                  </td>
+                ) : (
+                  <td>
+                    <button
+                      onClick={() =>
+                        expense.id &&
+                        expense.date &&
+                        handleEditExpense(expense.id, expense.date)
+                      }
+                      className="bg-green-700 hover:bg-green-900 text-white font-bold py-2 m-2 px-6 rounded-full "
+                    >
+                      Confirm
+                    </button>
+                    <button
+                      onClick={handleCancelEdit}
+                      className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 m-2 px-6 rounded-full "
+                    >
+                      Cancel
+                    </button>
+                  </td>
+                )}
+              </tr>
+            ))}
 
             {addExpense && <AddExpense setAddExpense={setAddExpense} />}
           </tbody>

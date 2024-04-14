@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { addExpense } from "../redux/usersSlice";
-import { useAppDispatch } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import type { AddExpenseProps } from "../types";
 
 export default function AddExpense({ setAddExpense }: AddExpenseProps) {
+  const categories = useAppSelector((state) => state.user.categories);
   const dispatch = useAppDispatch();
 
   const [expenseFromInput, setExpenseFromInput] = useState({
-    category: "",
+    category: categories[0],
     amount: "",
   });
 
@@ -28,19 +29,23 @@ export default function AddExpense({ setAddExpense }: AddExpenseProps) {
       </td>
 
       <td className="px-6 py-6">
-        <input
-          onChange={(e) =>
+        <select
+          onChange={(e) => {
             setExpenseFromInput((state) => ({
               ...state,
               category: e.target.value,
-            }))
-          }
-          type="text"
-          value={category}
-          placeholder="category"
-          required
+            }));
+          }}
           className="px-2 py-1 rounded-lg -ml-2"
-        ></input>
+          value={category}
+          name="choice"
+        >
+          {categories.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
       </td>
 
       <td className="px-6 py-6">

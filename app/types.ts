@@ -15,6 +15,7 @@ export interface State {
   budget: number;
   currencyType: string;
   expenses: Expense[];
+  categories: string[];
 }
 
 export interface User {

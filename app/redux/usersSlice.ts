@@ -211,7 +211,15 @@ export const registerUser = createAsyncThunk(
       displayName: user.username,
       budget: 0,
       currencyType: "USD",
-      expenses: [],
+      categories: [
+        "Shops",
+        "Food",
+        "Healthcare",
+        "Entertainment",
+        "Travel & Vacation",
+        "Personal care",
+        "Other",
+      ],
     });
   }
 );
@@ -283,6 +291,7 @@ const userSlice = createSlice({
         state.budget = action.payload.budget;
         state.username = action.payload.displayName;
         state.currencyType = action.payload.currencyType;
+        state.categories = action.payload.categories;
       })
       //----------------------------------------------------
 
