@@ -4,6 +4,7 @@ import { fetchUserData } from "../redux/usersSlice";
 import UpdateBudget from "./UpdateBudget";
 import ShowExpenses from "./ShowExpenses";
 import useFormatter from "../hooks/useFormatter";
+import ExpensesChart from "./ExpensesChart";
 
 export default function ControlPanel() {
   const budgetFromStore = useAppSelector((state) => state.user.budget);
@@ -30,6 +31,7 @@ export default function ControlPanel() {
         </b>
       </span>
       <ShowExpenses />
+      <ExpensesChart />
     </>
   );
 }
