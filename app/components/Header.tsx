@@ -37,6 +37,14 @@ export default function Header() {
             <li className="mr-6">
               <Link
                 className="text-blue-500 text-2xl hover:text-blue-800"
+                href="/setBudget"
+              >
+                Budget
+              </Link>
+            </li>
+            <li className="mr-6">
+              <Link
+                className="text-blue-500 text-2xl hover:text-blue-800"
                 href="/categorySettings"
               >
                 Categories
