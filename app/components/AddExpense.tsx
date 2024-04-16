@@ -36,7 +36,7 @@ export default function AddExpense({ setAddExpense }: AddExpenseProps) {
               category: e.target.value,
             }));
           }}
-          className="px-2 py-1 rounded-lg -ml-2"
+          className="px-2 py-1 rounded-full -ml-2"
           value={category}
           name="choice"
         >
@@ -60,7 +60,7 @@ export default function AddExpense({ setAddExpense }: AddExpenseProps) {
           type="number"
           value={amount}
           placeholder="amount"
-          className="px-2 py-1 rounded-lg -ml-2"
+          className="px-2 py-1 rounded-full -ml-2"
         ></input>
       </td>
 

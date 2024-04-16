@@ -14,20 +14,17 @@ export default function CurrencyType() {
   }, [currency, dispatch]);
 
   return (
-    <p className="my-5">
-      {`Currency Type: `}
-      <select
-        className="px-2 py-1 rounded-lg "
-        onChange={(e: SyntheticEvent) => {
-          setCurrency((e.target as HTMLInputElement).value);
-        }}
-        value={currency}
-        name="choice"
-      >
-        <option value="PLN">PLN</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-      </select>
-    </p>
+    <select
+      className="px-4 py-2 rounded-full "
+      onChange={(e: SyntheticEvent) => {
+        setCurrency((e.target as HTMLInputElement).value);
+      }}
+      value={currency}
+      name="choice"
+    >
+      <option value="PLN">PLN</option>
+      <option value="USD">USD</option>
+      <option value="EUR">EUR</option>
+    </select>
   );
 }

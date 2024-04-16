@@ -1,6 +1,7 @@
 import { SyntheticEvent, useState } from "react";
 import { useAppDispatch } from "../redux/hooks";
 import { updateBudget } from "../redux/usersSlice";
+import CurrencyType from "./CurrencyType";
 
 export default function UpdateBudget() {
   const dispatch = useAppDispatch();
@@ -15,25 +16,26 @@ export default function UpdateBudget() {
   };
 
   return (
-    <form className="flex m-4 items-center justify-center">
-      <p>Add budget: </p>
-
-      <input
-        type="number"
-        placeholder="0.00"
-        value={budgetFromInput}
-        className="py-3 px-2 text-md border border-blue-lighter rounded-r"
-        onChange={(e) => setBudgetFromInput(e.target.value)}
-      />
-      <div className="w-8 flex align-center bg-blue-lighter border-t border-l border-b border-blue-lighter rounded-l text-blue-dark">
-        $
-      </div>
-      <button
-        onClick={handleUpdateBudget}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full "
-      >
-        confrim
-      </button>
-    </form>
+    <>
+      <span className="font-bold text-xl mx-auto">Set budget</span>
+      <form className="flex m-2 items-center justify-center">
+        <input
+          type="number"
+          placeholder="0.00"
+          value={budgetFromInput}
+          className="  font-bold py-2 mr-1 px-4 rounded-full "
+          onChange={(e) => setBudgetFromInput(e.target.value)}
+        />
+        <div className="w-8 flex align-center bg-blue-lighter border-t border-l border-b border-blue-lighter rounded-l text-blue-dark">
+          <CurrencyType />
+        </div>
+        <button
+          onClick={handleUpdateBudget}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 ml-16 px-6 rounded-full "
+        >
+          confrim
+        </button>
+      </form>
+    </>
   );
 }

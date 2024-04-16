@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { fetchUserData } from "../redux/usersSlice";
-import UpdateBudget from "./UpdateBudget";
 import ShowExpenses from "./ShowExpenses";
 import useFormatter from "../hooks/useFormatter";
 import ExpensesChart from "./ExpensesChart";
@@ -20,8 +19,6 @@ export default function ControlPanel() {
 
   return (
     <>
-      <h2>Dashboard</h2>
-      <UpdateBudget />
       <span className="p-5 text-xl">
         Current budget:
         <b

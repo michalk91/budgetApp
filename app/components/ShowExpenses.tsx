@@ -117,7 +117,7 @@ export default function ShowExpenses() {
                           category: e.target.value,
                         }))
                       }
-                      className="px-2 py-1 rounded-lg -ml-2"
+                      className="px-2 py-1 rounded-full -ml-2"
                       defaultValue={expense.category}
                       name="choice"
                     >
@@ -143,7 +143,7 @@ export default function ShowExpenses() {
                         }))
                       }
                       defaultValue={expense.amount}
-                      className="px-2 py-1 rounded-lg -ml-2"
+                      className="px-2 py-1 rounded-full -ml-2"
                     ></input>
                   )}
                 </td>
