@@ -4,6 +4,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   getAuth,
+  updatePassword,
 } from "firebase/auth";
 import { auth, db } from "../firebase/config";
 import {
@@ -33,6 +34,14 @@ export const fetchUserData = createAsyncThunk(
     if (docSnap.exists()) {
       return docSnap.data();
     }
+  }
+);
+
+export const changePassword = createAsyncThunk(
+  "users/changePassword",
+  async (newPassword: string) => {
+    const user = auth?.currentUser;
+    user?.reload().then(() => updatePassword(user, newPassword));
   }
 );
 
@@ -330,6 +339,19 @@ const userSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loginStatus = "failed";
+        state.error = action.error.message;
+      })
+
+      //-----------------------------------------------------------------------------
+
+      .addCase(changePassword.pending, (state) => {
+        state.changePasswordStatus = "loading";
+      })
+      .addCase(changePassword.fulfilled, (state) => {
+        state.changePasswordStatus = "succeeded";
+      })
+      .addCase(changePassword.rejected, (state, action) => {
+        state.changePasswordStatus = "failed";
         state.error = action.error.message;
       })
 
