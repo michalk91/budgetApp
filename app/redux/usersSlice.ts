@@ -153,11 +153,14 @@ export const deleteAllExpenses = createAsyncThunk(
       collection(db, `users/${currentUserID}/expenses`)
     );
 
-    for (const expense of expenses.docs) {
-      await deleteDoc(doc(db, `users/${currentUserID}/expenses`, expense.id));
+    let allExpensesAmount = 0;
 
-      return [];
+    for (const expense of expenses.docs) {
+      allExpensesAmount += expense.data().amount;
+      await deleteDoc(doc(db, `users/${currentUserID}/expenses`, expense.id));
     }
+
+    return { expenses: [], allExpensesAmount };
   }
 );
 
@@ -409,7 +412,9 @@ const userSlice = createSlice({
       .addCase(deleteAllExpenses.fulfilled, (state, action) => {
         if (!action.payload) return;
 
-        state.expenses = action.payload;
+        state.expenses = action.payload.expenses;
+
+        state.budget += action.payload.allExpensesAmount;
       })
 
       //-------------------------------------------------
