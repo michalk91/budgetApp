@@ -137,10 +137,11 @@ export default function ShowExpenses() {
                       onClick={() =>
                         !addExpense &&
                         expense.id &&
+                        editedExpense.id === "" &&
                         handleDeleteExpense(expense.id)
                       }
                       className={
-                        !addExpense
+                        !addExpense && editedExpense.id === ""
                           ? "bg-red-500 hover:bg-red-700 text-white font-bold py-2 m-2 px-6 rounded-full"
                           : "bg-red-200  text-white font-bold py-2 m-2 px-6 rounded-full cursor-not-allowed"
                       }
@@ -149,10 +150,13 @@ export default function ShowExpenses() {
                     </button>
                     <button
                       onClick={() =>
-                        !addExpense && expense.id && handleStartEdit(expense.id)
+                        !addExpense &&
+                        expense.id &&
+                        editedExpense.id === "" &&
+                        handleStartEdit(expense.id)
                       }
                       className={
-                        !addExpense
+                        !addExpense && editedExpense.id === ""
                           ? "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 m-2 px-6 rounded-full "
                           : "bg-blue-200  text-white font-bold py-2 m-2 px-6 rounded-full cursor-not-allowed"
                       }
