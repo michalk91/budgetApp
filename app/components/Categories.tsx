@@ -13,10 +13,13 @@ export default function Categories() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <form onSubmit={(e) => (e.target as HTMLFormElement).reset()}>
-      <span>Categories: </span>
+    <form
+      className="text-center"
+      onSubmit={(e) => (e.target as HTMLFormElement).reset()}
+    >
+      <span className="font-bold text-xl mx-auto">Categories</span>
       <div className="py-2">
-        <div className="flex flex-wrap -ml-1">
+        <div className="flex flex-wrap -ml-1 py-1">
           {categories?.map((category) => (
             <p
               key={category}
