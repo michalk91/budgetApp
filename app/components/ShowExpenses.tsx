@@ -57,6 +57,7 @@ export default function ShowExpenses() {
   return (
     <div className="w-full">
       <span className="ml-2 font-bold text-xl mx-auto"> Expenses</span>
+
       <div className="relative overflow-x-auto border-2 border-slate-300 rounded-lg">
         <table className="table-fixed w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
           <thead className="text-xs text-gray-700 uppercase  dark:bg-gray-700 dark:text-gray-400">
@@ -75,7 +76,22 @@ export default function ShowExpenses() {
               </th>
             </tr>
           </thead>
+
           <tbody>
+            {expenses?.length === 0 && !addExpense && (
+              <tr
+                className={
+                  "bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700"
+                }
+              >
+                <td align="center" colSpan={4} className="px-6 py-6">
+                  <span className="ml-2 font-bold text-xl mx-auto">
+                    {`You don't have expenses yet`}
+                  </span>
+                </td>
+              </tr>
+            )}
+
             {expenses?.map((expense) => (
               <tr
                 key={expense.id}
@@ -208,7 +224,7 @@ export default function ShowExpenses() {
               Add expense
             </button>
 
-            {expenses.length > 1 && (
+            {expenses?.length > 1 && (
               <button
                 onClick={() => dispatch(deleteAllExpenses())}
                 className={
