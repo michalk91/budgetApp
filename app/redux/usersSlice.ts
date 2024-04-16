@@ -142,6 +142,25 @@ export const deleteExpense = createAsyncThunk(
   }
 );
 
+export const deleteAllExpenses = createAsyncThunk(
+  "users/expenses/deleteAllExpenses",
+  async () => {
+    const currentUserID = auth.currentUser?.uid;
+
+    if (!currentUserID) return;
+
+    const expenses = await getDocs(
+      collection(db, `users/${currentUserID}/expenses`)
+    );
+
+    for (const expense of expenses.docs) {
+      await deleteDoc(doc(db, `users/${currentUserID}/expenses`, expense.id));
+
+      return [];
+    }
+  }
+);
+
 export const addExpense = createAsyncThunk(
   "users/expenses/addExpense",
   async (expense: Expense) => {
@@ -384,6 +403,13 @@ const userSlice = createSlice({
         );
 
         state.budget += action.payload.expenseAmount;
+      })
+      //--------------------------------------------------
+
+      .addCase(deleteAllExpenses.fulfilled, (state, action) => {
+        if (!action.payload) return;
+
+        state.expenses = action.payload;
       })
 
       //-------------------------------------------------

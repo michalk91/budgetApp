@@ -3,6 +3,7 @@ import {
   deleteExpense,
   fetchExpenses,
   updateExpense,
+  deleteAllExpenses,
 } from "../redux/usersSlice";
 
 import { useEffect, useState } from "react";
@@ -195,16 +196,29 @@ export default function ShowExpenses() {
       </div>
       <div className="text-center">
         {!addExpense && (
-          <button
-            onClick={() => editedExpense.id === "" && setAddExpense(true)}
-            className={
-              editedExpense.id === ""
-                ? "bg-green-700 hover:bg-green-900 text-white font-bold py-2 m-5 px-6 rounded-full "
-                : "bg-green-300  text-white font-bold py-2 m-5 px-6 rounded-full cursor-not-allowed"
-            }
-          >
-            Add expense
-          </button>
+          <>
+            <button
+              onClick={() => editedExpense.id === "" && setAddExpense(true)}
+              className={
+                editedExpense.id === ""
+                  ? "bg-green-700 hover:bg-green-900 text-white font-bold py-2 my-5 mx-2 px-6 rounded-full "
+                  : "bg-green-300  text-white font-bold py-2 my-5 mx-2 px-6 rounded-full cursor-not-allowed"
+              }
+            >
+              Add expense
+            </button>
+
+            <button
+              onClick={() => dispatch(deleteAllExpenses())}
+              className={
+                editedExpense.id === ""
+                  ? "bg-red-700 hover:bg-red-900 text-white font-bold py-2 my-5 mx-2 px-6 rounded-full "
+                  : "bg-red-300  text-white font-bold py-2 my-5 mx-2 px-6 rounded-full cursor-not-allowed"
+              }
+            >
+              Delete All Expenses
+            </button>
+          </>
         )}
       </div>
     </div>
