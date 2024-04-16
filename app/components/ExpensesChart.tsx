@@ -8,10 +8,24 @@ export default function ExpensesChart() {
   const expensesFromDataBase: [[string, number]] = [["", 0]];
 
   expenses?.map((expense: Expense) => {
-    expensesFromDataBase.push([expense.category, expense.amount]);
-  });
+    let sameCategory = "",
+      totalAmount = 0,
+      sameCategoryIndex = 0;
 
-  console.log(expensesFromDataBase);
+    expensesFromDataBase.filter((item, index) => {
+      if (item[0] === expense.category) {
+        sameCategory = expense.category;
+        totalAmount = item[1] + expense.amount;
+        sameCategoryIndex = index;
+      }
+    });
+
+    if (expense.category !== sameCategory) {
+      expensesFromDataBase.push([expense.category, expense.amount]);
+    } else if (expense.category === sameCategory) {
+      expensesFromDataBase[sameCategoryIndex] = [expense.category, totalAmount];
+    }
+  });
 
   const data = [["Expense", "Amount"], ...expensesFromDataBase];
 
