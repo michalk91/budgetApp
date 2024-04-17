@@ -32,3 +32,8 @@ export interface CurrentBudgetProps {
 export interface AddExpenseProps {
   setAddExpense: (value: boolean) => void;
 }
+
+export interface SortOptions {
+  sortBy: string;
+  descending: boolean;
+}

@@ -20,8 +20,10 @@ import {
   getDocs,
   arrayUnion,
   arrayRemove,
+  orderBy,
+  query,
 } from "firebase/firestore";
-import type { State, User, Expense } from "../types";
+import type { State, User, Expense, SortOptions } from "../types";
 
 export const fetchUserData = createAsyncThunk(
   "users/fetchUserData",
@@ -47,12 +49,18 @@ export const changePassword = createAsyncThunk(
 
 export const fetchExpenses = createAsyncThunk(
   "users/fetchExpenses",
-  async () => {
+  async (sortOptions: SortOptions) => {
+    const { sortBy, descending } = sortOptions;
+
     const currentUserID = auth.currentUser?.uid;
 
-    const querySnapshot = await getDocs(
-      collection(db, `users/${currentUserID}/expenses`)
+    const expensesQuery = query(
+      collection(db, `users/${currentUserID}/expenses`),
+      descending ? orderBy(`${sortBy}`, `desc`) : orderBy(`${sortBy}`)
     );
+
+    const querySnapshot = await getDocs(expensesQuery);
+
     const expenses = querySnapshot.docs.map(
       (doc) =>
         ({
@@ -60,7 +68,6 @@ export const fetchExpenses = createAsyncThunk(
           ...doc.data(),
         } as Expense)
     );
-
     return expenses;
   }
 );
@@ -186,6 +193,7 @@ export const addExpense = createAsyncThunk(
 
     const expenseData = {
       ...expense,
+      timestamp: Timestamp.now().seconds,
       date: currentDate,
     };
 
@@ -194,7 +202,7 @@ export const addExpense = createAsyncThunk(
       expenseData
     );
 
-    const newExpense = Object.assign({ id: addExpenseRef.id }, expenseData);
+    const newExpense = { id: addExpenseRef.id, ...expenseData };
 
     await updateDoc(doc(db, "users", currentUserID), {
       budget: increment(-expense.amount),
@@ -234,6 +242,7 @@ export const updateExpense = createAsyncThunk(
         const validatedEditedExpense = {
           id: editedExpense.id,
           date: editedExpense.date,
+          timestamp: Timestamp.now().seconds,
           editDate: currentDate,
           category:
             editedExpense.category !== ""
