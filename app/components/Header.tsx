@@ -4,11 +4,12 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { logoutUser } from "../redux/usersSlice";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function Header() {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const pathname = usePathname();
   const loginStatus = useAppSelector((state) => state.user.loginStatus);
   const userName = useAppSelector((state) => state.user.username);
 
@@ -25,18 +26,23 @@ export default function Header() {
         <p className="absolute text-2xl">Welcome {`${userName}`}</p>
       )}
       <ul className="flex justify-end">
-        <li className="mr-6"></li>
-
-        <li className="mr-6">
-          <Link className="text-blue-500 text-2xl hover:text-blue-800" href="/">
-            Dashboard
-          </Link>
-        </li>
         {loginStatus === "succeeded" && (
           <>
             <li className="mr-6">
               <Link
-                className="text-blue-500 text-2xl hover:text-blue-800"
+                className={` ${
+                  pathname === "/" ? "text-blue-800" : "text-blue-500"
+                } text-2xl hover:text-blue-800`}
+                href="/"
+              >
+                Dashboard
+              </Link>
+            </li>
+            <li className="mr-6">
+              <Link
+                className={` ${
+                  pathname === "/setBudget" ? "text-blue-800" : "text-blue-500"
+                } text-2xl hover:text-blue-800`}
                 href="/setBudget"
               >
                 Budget
@@ -44,7 +50,11 @@ export default function Header() {
             </li>
             <li className="mr-6">
               <Link
-                className="text-blue-500 text-2xl hover:text-blue-800"
+                className={` ${
+                  pathname === "/categorySettings"
+                    ? "text-blue-800"
+                    : "text-blue-500"
+                } text-2xl hover:text-blue-800`}
                 href="/categorySettings"
               >
                 Categories
@@ -52,7 +62,11 @@ export default function Header() {
             </li>
             <li className="mr-6">
               <Link
-                className="text-blue-500 text-2xl hover:text-blue-800"
+                className={` ${
+                  pathname === "/accountSettings"
+                    ? "text-blue-800"
+                    : "text-blue-500"
+                } text-2xl hover:text-blue-800`}
                 href="/accountSettings"
               >
                 Account
@@ -72,7 +86,9 @@ export default function Header() {
         {loginStatus !== "succeeded" && (
           <li className="mr-6">
             <Link
-              className="text-blue-500 text-2xl hover:text-blue-800"
+              className={` ${
+                pathname === "/register" ? "text-blue-800" : "text-blue-500"
+              } text-2xl hover:text-blue-800`}
               href="/register"
             >
               Register
@@ -83,7 +99,9 @@ export default function Header() {
         {loginStatus !== "succeeded" && (
           <li className="mr-6">
             <Link
-              className="text-blue-500 text-2xl hover:text-blue-800"
+              className={` ${
+                pathname === "/login" ? "text-blue-800" : "text-blue-500"
+              } text-2xl hover:text-blue-800`}
               href="/login"
             >
               Login
