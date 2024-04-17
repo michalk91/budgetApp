@@ -6,7 +6,7 @@ import {
   deleteAllExpenses,
 } from "../redux/usersSlice";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, SyntheticEvent } from "react";
 import AddExpense from "./AddExpense";
 import useFormatter from "../hooks/useFormatter";
 
@@ -24,11 +24,21 @@ export default function ShowExpenses() {
     amount: "",
   });
 
+  const [expensesSort, setExpensesSort] = useState({
+    sortBy: "timestamp",
+    sortDirection: "ascending",
+  });
+
+  const { sortBy, sortDirection } = expensesSort;
+
   const formatter = useFormatter();
 
   useEffect(() => {
-    dispatch(fetchExpenses());
-  }, [dispatch]);
+    if (sortDirection === "ascending")
+      dispatch(fetchExpenses({ sortBy, descending: false }));
+    else if (sortDirection === "descending")
+      dispatch(fetchExpenses({ sortBy, descending: true }));
+  }, [dispatch, editedExpense.id, sortBy, sortDirection]);
 
   const handleDeleteExpense = (id: string) => {
     dispatch(deleteExpense(id));
@@ -157,11 +167,11 @@ export default function ShowExpenses() {
                         editedExpense.id === "" &&
                         handleDeleteExpense(expense.id)
                       }
-                      className={
+                      className={`${
                         !addExpense && editedExpense.id === ""
-                          ? "bg-red-500 hover:bg-red-700 text-white font-bold py-2 m-2 px-6 rounded-full"
-                          : "bg-red-200  text-white font-bold py-2 m-2 px-6 rounded-full cursor-not-allowed"
-                      }
+                          ? "bg-red-500 hover:bg-red-700"
+                          : "bg-red-200 cursor-not-allowed"
+                      } text-white font-bold py-2 m-2 px-6 rounded-full `}
                     >
                       Delete
                     </button>
@@ -172,11 +182,11 @@ export default function ShowExpenses() {
                         editedExpense.id === "" &&
                         handleStartEdit(expense.id)
                       }
-                      className={
+                      className={`${
                         !addExpense && editedExpense.id === ""
-                          ? "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 m-2 px-6 rounded-full "
-                          : "bg-blue-200  text-white font-bold py-2 m-2 px-6 rounded-full cursor-not-allowed"
-                      }
+                          ? "bg-blue-500 hover:bg-blue-700"
+                          : "bg-blue-200 cursor-not-allowed"
+                      } text-white font-bold py-2 m-2 px-6 rounded-full `}
                     >
                       Edit
                     </button>
@@ -209,29 +219,64 @@ export default function ShowExpenses() {
             )}
           </tbody>
         </table>
+
+        <div className="flex items-center ml-6">
+          <p>Sort: </p>
+          <select
+            className="px-1 m-2 rounded-full "
+            onChange={(e: SyntheticEvent) => {
+              setExpensesSort((state) => ({
+                ...state,
+                sortBy: (e.target as HTMLInputElement).value,
+              }));
+            }}
+            value={sortBy}
+            name="choice"
+          >
+            <option value="timestamp">time</option>
+            <option value="amount">amount</option>
+          </select>
+          <select
+            className="px-1  rounded-full "
+            onChange={(e: SyntheticEvent) => {
+              setExpensesSort((state) => ({
+                ...state,
+                sortDirection: (e.target as HTMLInputElement).value,
+              }));
+            }}
+            value={sortDirection}
+            name="choice"
+          >
+            <option value="ascending">ascending</option>
+            <option value="descending">descending</option>
+          </select>
+        </div>
       </div>
       <div className="text-center">
         {!addExpense && (
           <>
             <button
+              type="submit"
               onClick={() => editedExpense.id === "" && setAddExpense(true)}
-              className={
+              className={`${
                 editedExpense.id === ""
-                  ? "bg-green-700 hover:bg-green-900 text-white font-bold py-2 my-5 mx-2 px-6 rounded-full "
-                  : "bg-green-300  text-white font-bold py-2 my-5 mx-2 px-6 rounded-full cursor-not-allowed"
-              }
+                  ? "bg-green-700 hover:bg-green-800"
+                  : "bg-green-300 cursor-not-allowed"
+              } text-white font-bold py-2 my-5 mx-2 px-6 rounded-full`}
             >
               Add expense
             </button>
 
             {expenses?.length > 1 && (
               <button
-                onClick={() => dispatch(deleteAllExpenses())}
-                className={
-                  editedExpense.id === ""
-                    ? "bg-red-700 hover:bg-red-900 text-white font-bold py-2 my-5 mx-2 px-6 rounded-full "
-                    : "bg-red-300  text-white font-bold py-2 my-5 mx-2 px-6 rounded-full cursor-not-allowed"
+                onClick={() =>
+                  editedExpense.id === "" && dispatch(deleteAllExpenses())
                 }
+                className={`${
+                  editedExpense.id === ""
+                    ? "bg-red-700 hover:bg-red-800"
+                    : "bg-red-300 cursor-not-allowed"
+                } text-white font-bold py-2 my-5 mx-2 px-6 rounded-full`}
               >
                 Delete All Expenses
               </button>
