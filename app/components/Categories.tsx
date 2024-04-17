@@ -15,7 +15,10 @@ export default function Categories() {
   return (
     <form
       className="text-center"
-      onSubmit={(e) => (e.target as HTMLFormElement).reset()}
+      onSubmit={(e) => {
+        (e.target as HTMLFormElement).reset();
+        setCategoryToDelete("");
+      }}
     >
       <span className="font-bold text-xl mx-auto">Categories</span>
       <div className="py-2">
