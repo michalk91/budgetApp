@@ -5,7 +5,7 @@ import CurrentBudget from "./CurrentBudget";
 export default function ControlPanel() {
   return (
     <>
-      <CurrentBudget />
+      <CurrentBudget fontSize="2xl" />
       <ShowExpenses />
       <ExpensesChart />
     </>

@@ -3,7 +3,11 @@ import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { fetchUserData } from "../redux/usersSlice";
 import useFormatter from "../hooks/useFormatter";
 
-export default function CurrentBudget() {
+interface CurrentBudgetProps {
+  fontSize?: string;
+}
+
+export default function CurrentBudget({ fontSize = "xl" }: CurrentBudgetProps) {
   const budgetFromStore = useAppSelector((state) => state.user.budget);
   const currencyType = useAppSelector((state) => state.user.currencyType);
 
@@ -17,7 +21,7 @@ export default function CurrentBudget() {
 
   return (
     <>
-      <span className="p-5 text-xl">
+      <span className={`p-5 text-${fontSize}`}>
         {`Current budget: `}
         <b
           className={budgetFromStore > 0 ? " text-lime-600" : " text-rose-500"}
