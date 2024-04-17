@@ -2,10 +2,7 @@ import { useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { fetchUserData } from "../redux/usersSlice";
 import useFormatter from "../hooks/useFormatter";
-
-interface CurrentBudgetProps {
-  fontSize?: string;
-}
+import type { CurrentBudgetProps } from "../types";
 
 export default function CurrentBudget({ fontSize = "xl" }: CurrentBudgetProps) {
   const budgetFromStore = useAppSelector((state) => state.user.budget);

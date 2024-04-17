@@ -25,6 +25,10 @@ export interface User {
   username?: string;
 }
 
+export interface CurrentBudgetProps {
+  fontSize?: string;
+}
+
 export interface AddExpenseProps {
   setAddExpense: (value: boolean) => void;
 }
