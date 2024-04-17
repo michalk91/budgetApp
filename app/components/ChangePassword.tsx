@@ -1,6 +1,7 @@
 import { SyntheticEvent, useState } from "react";
 import { changePassword } from "../redux/usersSlice";
 import { useAppDispatch } from "../redux/hooks";
+import { toast } from "react-toastify";
 
 export default function ChangePassword() {
   const dispatch = useAppDispatch();
@@ -16,9 +17,18 @@ export default function ChangePassword() {
 
     if (password === repeat) {
       dispatch(changePassword(password));
+      notifyPasswordChanged();
       setNewPassword({ ...newPassword, password: "", repeat: "" });
+    } else {
+      repeatIncorrectlyChanged();
     }
   };
+
+  const notifyPasswordChanged = () =>
+    toast.success("The password has been successfully changed");
+
+  const repeatIncorrectlyChanged = () =>
+    toast.error("You repeated the password incorrectly");
 
   return (
     <>
