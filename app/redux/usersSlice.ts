@@ -44,7 +44,11 @@ export const changePassword = createAsyncThunk(
   "users/changePassword",
   async (newPassword: string) => {
     const user = auth?.currentUser;
-    user?.reload().then(() => updatePassword(user, newPassword));
+
+    if (!user) return;
+
+    await user.reload();
+    await updatePassword(user, newPassword);
   }
 );
 
@@ -55,6 +59,8 @@ export const changeUsername = createAsyncThunk(
     const currentUserID = auth.currentUser?.uid;
 
     if (!user || !currentUserID) return;
+
+    await user.reload();
 
     await updateProfile(user, {
       displayName: newUsername,
@@ -342,6 +348,8 @@ const userSlice = createSlice({
   initialState: {
     registeredStatus: "idle",
     loginStatus: "idle",
+    changePasswordStatus: "idle",
+    changeUsernameStatus: "idle",
     error: undefined,
   } as State,
   reducers: {},
