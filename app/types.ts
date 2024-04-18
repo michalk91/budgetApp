@@ -38,6 +38,6 @@ export interface SortOptions {
   descending: boolean;
 }
 
-export interface ChangePasswordProps {
+export interface ChangeComponentsProps {
   setActive: (value: string) => void;
 }

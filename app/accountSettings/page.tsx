@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import ChangePassword from "../components/ChangePassword";
+import ChangeUsername from "../components/ChangeUsername";
 
 export default function Account() {
   const [active, setActive] = useState("");
@@ -30,6 +31,9 @@ export default function Account() {
         )}
         {active === "change-password" && (
           <ChangePassword setActive={setActive} />
+        )}
+        {active === "change-username" && (
+          <ChangeUsername setActive={setActive} />
         )}
       </div>
     </section>

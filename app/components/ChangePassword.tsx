@@ -2,9 +2,9 @@ import { SyntheticEvent, useState } from "react";
 import { changePassword } from "../redux/usersSlice";
 import { useAppDispatch } from "../redux/hooks";
 import { toast } from "react-toastify";
-import type { ChangePasswordProps } from "../types";
+import type { ChangeComponentsProps } from "../types";
 
-export default function ChangePassword({ setActive }: ChangePasswordProps) {
+export default function ChangePassword({ setActive }: ChangeComponentsProps) {
   const dispatch = useAppDispatch();
   const [newPassword, setNewPassword] = useState({
     password: "",
