@@ -20,6 +20,7 @@ export default function ChangePassword({ setActive }: ChangeComponentsProps) {
       dispatch(changePassword(password));
       notifyPasswordChanged();
       setNewPassword({ ...newPassword, password: "", repeat: "" });
+      setActive("");
     } else {
       repeatIncorrectlyChanged();
     }

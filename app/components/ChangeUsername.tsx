@@ -12,7 +12,7 @@ export default function ChangeUsername({ setActive }: ChangeComponentsProps) {
 
   const [newUsername, setNewUsername] = useState("");
 
-  const notifyPasswordChanged = () =>
+  const notifyUsernameChanged = () =>
     toast.success("The username has been successfully changed");
 
   const notifyError = () => toast.error("Something went wrong");
@@ -21,13 +21,13 @@ export default function ChangeUsername({ setActive }: ChangeComponentsProps) {
     e.preventDefault();
 
     dispatch(changeUsername(newUsername));
+
+    notifyUsernameChanged();
+    setActive("");
   };
 
   useEffect(() => {
-    if (changeUsernameStatus === "succeeded") {
-      setNewUsername("");
-      notifyPasswordChanged();
-    } else if (changeUsernameStatus === "failed") {
+    if (changeUsernameStatus === "failed") {
       notifyError();
     }
   }, [changeUsernameStatus]);
