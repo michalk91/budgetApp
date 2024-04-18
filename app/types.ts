@@ -37,3 +37,7 @@ export interface SortOptions {
   sortBy: string;
   descending: boolean;
 }
+
+export interface ChangePasswordProps {
+  setActive: (value: string) => void;
+}
