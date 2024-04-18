@@ -2,8 +2,9 @@ import { SyntheticEvent, useState } from "react";
 import { changePassword } from "../redux/usersSlice";
 import { useAppDispatch } from "../redux/hooks";
 import { toast } from "react-toastify";
+import type { ChangePasswordProps } from "../types";
 
-export default function ChangePassword() {
+export default function ChangePassword({ setActive }: ChangePasswordProps) {
   const dispatch = useAppDispatch();
   const [newPassword, setNewPassword] = useState({
     password: "",
@@ -32,9 +33,9 @@ export default function ChangePassword() {
 
   return (
     <>
-      <form onSubmit={handleChangePassword} className=" p-3  ">
-        <span>Change password:</span>
+      <form onSubmit={handleChangePassword}>
         <div className="flex flex-wrap">
+          <span className="text-lg text-center m-auto">Change password:</span>
           <div className="p-2">
             <label
               htmlFor="password"
@@ -89,6 +90,13 @@ export default function ChangePassword() {
             type="submit"
           >
             Confirm
+          </button>
+          <button
+            onClick={() => setActive("")}
+            className="w-4/5 bg-red-500 hover:bg-red-700 text-white font-bold py-2 my-2 px-6 rounded-full "
+            type="button"
+          >
+            Cancel
           </button>
         </div>
       </form>
