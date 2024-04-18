@@ -34,7 +34,8 @@ const Register = () => {
   }, [registerStatus, router]);
 
   return (
-    <section className="flex w-full h-screen max-h-full justify-center items-center">
+    <section className="flex flex-col w-full h-screen max-h-full justify-center items-center">
+      <span className="font-bold text-xl mx-auto">Sing up</span>
       <form className="rounded-md p-10 text-center border-solid border-2 border-blue-400 shadow-xl">
         <div className="p-2">
           <label
