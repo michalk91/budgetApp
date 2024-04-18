@@ -12,7 +12,10 @@ export default function Account() {
       <div className="w-full rounded-md p-12  text-center border-solid border-2 border-blue-400 shadow-xl">
         {active === "" && (
           <>
-            <button className=" bg-blue-500 w-full my-2 hover:bg-blue-700 text-white font-bold py-2 rounded-full ">
+            <button
+              onClick={() => setActive("change-username")}
+              className=" bg-blue-500 w-full my-2 hover:bg-blue-700 text-white font-bold py-2 rounded-full "
+            >
               Change username
             </button>
             <button className="bg-blue-500 w-full my-2 hover:bg-blue-700 text-white font-bold py-2 rounded-full ">

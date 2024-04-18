@@ -5,6 +5,7 @@ import {
   signOut,
   getAuth,
   updatePassword,
+  updateProfile,
 } from "firebase/auth";
 import { auth, db } from "../firebase/config";
 import {
@@ -44,6 +45,26 @@ export const changePassword = createAsyncThunk(
   async (newPassword: string) => {
     const user = auth?.currentUser;
     user?.reload().then(() => updatePassword(user, newPassword));
+  }
+);
+
+export const changeUsername = createAsyncThunk(
+  "users/changeUsername",
+  async (newUsername: string) => {
+    const user = auth?.currentUser;
+    const currentUserID = auth.currentUser?.uid;
+
+    if (!user || !currentUserID) return;
+
+    await updateProfile(user, {
+      displayName: newUsername,
+    });
+
+    await updateDoc(doc(db, "users", currentUserID), {
+      displayName: newUsername,
+    });
+
+    return newUsername;
   }
 );
 
@@ -361,6 +382,22 @@ const userSlice = createSlice({
       })
       .addCase(changePassword.rejected, (state, action) => {
         state.changePasswordStatus = "failed";
+        state.error = action.error.message;
+      })
+
+      //---------------------------------------------------------------------------------
+
+      .addCase(changeUsername.pending, (state) => {
+        state.changeUsernameStatus = "loading";
+      })
+      .addCase(changeUsername.fulfilled, (state, action) => {
+        if (!action.payload) return;
+
+        state.changeUsernameStatus = "succeeded";
+        state.username = action.payload;
+      })
+      .addCase(changeUsername.rejected, (state, action) => {
+        state.changeUsernameStatus = "failed";
         state.error = action.error.message;
       })
 
