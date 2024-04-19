@@ -8,7 +8,7 @@ export default function Account() {
   const [active, setActive] = useState("");
 
   return (
-    <section className="flex flex-col  w-80 h-screen max-h-full justify-center items-center ">
+    <section className="flex flex-col  w-72 h-screen max-h-full justify-center items-center ">
       <span className="font-bold text-xl mx-auto">Account settings</span>
       <div className="w-full rounded-md p-12  text-center border-solid border-2 border-blue-400 shadow-xl">
         {active === "" && (
