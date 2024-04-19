@@ -7,6 +7,7 @@ import { registerUser } from "../redux/usersSlice";
 import { useAppDispatch } from "../redux/hooks";
 import { useAppSelector } from "../redux/hooks";
 import Link from "next/link";
+import Loader from "../components/Loader";
 
 const Register = () => {
   const dispatch = useAppDispatch();
@@ -94,20 +95,29 @@ const Register = () => {
           </div>
         </div>
 
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full "
-          type="submit"
-          onClick={onSubmit}
-        >
-          Sign up
-        </button>
+        {registerStatus !== "loading" ? (
+          <button
+            className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full "
+            onClick={onSubmit}
+          >
+            Sign up
+          </button>
+        ) : (
+          <button
+            className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full "
+            onClick={onSubmit}
+          >
+            <Loader />
+          </button>
+        )}
+
         <p className="text-m text-center mt-4">
           Already have an account?
           <Link
             className="text-blue-500 text-xl hover:text-blue-800 m-2"
             href="/login"
           >
-            Sign in
+            Sign up
           </Link>
         </p>
       </form>
