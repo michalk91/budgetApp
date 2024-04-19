@@ -11,6 +11,7 @@ export interface State {
   loginStatus: "idle" | "loading" | "succeeded" | "failed";
   changePasswordStatus: "idle" | "loading" | "succeeded" | "failed";
   changeUsernameStatus: "idle" | "loading" | "succeeded" | "failed";
+  changeEmailStatus: "idle" | "loading" | "succeeded" | "failed";
   error: string | undefined;
   userID: null | string;
   username: null | string;

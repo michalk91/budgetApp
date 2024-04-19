@@ -6,6 +6,7 @@ import {
   getAuth,
   updatePassword,
   updateProfile,
+  updateEmail,
 } from "firebase/auth";
 import { auth, db } from "../firebase/config";
 import {
@@ -52,11 +53,29 @@ export const changePassword = createAsyncThunk(
   }
 );
 
+export const changeEmail = createAsyncThunk(
+  "users/changeEmail",
+  async (newEmail: string) => {
+    const user = auth?.currentUser;
+    const currentUserID = user?.uid;
+
+    if (!user || !currentUserID) return;
+
+    await user.reload();
+
+    await updateEmail(user, newEmail);
+
+    await updateDoc(doc(db, "users", currentUserID), {
+      email: newEmail,
+    });
+  }
+);
+
 export const changeUsername = createAsyncThunk(
   "users/changeUsername",
   async (newUsername: string) => {
     const user = auth?.currentUser;
-    const currentUserID = auth.currentUser?.uid;
+    const currentUserID = user?.uid;
 
     if (!user || !currentUserID) return;
 
@@ -350,6 +369,7 @@ const userSlice = createSlice({
     loginStatus: "idle",
     changePasswordStatus: "idle",
     changeUsernameStatus: "idle",
+    changeEmailStatus: "idle",
     error: undefined,
   } as State,
   reducers: {},
@@ -406,6 +426,19 @@ const userSlice = createSlice({
       })
       .addCase(changeUsername.rejected, (state, action) => {
         state.changeUsernameStatus = "failed";
+        state.error = action.error.message;
+      })
+
+      //----------------------------------------------------------------------------------
+
+      .addCase(changeEmail.pending, (state) => {
+        state.changeEmailStatus = "loading";
+      })
+      .addCase(changeEmail.fulfilled, (state) => {
+        state.changeEmailStatus = "succeeded";
+      })
+      .addCase(changeEmail.rejected, (state, action) => {
+        state.changeEmailStatus = "failed";
         state.error = action.error.message;
       })
 

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import ChangePassword from "../components/ChangePassword";
 import ChangeUsername from "../components/ChangeUsername";
+import ChangeEmail from "../components/ChangeEmail";
 
 export default function Account() {
   const [active, setActive] = useState("");
@@ -18,7 +19,10 @@ export default function Account() {
             >
               Change username
             </button>
-            <button className="bg-blue-500 w-full my-2 hover:bg-blue-700 text-white font-bold py-2 rounded-full ">
+            <button
+              onClick={() => setActive("change-email")}
+              className="bg-blue-500 w-full my-2 hover:bg-blue-700 text-white font-bold py-2 rounded-full "
+            >
               Change e-mail
             </button>
             <button
@@ -38,6 +42,7 @@ export default function Account() {
         {active === "change-username" && (
           <ChangeUsername setActive={setActive} />
         )}
+        {active === "change-email" && <ChangeEmail setActive={setActive} />}
       </div>
     </section>
   );
