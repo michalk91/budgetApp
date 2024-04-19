@@ -3,6 +3,7 @@ import { useState } from "react";
 import ChangePassword from "../components/ChangePassword";
 import ChangeUsername from "../components/ChangeUsername";
 import ChangeEmail from "../components/ChangeEmail";
+import RemoveUser from "../components/RemoveUser";
 
 export default function Account() {
   const [active, setActive] = useState("");
@@ -31,7 +32,10 @@ export default function Account() {
             >
               Change password
             </button>
-            <button className="bg-red-500 w-full my-2 hover:bg-red-700 text-white font-bold py-2 rounded-full ">
+            <button
+              onClick={() => setActive("remove-user")}
+              className="bg-red-500 w-full my-2 hover:bg-red-700 text-white font-bold py-2 rounded-full "
+            >
               Delete account
             </button>
           </>
@@ -43,6 +47,7 @@ export default function Account() {
           <ChangeUsername setActive={setActive} />
         )}
         {active === "change-email" && <ChangeEmail setActive={setActive} />}
+        {active === "remove-user" && <RemoveUser setActive={setActive} />}
       </div>
     </section>
   );

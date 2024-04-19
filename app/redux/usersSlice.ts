@@ -7,6 +7,7 @@ import {
   updatePassword,
   updateProfile,
   updateEmail,
+  deleteUser,
 } from "firebase/auth";
 import { auth, db } from "../firebase/config";
 import {
@@ -52,6 +53,25 @@ export const changePassword = createAsyncThunk(
     await updatePassword(user, newPassword);
   }
 );
+
+export const removeUser = createAsyncThunk("users/removeUser", async () => {
+  const user = auth?.currentUser;
+  const currentUserID = user?.uid;
+
+  if (!user || !currentUserID) return;
+
+  const users = await getDocs(collection(db, "users"));
+
+  for (const currentUser of users.docs) {
+    if (currentUser.id === currentUserID) {
+      await deleteDoc(doc(db, "users", currentUser.id));
+    }
+  }
+
+  await user.reload();
+
+  await deleteUser(user);
+});
 
 export const changeEmail = createAsyncThunk(
   "users/changeEmail",
@@ -370,6 +390,7 @@ const userSlice = createSlice({
     changePasswordStatus: "idle",
     changeUsernameStatus: "idle",
     changeEmailStatus: "idle",
+    removeUserStatus: "idle",
     error: undefined,
   } as State,
   reducers: {},
@@ -415,6 +436,21 @@ const userSlice = createSlice({
 
       //---------------------------------------------------------------------------------
 
+      .addCase(removeUser.pending, (state) => {
+        state.removeUserStatus = "loading";
+      })
+      .addCase(removeUser.fulfilled, (state) => {
+        state.removeUserStatus = "succeeded";
+        state.loginStatus = "idle";
+        state.registeredStatus = "idle";
+      })
+      .addCase(removeUser.rejected, (state, action) => {
+        state.removeUserStatus = "failed";
+        state.error = action.error.message;
+      })
+
+      //-----------------------------------------------------------------------------------
+
       .addCase(changeUsername.pending, (state) => {
         state.changeUsernameStatus = "loading";
       })
@@ -444,7 +480,7 @@ const userSlice = createSlice({
 
       //------------------------------------------------------------------------------
       .addCase(logoutUser.fulfilled, (state) => {
-        state.loginStatus = "idle";
+        state.loginStatus = "loggedOut";
       })
 
       //-----------------------------------------------------------------------------------
