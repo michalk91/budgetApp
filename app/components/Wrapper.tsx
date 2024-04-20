@@ -26,7 +26,7 @@ export default function Wrapper({
 
   useEffect(() => {
     if (loginStatus === "succeeded") notifyLoggedIn();
-    else if (loginStatus === "idle") notifyLoggedOut();
+    else if (loginStatus === "loggedOut") notifyLoggedOut();
     else if (loginStatus === "failed") notifyFailedLogin();
   }, [loginStatus]);
 

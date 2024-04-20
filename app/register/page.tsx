@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { SyntheticEvent } from "react";
-import { useRouter } from "next/navigation";
 import { registerUser } from "../redux/usersSlice";
 import { useAppDispatch } from "../redux/hooks";
 import { useAppSelector } from "../redux/hooks";
@@ -17,8 +16,6 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
 
-  const router = useRouter();
-
   const onSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
     const user = {
@@ -30,9 +27,8 @@ const Register = () => {
   };
 
   useEffect(() => {
-    if (registerStatus === "succeeded")
-      router.push("/login", { scroll: false });
-  }, [registerStatus, router]);
+    if (registerStatus === "succeeded") location.replace("/login");
+  }, [registerStatus]);
 
   return (
     <section className="flex flex-col w-full h-screen max-h-full justify-center items-center">
