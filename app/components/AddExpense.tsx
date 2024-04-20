@@ -17,6 +17,8 @@ export default function AddExpense({ setAddExpense }: AddExpenseProps) {
   const addNewExpense = () => {
     dispatch(addExpense({ category, amount: Number(amount) }));
 
+    setExpenseFromInput((state) => ({ ...state, amount: "" }));
+
     setAddExpense(false);
   };
 
