@@ -20,6 +20,7 @@ export interface State {
   currencyType: string;
   expenses: Expense[];
   categories: string[];
+  expensesValue: number;
 }
 
 export interface User {

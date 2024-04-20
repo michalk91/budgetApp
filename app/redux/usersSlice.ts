@@ -217,6 +217,7 @@ export const deleteExpense = createAsyncThunk(
 
         await updateDoc(doc(db, "users", currentUserID), {
           budget: increment(expenseAmount),
+          expensesValue: increment(-expenseAmount),
         });
         return { id, expenseAmount };
       }
@@ -272,6 +273,7 @@ export const addExpense = createAsyncThunk(
 
     await updateDoc(doc(db, "users", currentUserID), {
       budget: increment(-expense.amount),
+      expensesValue: increment(expense.amount),
     });
 
     return newExpense;
@@ -327,6 +329,7 @@ export const updateExpense = createAsyncThunk(
 
           await updateDoc(doc(db, "users", currentUserID), {
             budget: increment(budgetDiff),
+            expensesValue: increment(-budgetDiff),
           });
         }
         return { validatedEditedExpense, budgetDiff };
@@ -348,6 +351,7 @@ export const registerUser = createAsyncThunk(
       email: currentUser.email,
       displayName: user.username,
       budget: 0,
+      expensesValue: 0,
       currencyType: "PLN",
       categories: [
         "Shops",
@@ -491,6 +495,7 @@ const userSlice = createSlice({
         state.username = action.payload.displayName;
         state.currencyType = action.payload.currencyType;
         state.categories = action.payload.categories;
+        state.expensesValue = action.payload.expensesValue;
       })
       //----------------------------------------------------
 
@@ -540,6 +545,7 @@ const userSlice = createSlice({
         if (!action.payload) return;
         state.expenses?.push(action.payload);
         state.budget -= action.payload.amount;
+        state.expensesValue += action.payload.amount;
       })
 
       //------------------------------------------------------------------------
@@ -551,6 +557,7 @@ const userSlice = createSlice({
         );
 
         state.budget += action.payload.expenseAmount;
+        state.expensesValue -= action.payload.expenseAmount;
       })
       //--------------------------------------------------
 
@@ -558,8 +565,8 @@ const userSlice = createSlice({
         if (!action.payload) return;
 
         state.expenses = action.payload.expenses;
-
         state.budget += action.payload.allExpensesAmount;
+        state.expensesValue -= action.payload.allExpensesAmount;
       })
 
       //-------------------------------------------------
@@ -574,6 +581,7 @@ const userSlice = createSlice({
         if (expenseIndex !== -1) {
           state.expenses[expenseIndex] = validatedEditedExpense;
           state.budget += budgetDiff;
+          state.expensesValue -= budgetDiff;
         }
       });
   },
