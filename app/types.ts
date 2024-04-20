@@ -17,6 +17,7 @@ export interface State {
   userID: null | string;
   username: null | string;
   budget: number;
+  budgetAddDate: string;
   currencyType: string;
   expenses: Expense[];
   categories: string[];

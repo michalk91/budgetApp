@@ -145,11 +145,16 @@ export const updateBudget = createAsyncThunk(
 
     if (!currentUserID) return;
 
+    const budgetAddDate = new Date(
+      Timestamp.now().seconds * 1000
+    ).toLocaleString();
+
     await updateDoc(doc(db, "users", currentUserID), {
       budget: editedBudget,
+      budgetAddDate,
     });
 
-    return editedBudget;
+    return { editedBudget, budgetAddDate };
   }
 );
 
@@ -510,7 +515,8 @@ const userSlice = createSlice({
       .addCase(updateBudget.fulfilled, (state, action) => {
         if (!action.payload) return;
 
-        state.budget = action.payload;
+        state.budget = action.payload.editedBudget;
+        state.budgetAddDate = action.payload.budgetAddDate;
       })
 
       //--------------------------------------------------------------

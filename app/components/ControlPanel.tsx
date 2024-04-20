@@ -2,6 +2,7 @@ import ShowExpenses from "./ShowExpenses";
 import ExpensesChart from "./ExpensesChart";
 import CurrentBudget from "./CurrentBudget";
 import ExpensesValue from "./ExpensesValue";
+import BudgetAddDate from "./BudgetAddDate";
 
 export default function ControlPanel() {
   return (
@@ -10,6 +11,7 @@ export default function ControlPanel() {
         <CurrentBudget fontSize="2xl" />
         <ExpensesValue fontSize="2xl" />
       </div>
+      <BudgetAddDate />
       <ShowExpenses />
       <ExpensesChart />
     </>
