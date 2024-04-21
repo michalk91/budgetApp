@@ -138,8 +138,8 @@ export const fetchExpenses = createAsyncThunk(
   }
 );
 
-export const updateBudget = createAsyncThunk(
-  "users/updateBudget",
+export const setBudget = createAsyncThunk(
+  "users/setBudget",
   async (editedBudget: number) => {
     const currentUserID = auth.currentUser?.uid;
 
@@ -152,9 +152,20 @@ export const updateBudget = createAsyncThunk(
     await updateDoc(doc(db, "users", currentUserID), {
       budget: editedBudget,
       budgetAddDate,
+      expensesValue: 0,
     });
 
-    return { editedBudget, budgetAddDate };
+    const expensesFromDatabase = await getDocs(
+      collection(db, `users/${currentUserID}/expenses`)
+    );
+
+    for (const expense of expensesFromDatabase.docs) {
+      if (expensesFromDatabase.docs.length === 0) return;
+
+      await deleteDoc(doc(db, `users/${currentUserID}/expenses`, expense.id));
+    }
+
+    return { editedBudget, budgetAddDate, expenses: [] };
   }
 );
 
@@ -501,6 +512,7 @@ const userSlice = createSlice({
         state.currencyType = action.payload.currencyType;
         state.categories = action.payload.categories;
         state.expensesValue = action.payload.expensesValue;
+        state.budgetAddDate = action.payload.budgetAddDate;
       })
       //----------------------------------------------------
 
@@ -512,11 +524,13 @@ const userSlice = createSlice({
 
       //-------------------------------------------------
 
-      .addCase(updateBudget.fulfilled, (state, action) => {
+      .addCase(setBudget.fulfilled, (state, action) => {
         if (!action.payload) return;
 
         state.budget = action.payload.editedBudget;
         state.budgetAddDate = action.payload.budgetAddDate;
+        state.expensesValue = 0;
+        state.expenses = action.payload.expenses;
       })
 
       //--------------------------------------------------------------
