@@ -1,9 +1,9 @@
 import { SyntheticEvent, useState } from "react";
 import { useAppDispatch } from "../redux/hooks";
-import { updateBudget } from "../redux/usersSlice";
+import { setBudget } from "../redux/usersSlice";
 import CurrencyType from "./CurrencyType";
 
-export default function UpdateBudget() {
+export default function SetBudget() {
   const dispatch = useAppDispatch();
 
   const [budgetFromInput, setBudgetFromInput] = useState("");
@@ -11,7 +11,7 @@ export default function UpdateBudget() {
   const handleUpdateBudget = (e: SyntheticEvent) => {
     e.preventDefault();
 
-    dispatch(updateBudget(Number(budgetFromInput)));
+    dispatch(setBudget(Number(budgetFromInput)));
     setBudgetFromInput("");
   };
 
