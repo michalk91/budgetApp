@@ -46,3 +46,7 @@ export interface SortOptions {
 export interface ChangeComponentsProps {
   setActive: (value: string) => void;
 }
+
+export interface WarningProps {
+  setDecision: (value: boolean) => void;
+}
