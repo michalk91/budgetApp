@@ -45,7 +45,7 @@ export default function Header() {
                 } text-2xl hover:text-blue-800`}
                 href="/setBudget"
               >
-                Budget
+                Set budget
               </Link>
             </li>
             <li className="mr-6">
