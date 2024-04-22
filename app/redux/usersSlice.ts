@@ -155,6 +155,8 @@ export const setBudget = createAsyncThunk(
       expensesValue: 0,
     });
 
+    let areExpenses = false;
+
     const expensesFromDatabase = await getDocs(
       collection(db, `users/${currentUserID}/expenses`)
     );
@@ -163,9 +165,14 @@ export const setBudget = createAsyncThunk(
       if (expensesFromDatabase.docs.length === 0) return;
 
       await deleteDoc(doc(db, `users/${currentUserID}/expenses`, expense.id));
+      areExpenses = true;
     }
 
-    return { editedBudget, budgetAddDate, expenses: [] };
+    return {
+      editedBudget,
+      budgetAddDate,
+      expenses: areExpenses ? [] : undefined,
+    };
   }
 );
 
@@ -530,7 +537,9 @@ const userSlice = createSlice({
         state.budget = action.payload.editedBudget;
         state.budgetAddDate = action.payload.budgetAddDate;
         state.expensesValue = 0;
-        state.expenses = action.payload.expenses;
+
+        if (action.payload.expenses !== undefined)
+          state.expenses = action.payload.expenses;
       })
 
       //--------------------------------------------------------------
