@@ -1,15 +1,16 @@
 import React from "react";
-import { useAppSelector } from "../redux/hooks";
-import type { CurrentBudgetProps } from "../types";
+import type { BudgetAddDateProps } from "../types";
 
-export default function BudgetAddDate({ fontSize = "xl" }: CurrentBudgetProps) {
-  const budgetDate = useAppSelector((state) => state.user.budgetAddDate);
-
+export default function BudgetAddDate({
+  fontSize = "xl",
+  budgetDate,
+}: BudgetAddDateProps) {
   return (
     budgetDate && (
-      <span className={`p-5 text-${fontSize}`}>
-        {`Budget set: `}
+      <span className={`py-5 -ml-3 text-${fontSize}`}>
+        {`(set: `}
         <b>{budgetDate}</b>
+        {`)`}
       </span>
     )
   );

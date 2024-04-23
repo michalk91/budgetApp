@@ -1,37 +1,42 @@
 import { useState } from "react";
-import { addExpense } from "../redux/usersSlice";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import type { AddExpenseProps } from "../types";
+import { addTransaction } from "../redux/usersSlice";
+import { useAppDispatch } from "../redux/hooks";
+import type { AddTransactionProps } from "../types";
 
-export default function AddExpense({ setAddExpense }: AddExpenseProps) {
-  const categories = useAppSelector((state) => state.user.categories);
+export default function AddTransaction({
+  setAdd,
+  categories,
+  type,
+}: AddTransactionProps) {
   const dispatch = useAppDispatch();
 
-  const [expenseFromInput, setExpenseFromInput] = useState({
+  const [valueFromInput, setValueFromInput] = useState({
     category: categories[0],
     amount: "",
   });
 
-  const { amount, category } = expenseFromInput;
+  const { amount, category } = valueFromInput;
 
-  const addNewExpense = () => {
-    dispatch(addExpense({ category, amount: Number(amount) }));
+  const addNew = () => {
+    dispatch(addTransaction({ category, amount: Number(amount), type }));
 
-    setExpenseFromInput((state) => ({ ...state, amount: "" }));
+    setValueFromInput((state) => ({ ...state, amount: "" }));
 
-    setAddExpense(false);
+    setAdd(false);
   };
 
   return (
     <tr className="bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700">
       <td className="px-6 py-6">
-        <span className="ml-2 font-bold text-xl mx-auto">New expense</span>
+        <span className="ml-2 font-bold text-xl mx-auto">
+          {type === "expense" ? "New expense" : "New income"}
+        </span>
       </td>
 
       <td className="px-6 py-6">
         <select
           onChange={(e) => {
-            setExpenseFromInput((state) => ({
+            setValueFromInput((state) => ({
               ...state,
               category: e.target.value,
             }));
@@ -51,7 +56,7 @@ export default function AddExpense({ setAddExpense }: AddExpenseProps) {
       <td className="px-6 py-6">
         <input
           onChange={(e) =>
-            setExpenseFromInput((state) => ({
+            setValueFromInput((state) => ({
               ...state,
               amount: e.target.value,
             }))
@@ -67,13 +72,13 @@ export default function AddExpense({ setAddExpense }: AddExpenseProps) {
       <td>
         <button
           type="submit"
-          onClick={addNewExpense}
+          onClick={addNew}
           className="bg-green-700 hover:bg-green-900 text-white font-bold py-2 m-2 px-6 rounded-full "
         >
           Add
         </button>
         <button
-          onClick={() => setAddExpense(false)}
+          onClick={() => setAdd(false)}
           className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 m-2 px-6 rounded-full "
         >
           Cancel

@@ -1,13 +1,12 @@
 import { Chart } from "react-google-charts";
-import { useAppSelector } from "../redux/hooks";
-import type { Expense } from "../types";
+import type { Transaction, ExpensesChartProps } from "../types";
 
-export default function ExpensesChart() {
-  const expenses = useAppSelector((state) => state.user.expenses);
-
+export default function ExpensesChart({ transactions }: ExpensesChartProps) {
   const expensesFromDataBase: [[string, number]] = [["", 0]];
 
-  expenses?.map((expense: Expense) => {
+  transactions?.map((expense: Transaction) => {
+    if (expense.type === "income") return;
+
     let sameCategory = "",
       totalAmount = 0,
       sameCategoryIndex = 0;

@@ -1,9 +1,15 @@
-export interface Expense {
+export interface Transaction {
   id?: string;
   category: string;
   amount: number;
   date?: string;
   editDate?: string;
+  type: "expense" | "income";
+}
+
+export interface TransactionToDelete {
+  id: string;
+  type: "expense" | "income";
 }
 
 export interface State {
@@ -19,9 +25,10 @@ export interface State {
   budget: number;
   budgetAddDate: string;
   currencyType: string;
-  expenses: Expense[];
+  transactions: Transaction[];
   categories: string[];
   expensesValue: number;
+  incomesValue: number;
 }
 
 export interface User {
@@ -30,12 +37,15 @@ export interface User {
   username?: string;
 }
 
-export interface CurrentBudgetProps {
-  fontSize?: string;
+export interface AddTransactionProps {
+  setAdd: (value: boolean) => void;
+  categories: string[];
+  type: "income" | "expense";
 }
 
-export interface AddExpenseProps {
-  setAddExpense: (value: boolean) => void;
+export interface BudgetAddDateProps {
+  fontSize?: string;
+  budgetDate: string;
 }
 
 export interface SortOptions {
@@ -49,4 +59,22 @@ export interface ChangeComponentsProps {
 
 export interface WarningProps {
   setDecision: (value: boolean) => void;
+}
+
+export interface DisplayAmountProps {
+  fontSize?: string;
+  valueFromStore: number;
+  currencyType: string;
+  title: string;
+  titleClass: string;
+}
+
+export interface ShowTransactionsProps {
+  transactions: Transaction[];
+  currencyType: string;
+  categories: string[];
+}
+
+export interface ExpensesChartProps {
+  transactions: Transaction[];
 }

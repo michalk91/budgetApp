@@ -43,11 +43,8 @@ export default function Categories() {
         {categoryToDelete === "" && (
           <div className="mt-3">
             <input
-              onChange={(e: SyntheticEvent) => {
-                setNewCategory((state) => [
-                  ...state,
-                  (e.target as HTMLInputElement).value,
-                ]);
+              onChange={(e) => {
+                setNewCategory((state) => [...state, e.target.value]);
               }}
               ref={inputRef}
               required
@@ -57,14 +54,14 @@ export default function Categories() {
             ></input>
 
             <button
-              onClick={(e: SyntheticEvent) => {
+              onClick={(e) => {
                 e.preventDefault();
 
                 dispatch(addCategory(newCategory[newCategory.length - 1]));
 
                 if (!inputRef.current) return;
 
-                (inputRef.current as HTMLInputElement).value = "";
+                inputRef.current.value = "";
               }}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full "
             >
@@ -75,7 +72,7 @@ export default function Categories() {
         {categoryToDelete !== "" && (
           <div className="mt-3">
             <button
-              onClick={(e: SyntheticEvent) => {
+              onClick={(e) => {
                 e.preventDefault();
                 dispatch(deleteCategory(categoryToDelete));
 
@@ -86,7 +83,7 @@ export default function Categories() {
               Delete
             </button>
             <button
-              onClick={(e: SyntheticEvent) => {
+              onClick={(e) => {
                 e.preventDefault();
                 setCategoryToDelete("");
               }}

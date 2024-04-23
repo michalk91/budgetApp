@@ -1,27 +1,31 @@
-import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { useAppDispatch } from "../redux/hooks";
 import {
-  deleteExpense,
-  fetchExpenses,
-  updateExpense,
-  deleteAllExpenses,
+  deleteTransaction,
+  fetchTransactions,
+  updateTransaction,
+  deleteAllTransactions,
 } from "../redux/usersSlice";
 
-import { useEffect, useState, SyntheticEvent } from "react";
-import AddExpense from "./AddExpense";
+import { useEffect, useState } from "react";
 import useFormatter from "../hooks/useFormatter";
+import AddTransaction from "./AddTransaction";
+import type { ShowTransactionsProps } from "../types";
 
-export default function ShowExpenses() {
+export default function ShowTransactions({
+  transactions,
+  currencyType,
+  categories,
+}: ShowTransactionsProps) {
   const dispatch = useAppDispatch();
-  const expenses = useAppSelector((state) => state.user.expenses);
-  const currencyType = useAppSelector((state) => state.user.currencyType);
-  const categories = useAppSelector((state) => state.user.categories);
 
-  const [addExpense, setAddExpense] = useState(false);
+  const [addNewExpense, setAddNewExpense] = useState(false);
+  const [addNewIncome, setAddNewIncome] = useState(false);
 
-  const [editedExpense, setEditedExpense] = useState({
+  const [editedTransaction, setEditedTransaction] = useState({
     id: "",
     category: "",
     amount: "",
+    type: "",
   });
 
   const [expensesSort, setExpensesSort] = useState({
@@ -35,38 +39,46 @@ export default function ShowExpenses() {
 
   useEffect(() => {
     if (sortDirection === "ascending")
-      dispatch(fetchExpenses({ sortBy, descending: false }));
+      dispatch(fetchTransactions({ sortBy, descending: false }));
     else if (sortDirection === "descending")
-      dispatch(fetchExpenses({ sortBy, descending: true }));
-  }, [dispatch, editedExpense.id, sortBy, sortDirection]);
+      dispatch(fetchTransactions({ sortBy, descending: true }));
+  }, [dispatch, editedTransaction.id, sortBy, sortDirection]);
 
-  const handleDeleteExpense = (id: string) => {
-    dispatch(deleteExpense(id));
+  const handleDeleteTransaction = (id: string, type: "expense" | "income") => {
+    dispatch(deleteTransaction({ id, type }));
   };
 
   const handleStartEdit = (id: string) => {
-    setEditedExpense((state) => ({ ...state, id }));
+    setEditedTransaction((state) => ({ ...state, id }));
   };
   const handleCancelEdit = () => {
-    setEditedExpense((state) => ({ ...state, id: "" }));
+    setEditedTransaction((state) => ({ ...state, id: "" }));
   };
 
-  const handleEditExpense = (id: string, date: string) => {
-    const { category, amount } = editedExpense;
-    const expense = { id, date, category, amount: Number(amount) };
+  const handleEditTransaction = (
+    id: string,
+    date: string,
+    type: "income" | "expense"
+  ) => {
+    const { category, amount } = editedTransaction;
+    const transaction = { id, date, category, amount: Number(amount), type };
 
-    dispatch(updateExpense(expense));
-    setEditedExpense((state) => ({
+    dispatch(updateTransaction(transaction));
+
+    setEditedTransaction((state) => ({
       ...state,
       id: "",
       category: "",
       amount: "",
+      type: "",
     }));
   };
 
   return (
     <div className="w-full">
-      <span className="ml-2 font-bold text-xl mx-auto"> Expenses</span>
+      <span className="ml-2 font-bold text-xl mx-auto">
+        Expenses and incomes
+      </span>
 
       <div className="relative overflow-x-auto border-2 border-slate-300 rounded-lg">
         <table className="table-fixed w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
@@ -88,7 +100,7 @@ export default function ShowExpenses() {
           </thead>
 
           <tbody>
-            {expenses?.length === 0 && !addExpense && (
+            {transactions?.length === 0 && !addNewExpense && !addNewIncome && (
               <tr
                 className={
                   "bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700"
@@ -102,33 +114,43 @@ export default function ShowExpenses() {
               </tr>
             )}
 
-            {expenses?.map((expense) => (
+            {transactions?.map((transaction) => (
               <tr
-                key={expense.id}
+                key={transaction.id}
                 className={
-                  editedExpense.id === expense.id
-                    ? "bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700"
-                    : "hover:bg-gray-100 bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                  editedTransaction.id === transaction.id
+                    ? `bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700 ${
+                        transaction.type === "expense"
+                          ? ""
+                          : "border-l-4 border-l-green-500"
+                      } `
+                    : `hover:bg-gray-100 bg-white border-b dark:bg-gray-800 dark:border-gray-700 ${
+                        transaction.type === "expense"
+                          ? ""
+                          : "border-l-4 border-l-green-500"
+                      } `
                 }
               >
                 <td className="px-6 py-6">
-                  <p>created: {expense.date}</p>
-                  {expense.editDate && <p>modified: {expense.editDate}</p>}
+                  <p>created: {transaction.date}</p>
+                  {transaction.editDate && (
+                    <p>modified: {transaction.editDate}</p>
+                  )}
                 </td>
 
                 <td className="px-6 py-6">
-                  {editedExpense.id !== expense.id ? (
-                    expense.category
+                  {editedTransaction.id !== transaction.id ? (
+                    transaction.category
                   ) : (
                     <select
                       onChange={(e) =>
-                        setEditedExpense((state) => ({
+                        setEditedTransaction((state) => ({
                           ...state,
                           category: e.target.value,
                         }))
                       }
                       className="px-2 py-1 rounded-full -ml-3"
-                      defaultValue={expense.category}
+                      defaultValue={transaction.category}
                       name="choice"
                     >
                       {categories.map((category) => (
@@ -140,35 +162,51 @@ export default function ShowExpenses() {
                   )}
                 </td>
 
-                <td className="px-6 py-6">
-                  {editedExpense.id !== expense.id ? (
-                    formatter(expense.amount, currencyType)
+                <td
+                  className={`${
+                    transaction.type === "expense"
+                      ? "text-red-600"
+                      : "text-green-600"
+                  } px-6 py-6`}
+                >
+                  {editedTransaction.id !== transaction.id ? (
+                    `${transaction.type === "expense" ? "-" : "+"} ${formatter(
+                      transaction.amount,
+                      currencyType
+                    )}`
                   ) : (
                     <input
                       type="number"
                       onChange={(e) =>
-                        setEditedExpense((state) => ({
+                        setEditedTransaction((state) => ({
                           ...state,
                           amount: e.target.value,
                         }))
                       }
-                      defaultValue={expense.amount}
+                      defaultValue={transaction.amount}
                       className="px-2 py-1 rounded-full -ml-2"
                     ></input>
                   )}
                 </td>
 
-                {editedExpense.id !== expense.id ? (
+                {editedTransaction.id !== transaction.id ? (
                   <td>
                     <button
-                      onClick={() =>
-                        !addExpense &&
-                        expense.id &&
-                        editedExpense.id === "" &&
-                        handleDeleteExpense(expense.id)
-                      }
+                      onClick={() => {
+                        !addNewExpense &&
+                          !addNewIncome &&
+                          transaction.id &&
+                          transaction.type &&
+                          editedTransaction.id === "" &&
+                          handleDeleteTransaction(
+                            transaction.id,
+                            transaction.type
+                          );
+                      }}
                       className={`${
-                        !addExpense && editedExpense.id === ""
+                        !addNewExpense &&
+                        !addNewIncome &&
+                        editedTransaction.id === ""
                           ? "bg-red-500 hover:bg-red-700"
                           : "bg-red-200 cursor-not-allowed"
                       } text-white font-bold py-2 m-2 px-6 rounded-full `}
@@ -177,13 +215,16 @@ export default function ShowExpenses() {
                     </button>
                     <button
                       onClick={() =>
-                        !addExpense &&
-                        expense.id &&
-                        editedExpense.id === "" &&
-                        handleStartEdit(expense.id)
+                        !addNewExpense &&
+                        !addNewIncome &&
+                        transaction.id &&
+                        editedTransaction.id === "" &&
+                        handleStartEdit(transaction.id)
                       }
                       className={`${
-                        !addExpense && editedExpense.id === ""
+                        !addNewExpense &&
+                        !addNewIncome &&
+                        editedTransaction.id === ""
                           ? "bg-blue-500 hover:bg-blue-700"
                           : "bg-blue-200 cursor-not-allowed"
                       } text-white font-bold py-2 m-2 px-6 rounded-full `}
@@ -195,9 +236,14 @@ export default function ShowExpenses() {
                   <td>
                     <button
                       onClick={() =>
-                        expense.id &&
-                        expense.date &&
-                        handleEditExpense(expense.id, expense.date)
+                        transaction.id &&
+                        transaction.date &&
+                        transaction.type &&
+                        handleEditTransaction(
+                          transaction.id,
+                          transaction.date,
+                          transaction.type
+                        )
                       }
                       className="bg-green-700 hover:bg-green-900 text-white font-bold py-2 m-2 px-6 rounded-full "
                     >
@@ -214,8 +260,20 @@ export default function ShowExpenses() {
               </tr>
             ))}
 
-            {editedExpense.id === "" && addExpense && (
-              <AddExpense setAddExpense={setAddExpense} />
+            {editedTransaction.id === "" && addNewExpense && (
+              <AddTransaction
+                setAdd={setAddNewExpense}
+                categories={categories}
+                type="expense"
+              />
+            )}
+
+            {editedTransaction.id === "" && addNewIncome && (
+              <AddTransaction
+                setAdd={setAddNewIncome}
+                categories={categories}
+                type="income"
+              />
             )}
           </tbody>
         </table>
@@ -224,10 +282,10 @@ export default function ShowExpenses() {
           <p>Sort: </p>
           <select
             className="px-1 m-2 rounded-full "
-            onChange={(e: SyntheticEvent) => {
+            onChange={(e) => {
               setExpensesSort((state) => ({
                 ...state,
-                sortBy: (e.target as HTMLInputElement).value,
+                sortBy: e.target.value,
               }));
             }}
             value={sortBy}
@@ -238,10 +296,10 @@ export default function ShowExpenses() {
           </select>
           <select
             className="px-1  rounded-full "
-            onChange={(e: SyntheticEvent) => {
+            onChange={(e) => {
               setExpensesSort((state) => ({
                 ...state,
-                sortDirection: (e.target as HTMLInputElement).value,
+                sortDirection: e.target.value,
               }));
             }}
             value={sortDirection}
@@ -253,32 +311,48 @@ export default function ShowExpenses() {
         </div>
       </div>
       <div className="text-center">
-        {!addExpense && (
+        {!addNewExpense && !addNewIncome && (
           <>
             <button
               type="submit"
-              onClick={() => editedExpense.id === "" && setAddExpense(true)}
+              onClick={() =>
+                editedTransaction.id === "" && setAddNewExpense(true)
+              }
               className={`${
-                editedExpense.id === ""
-                  ? "bg-green-700 hover:bg-green-800"
-                  : "bg-green-300 cursor-not-allowed"
+                editedTransaction.id === ""
+                  ? "bg-blue-800 hover:bg-blue-900"
+                  : "bg-blue-300 cursor-not-allowed"
               } text-white font-bold py-2 my-5 mx-2 px-6 rounded-full`}
             >
               Add expense
             </button>
+            <button
+              type="submit"
+              onClick={() =>
+                editedTransaction.id === "" && setAddNewIncome(true)
+              }
+              className={`${
+                editedTransaction.id === ""
+                  ? "bg-green-700 hover:bg-green-800"
+                  : "bg-green-300 cursor-not-allowed"
+              } text-white font-bold py-2 my-5 mx-2 px-6 rounded-full`}
+            >
+              Add Income
+            </button>
 
-            {expenses?.length > 1 && (
+            {transactions?.length > 1 && (
               <button
                 onClick={() =>
-                  editedExpense.id === "" && dispatch(deleteAllExpenses())
+                  editedTransaction.id === "" &&
+                  dispatch(deleteAllTransactions())
                 }
                 className={`${
-                  editedExpense.id === ""
+                  editedTransaction.id === ""
                     ? "bg-red-700 hover:bg-red-800"
                     : "bg-red-300 cursor-not-allowed"
                 } text-white font-bold py-2 my-5 mx-2 px-6 rounded-full`}
               >
-                Delete All Expenses
+                Delete All
               </button>
             )}
           </>

@@ -26,7 +26,13 @@ import {
   orderBy,
   query,
 } from "firebase/firestore";
-import type { State, User, Expense, SortOptions } from "../types";
+import type {
+  State,
+  User,
+  Transaction,
+  SortOptions,
+  TransactionToDelete,
+} from "../types";
 
 export const fetchUserData = createAsyncThunk(
   "users/fetchUserData",
@@ -113,28 +119,28 @@ export const changeUsername = createAsyncThunk(
   }
 );
 
-export const fetchExpenses = createAsyncThunk(
-  "users/fetchExpenses",
+export const fetchTransactions = createAsyncThunk(
+  "users/fetchTransactions",
   async (sortOptions: SortOptions) => {
     const { sortBy, descending } = sortOptions;
 
     const currentUserID = auth.currentUser?.uid;
 
-    const expensesQuery = query(
-      collection(db, `users/${currentUserID}/expenses`),
+    const transactionsQuery = query(
+      collection(db, `users/${currentUserID}/transactions`),
       descending ? orderBy(`${sortBy}`, `desc`) : orderBy(`${sortBy}`)
     );
 
-    const querySnapshot = await getDocs(expensesQuery);
+    const querySnapshot = await getDocs(transactionsQuery);
 
-    const expenses = querySnapshot.docs.map(
+    const transactions = querySnapshot.docs.map(
       (doc) =>
         ({
           id: doc.id,
           ...doc.data(),
-        } as Expense)
+        } as Transaction)
     );
-    return expenses;
+    return transactions;
   }
 );
 
@@ -153,25 +159,28 @@ export const setBudget = createAsyncThunk(
       budget: editedBudget,
       budgetAddDate,
       expensesValue: 0,
+      incomesValue: 0,
     });
 
-    let areExpenses = false;
+    let areTransactions = false;
 
-    const expensesFromDatabase = await getDocs(
-      collection(db, `users/${currentUserID}/expenses`)
+    const transactionsFromDatabase = await getDocs(
+      collection(db, `users/${currentUserID}/transactions`)
     );
 
-    for (const expense of expensesFromDatabase.docs) {
-      if (expensesFromDatabase.docs.length === 0) return;
+    for (const transaction of transactionsFromDatabase.docs) {
+      if (transactionsFromDatabase.docs.length === 0) return;
 
-      await deleteDoc(doc(db, `users/${currentUserID}/expenses`, expense.id));
-      areExpenses = true;
+      await deleteDoc(
+        doc(db, `users/${currentUserID}/transactions`, transaction.id)
+      );
+      areTransactions = true;
     }
 
     return {
       editedBudget,
       budgetAddDate,
-      expenses: areExpenses ? [] : undefined,
+      transactions: areTransactions ? [] : undefined,
     };
   }
 );
@@ -221,58 +230,86 @@ export const changeCurrencyType = createAsyncThunk(
   }
 );
 
-export const deleteExpense = createAsyncThunk(
-  "users/expenses/deleteExpense",
-  async (id: string) => {
+export const deleteTransaction = createAsyncThunk(
+  "users/transactions/deleteTransaction",
+  async (transactionToDelete: TransactionToDelete) => {
     const currentUserID = auth.currentUser?.uid;
 
     if (!currentUserID) return;
 
-    const expenses = await getDocs(
-      collection(db, `users/${currentUserID}/expenses`)
+    const transactions = await getDocs(
+      collection(db, `users/${currentUserID}/transactions`)
     );
 
-    for (const expense of expenses.docs) {
-      if (expense.id === id) {
-        await deleteDoc(doc(db, `users/${currentUserID}/expenses`, expense.id));
+    let transactionAmount = 0;
 
-        const expenseAmount = expense.data().amount;
+    for (const transaction of transactions.docs) {
+      if (transaction.id === transactionToDelete.id) {
+        await deleteDoc(
+          doc(db, `users/${currentUserID}/transactions`, transaction.id)
+        );
 
-        await updateDoc(doc(db, "users", currentUserID), {
-          budget: increment(expenseAmount),
-          expensesValue: increment(-expenseAmount),
-        });
-        return { id, expenseAmount };
+        transactionAmount = transaction.data().amount;
       }
     }
+
+    await updateDoc(
+      doc(db, "users", currentUserID),
+      transactionToDelete.type === "expense"
+        ? {
+            budget: increment(transactionAmount),
+            expensesValue: increment(-transactionAmount),
+          }
+        : {
+            budget: increment(-transactionAmount),
+            incomesValue: increment(-transactionAmount),
+          }
+    );
+
+    return {
+      id: transactionToDelete.id,
+      transactionAmount,
+      type: transactionToDelete.type,
+    };
   }
 );
 
-export const deleteAllExpenses = createAsyncThunk(
-  "users/expenses/deleteAllExpenses",
+export const deleteAllTransactions = createAsyncThunk(
+  "users/transactions/deleteAllTransactions",
   async () => {
     const currentUserID = auth.currentUser?.uid;
 
     if (!currentUserID) return;
 
-    const expenses = await getDocs(
-      collection(db, `users/${currentUserID}/expenses`)
+    const transactions = await getDocs(
+      collection(db, `users/${currentUserID}/transactions`)
     );
 
-    let allExpensesAmount = 0;
+    let allTransactionsAmount = 0;
 
-    for (const expense of expenses.docs) {
-      allExpensesAmount += expense.data().amount;
-      await deleteDoc(doc(db, `users/${currentUserID}/expenses`, expense.id));
+    for (const transaction of transactions.docs) {
+      allTransactionsAmount =
+        transaction.data().type === "expense"
+          ? allTransactionsAmount + transaction.data().amount
+          : allTransactionsAmount - transaction.data().amount;
+
+      await deleteDoc(
+        doc(db, `users/${currentUserID}/transactions`, transaction.id)
+      );
     }
+    await updateDoc(doc(db, "users", currentUserID), {
+      budget: increment(allTransactionsAmount),
+      expensesValue: 0,
+      incomesValue: 0,
+    });
 
-    return { expenses: [], allExpensesAmount };
+    return { transactions: [], allTransactionsAmount };
   }
 );
 
-export const addExpense = createAsyncThunk(
-  "users/expenses/addExpense",
-  async (expense: Expense) => {
+export const addTransaction = createAsyncThunk(
+  "users/transactions/addTransaction",
+  async (transaction: Transaction) => {
     const currentUserID = auth.currentUser?.uid;
 
     if (!currentUserID) return;
@@ -281,81 +318,110 @@ export const addExpense = createAsyncThunk(
       Timestamp.now().seconds * 1000
     ).toLocaleString();
 
-    const expenseData = {
-      ...expense,
+    const transactionData = {
+      ...transaction,
+      type: transaction.type,
       timestamp: Timestamp.now().seconds,
       date: currentDate,
     };
 
-    const addExpenseRef = await addDoc(
-      collection(db, "users", currentUserID, "expenses"),
-      expenseData
+    const transactionRef = await addDoc(
+      collection(db, "users", currentUserID, "transactions"),
+      transactionData
     );
 
-    const newExpense = { id: addExpenseRef.id, ...expenseData };
+    const newTransaction = { id: transactionRef.id, ...transactionData };
 
-    await updateDoc(doc(db, "users", currentUserID), {
-      budget: increment(-expense.amount),
-      expensesValue: increment(expense.amount),
-    });
+    await updateDoc(
+      doc(db, "users", currentUserID),
+      transaction.type === "expense"
+        ? {
+            budget: increment(-transactionData.amount),
+            expensesValue: increment(transactionData.amount),
+          }
+        : {
+            budget: increment(transactionData.amount),
+            incomesValue: increment(transactionData.amount),
+          }
+    );
 
-    return newExpense;
+    return newTransaction;
   }
 );
 
-export const updateExpense = createAsyncThunk(
-  "users/expenses/updateExpense",
-  async (editedExpense: Expense) => {
+export const updateTransaction = createAsyncThunk(
+  "users/transactions/updateTransaction",
+  async (editedTransaction: Transaction) => {
     const currentUserID = auth.currentUser?.uid;
 
     if (!currentUserID) return;
 
     let budgetDiff = 0;
 
-    const expenses = await getDocs(
-      collection(db, "users", currentUserID, "expenses")
+    const transactions = await getDocs(
+      collection(db, "users", currentUserID, "transactions")
     );
 
     const currentDate = new Date(
       Timestamp.now().seconds * 1000
     ).toLocaleString();
 
-    for (const expense of expenses.docs) {
-      if (expense.id === editedExpense.id) {
-        const expenseRef = doc(
+    for (const transaction of transactions.docs) {
+      if (transaction.id === editedTransaction.id) {
+        const transactionRef = doc(
           db,
           "users",
           currentUserID,
-          "expenses",
-          expense.id
+          "transactions",
+          transaction.id
         );
 
-        const validatedEditedExpense = {
-          id: editedExpense.id,
-          date: editedExpense.date,
+        const validatedEditedTransaction = {
+          id: editedTransaction.id,
+          date: editedTransaction.date,
           timestamp: Timestamp.now().seconds,
           editDate: currentDate,
+          type: editedTransaction.type,
           category:
-            editedExpense.category !== ""
-              ? editedExpense.category
-              : expense.data().category,
+            editedTransaction.category !== ""
+              ? editedTransaction.category
+              : transaction.data().category,
           amount:
-            editedExpense.amount !== 0
-              ? editedExpense.amount
-              : expense.data().amount,
+            editedTransaction.amount !== 0
+              ? editedTransaction.amount
+              : transaction.data().amount,
         };
 
-        await updateDoc(expenseRef, validatedEditedExpense);
+        await updateDoc(transactionRef, validatedEditedTransaction);
 
-        if (expense.data().amount !== validatedEditedExpense.amount) {
-          budgetDiff = expense.data().amount - validatedEditedExpense.amount;
+        if (transaction.data().amount !== validatedEditedTransaction.amount) {
+          budgetDiff =
+            transaction.data().amount - validatedEditedTransaction.amount;
 
-          await updateDoc(doc(db, "users", currentUserID), {
-            budget: increment(budgetDiff),
-            expensesValue: increment(-budgetDiff),
-          });
+          await updateDoc(
+            doc(db, "users", currentUserID),
+            editedTransaction.type === "expense"
+              ? {
+                  budget: increment(budgetDiff),
+                  expensesValue: increment(-budgetDiff),
+                }
+              : {
+                  budget: increment(budgetDiff),
+                  incomesValue: increment(-budgetDiff),
+                }
+
+            // {
+            //   budget: increment(budgetDiff),
+            //   expensesValue: increment(-budgetDiff),
+            //   incomesValue: increment(-budgetDiff),
+            // }
+          );
         }
-        return { validatedEditedExpense, budgetDiff };
+        return {
+          validatedEditedTransaction,
+          budgetDiff,
+          type: editedTransaction.type,
+        };
       }
     }
   }
@@ -375,6 +441,7 @@ export const registerUser = createAsyncThunk(
       displayName: user.username,
       budget: 0,
       expensesValue: 0,
+      incomesValue: 0,
       currencyType: "PLN",
       categories: [
         "Shops",
@@ -520,13 +587,14 @@ const userSlice = createSlice({
         state.categories = action.payload.categories;
         state.expensesValue = action.payload.expensesValue;
         state.budgetAddDate = action.payload.budgetAddDate;
+        state.incomesValue = action.payload.incomesValue;
       })
       //----------------------------------------------------
 
-      .addCase(fetchExpenses.fulfilled, (state, action) => {
+      .addCase(fetchTransactions.fulfilled, (state, action) => {
         if (!action.payload) return;
 
-        state.expenses = action.payload;
+        state.transactions = action.payload;
       })
 
       //-------------------------------------------------
@@ -538,8 +606,8 @@ const userSlice = createSlice({
         state.budgetAddDate = action.payload.budgetAddDate;
         state.expensesValue = 0;
 
-        if (action.payload.expenses !== undefined)
-          state.expenses = action.payload.expenses;
+        if (action.payload.transactions !== undefined)
+          state.transactions = action.payload.transactions;
       })
 
       //--------------------------------------------------------------
@@ -570,47 +638,65 @@ const userSlice = createSlice({
       })
 
       //---------------------------------------------------------
-      .addCase(addExpense.fulfilled, (state, action) => {
+      .addCase(addTransaction.fulfilled, (state, action) => {
         if (!action.payload) return;
-        state.expenses?.push(action.payload);
-        state.budget -= action.payload.amount;
-        state.expensesValue += action.payload.amount;
+
+        state.transactions?.push(action.payload);
+
+        if (action.payload.type === "expense") {
+          state.budget -= action.payload.amount;
+          state.expensesValue += action.payload.amount;
+        } else if (action.payload.type === "income") {
+          state.budget += action.payload.amount;
+          state.incomesValue += action.payload.amount;
+        }
       })
 
       //------------------------------------------------------------------------
-      .addCase(deleteExpense.fulfilled, (state, action) => {
+      .addCase(deleteTransaction.fulfilled, (state, action) => {
         if (!action.payload) return;
 
-        state.expenses = state.expenses.filter(
-          (expense) => expense.id !== action.payload?.id
+        state.transactions = state.transactions.filter(
+          (transaction) => transaction.id !== action.payload?.id
         );
 
-        state.budget += action.payload.expenseAmount;
-        state.expensesValue -= action.payload.expenseAmount;
+        if (action.payload.type === "expense") {
+          state.budget += action.payload.transactionAmount;
+          state.expensesValue -= action.payload.transactionAmount;
+        } else if (action.payload.type === "income") {
+          state.budget -= action.payload.transactionAmount;
+          state.incomesValue -= action.payload.transactionAmount;
+        }
       })
       //--------------------------------------------------
 
-      .addCase(deleteAllExpenses.fulfilled, (state, action) => {
+      .addCase(deleteAllTransactions.fulfilled, (state, action) => {
         if (!action.payload) return;
 
-        state.expenses = action.payload.expenses;
-        state.budget += action.payload.allExpensesAmount;
-        state.expensesValue -= action.payload.allExpensesAmount;
+        state.transactions = action.payload.transactions;
+        state.budget += action.payload.allTransactionsAmount;
+        state.expensesValue = 0;
+        state.incomesValue = 0;
       })
 
       //-------------------------------------------------
-      .addCase(updateExpense.fulfilled, (state, action) => {
+      .addCase(updateTransaction.fulfilled, (state, action) => {
         if (!action.payload) return;
 
-        const { validatedEditedExpense, budgetDiff } = action.payload;
+        const { validatedEditedTransaction, budgetDiff } = action.payload;
 
-        const expenseIndex = state.expenses.findIndex(
-          (expense) => expense.id === validatedEditedExpense.id
+        const transactionIndex = state.transactions.findIndex(
+          (transaction) => transaction.id === validatedEditedTransaction.id
         );
-        if (expenseIndex !== -1) {
-          state.expenses[expenseIndex] = validatedEditedExpense;
+        if (transactionIndex !== -1) {
+          state.transactions[transactionIndex] = validatedEditedTransaction;
           state.budget += budgetDiff;
-          state.expensesValue -= budgetDiff;
+
+          if (action.payload.type === "expense") {
+            state.expensesValue -= budgetDiff;
+          } else if (action.payload.type === "income") {
+            state.incomesValue -= budgetDiff;
+          }
         }
       });
   },
