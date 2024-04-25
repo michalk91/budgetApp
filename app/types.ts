@@ -73,7 +73,8 @@ export interface DisplayAmountProps {
 export interface ShowTransactionsProps {
   transactions: Transaction[];
   currencyType: string;
-  categories: string[];
+  expenseCategories: string[];
+  incomeCategories: string[];
 }
 
 export interface ExpensesChartProps {

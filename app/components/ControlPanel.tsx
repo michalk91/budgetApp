@@ -16,6 +16,9 @@ export default function ControlPanel() {
   const expenseCategories = useAppSelector(
     (state) => state.user.expenseCategories
   );
+  const incomeCategories = useAppSelector(
+    (state) => state.user.incomeCategories
+  );
 
   const dispatch = useAppDispatch();
 
@@ -56,7 +59,8 @@ export default function ControlPanel() {
 
       <ShowTransactions
         transactions={transactions}
-        categories={expenseCategories}
+        expenseCategories={expenseCategories}
+        incomeCategories={incomeCategories}
         currencyType={currencyType}
       />
       <ExpensesChart transactions={transactions} />

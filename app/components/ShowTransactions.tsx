@@ -14,7 +14,8 @@ import type { ShowTransactionsProps } from "../types";
 export default function ShowTransactions({
   transactions,
   currencyType,
-  categories,
+  expenseCategories,
+  incomeCategories,
 }: ShowTransactionsProps) {
   const dispatch = useAppDispatch();
 
@@ -153,11 +154,17 @@ export default function ShowTransactions({
                       defaultValue={transaction.category}
                       name="choice"
                     >
-                      {categories.map((category) => (
-                        <option key={category} value={category}>
-                          {category}
-                        </option>
-                      ))}
+                      {transaction.type === "expense"
+                        ? expenseCategories.map((category) => (
+                            <option key={category} value={category}>
+                              {category}
+                            </option>
+                          ))
+                        : incomeCategories.map((category) => (
+                            <option key={category} value={category}>
+                              {category}
+                            </option>
+                          ))}
                     </select>
                   )}
                 </td>
@@ -263,7 +270,7 @@ export default function ShowTransactions({
             {editedTransaction.id === "" && addNewExpense && (
               <AddTransaction
                 setAdd={setAddNewExpense}
-                categories={categories}
+                categories={expenseCategories}
                 type="expense"
               />
             )}
@@ -271,7 +278,7 @@ export default function ShowTransactions({
             {editedTransaction.id === "" && addNewIncome && (
               <AddTransaction
                 setAdd={setAddNewIncome}
-                categories={categories}
+                categories={incomeCategories}
                 type="income"
               />
             )}
