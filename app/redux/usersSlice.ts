@@ -430,7 +430,7 @@ export const updateTransaction = createAsyncThunk(
                 }
               : {
                   budget: increment(budgetDiff),
-                  incomesValue: increment(-budgetDiff),
+                  incomesValue: increment(budgetDiff),
                 }
           );
         }
@@ -732,7 +732,7 @@ const userSlice = createSlice({
           if (action.payload.type === "expense") {
             state.expensesValue -= budgetDiff;
           } else if (action.payload.type === "income") {
-            state.incomesValue -= budgetDiff;
+            state.incomesValue += budgetDiff;
           }
         }
       });
