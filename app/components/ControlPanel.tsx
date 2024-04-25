@@ -13,7 +13,9 @@ export default function ControlPanel() {
   const currencyType = useAppSelector((state) => state.user.currencyType);
   const budgetDate = useAppSelector((state) => state.user.budgetAddDate);
   const transactions = useAppSelector((state) => state.user.transactions);
-  const categories = useAppSelector((state) => state.user.categories);
+  const expenseCategories = useAppSelector(
+    (state) => state.user.expenseCategories
+  );
 
   const dispatch = useAppDispatch();
 
@@ -22,46 +24,42 @@ export default function ControlPanel() {
   }, [dispatch]);
 
   return (
-    budgetFromStore && (
-      <>
-        <div className="flex flex-wrap py-6">
-          <DisplayAmount
-            fontSize="2xl"
-            valueFromStore={budgetFromStore}
-            currencyType={currencyType}
-            title="Budget"
-            titleClass={
-              budgetFromStore > 0 ? " text-lime-600" : " text-rose-500"
-            }
-          />
-          <BudgetAddDate budgetDate={budgetDate} />
-        </div>
-        <div>
-          <DisplayAmount
-            title="Expenses"
-            valueFromStore={expensesFromStore}
-            currencyType={currencyType}
-            titleClass={
-              expensesFromStore === 0 ? " text-lime-600" : " text-rose-500"
-            }
-          />
-          <DisplayAmount
-            title="Incomes"
-            valueFromStore={incomesFromStore}
-            currencyType={currencyType}
-            titleClass={
-              incomesFromStore > 0 ? " text-lime-600" : " text-rose-500"
-            }
-          />
-        </div>
-
-        <ShowTransactions
-          transactions={transactions}
-          categories={categories}
+    <>
+      <div className="flex flex-wrap py-6">
+        <DisplayAmount
+          fontSize="2xl"
+          valueFromStore={budgetFromStore}
           currencyType={currencyType}
+          title="Budget"
+          titleClass={budgetFromStore > 0 ? " text-lime-600" : " text-rose-500"}
         />
-        <ExpensesChart transactions={transactions} />
-      </>
-    )
+        <BudgetAddDate budgetDate={budgetDate} />
+      </div>
+      <div>
+        <DisplayAmount
+          title="Expenses"
+          valueFromStore={expensesFromStore}
+          currencyType={currencyType}
+          titleClass={
+            expensesFromStore === 0 ? " text-lime-600" : " text-rose-500"
+          }
+        />
+        <DisplayAmount
+          title="Incomes"
+          valueFromStore={incomesFromStore}
+          currencyType={currencyType}
+          titleClass={
+            incomesFromStore > 0 ? " text-lime-600" : " text-rose-500"
+          }
+        />
+      </div>
+
+      <ShowTransactions
+        transactions={transactions}
+        categories={expenseCategories}
+        currencyType={currencyType}
+      />
+      <ExpensesChart transactions={transactions} />
+    </>
   );
 }

@@ -26,7 +26,8 @@ export interface State {
   budgetAddDate: string;
   currencyType: string;
   transactions: Transaction[];
-  categories: string[];
+  expenseCategories: string[];
+  incomeCategories: string[];
   expensesValue: number;
   incomesValue: number;
 }
@@ -77,4 +78,9 @@ export interface ShowTransactionsProps {
 
 export interface ExpensesChartProps {
   transactions: Transaction[];
+}
+
+export interface Category {
+  categoryName: string;
+  type: "expense" | "income";
 }

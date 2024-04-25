@@ -1,11 +1,13 @@
-import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { useAppDispatch } from "../redux/hooks";
 import { SyntheticEvent } from "react";
 import { useState, useRef } from "react";
+import { useAppSelector } from "../redux/hooks";
 import { addCategory, deleteCategory } from "../redux/usersSlice";
 
-export default function Categories() {
+export default function IncomeCategories() {
   const dispatch = useAppDispatch();
-  const categories = useAppSelector((state) => state.user.categories);
+
+  const categories = useAppSelector((state) => state.user.incomeCategories);
 
   const [categoryToDelete, setCategoryToDelete] = useState("");
   const [newCategory, setNewCategory] = useState(categories);
@@ -20,9 +22,9 @@ export default function Categories() {
         setCategoryToDelete("");
       }}
     >
-      <span className="font-bold text-xl mx-auto">Categories</span>
+      <span className="font-bold text-xl mx-auto">Income categories</span>
       <div className="py-2">
-        <div className="flex flex-wrap -ml-1 py-1">
+        <div className="flex flex-wrap -ml-1 py-1 justify-center">
           {categories?.map((category) => (
             <p
               key={category}
@@ -57,7 +59,12 @@ export default function Categories() {
               onClick={(e) => {
                 e.preventDefault();
 
-                dispatch(addCategory(newCategory[newCategory.length - 1]));
+                dispatch(
+                  addCategory({
+                    categoryName: newCategory[newCategory.length - 1],
+                    type: "income",
+                  })
+                );
 
                 if (!inputRef.current) return;
 
@@ -74,7 +81,12 @@ export default function Categories() {
             <button
               onClick={(e) => {
                 e.preventDefault();
-                dispatch(deleteCategory(categoryToDelete));
+                dispatch(
+                  deleteCategory({
+                    categoryName: categoryToDelete,
+                    type: "income",
+                  })
+                );
 
                 setCategoryToDelete("");
               }}

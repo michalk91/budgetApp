@@ -32,6 +32,7 @@ import type {
   Transaction,
   SortOptions,
   TransactionToDelete,
+  Category,
 } from "../types";
 
 export const fetchUserData = createAsyncThunk(
@@ -187,14 +188,23 @@ export const setBudget = createAsyncThunk(
 
 export const addCategory = createAsyncThunk(
   "users/addCategory",
-  async (category: string) => {
+  async (category: Category) => {
     const currentUserID = auth.currentUser?.uid;
 
     if (!currentUserID) return;
 
-    await updateDoc(doc(db, "users", currentUserID), {
-      categories: arrayUnion(category),
-    });
+    const { categoryName, type } = category;
+
+    await updateDoc(
+      doc(db, "users", currentUserID),
+      type === "expense"
+        ? {
+            expenseCategories: arrayUnion(categoryName),
+          }
+        : {
+            incomeCategories: arrayUnion(categoryName),
+          }
+    );
 
     return category;
   }
@@ -202,14 +212,23 @@ export const addCategory = createAsyncThunk(
 
 export const deleteCategory = createAsyncThunk(
   "users/deleteCategory",
-  async (category: string) => {
+  async (category: Category) => {
     const currentUserID = auth.currentUser?.uid;
 
     if (!currentUserID) return;
 
-    await updateDoc(doc(db, "users", currentUserID), {
-      categories: arrayRemove(category),
-    });
+    const { categoryName, type } = category;
+
+    await updateDoc(
+      doc(db, "users", currentUserID),
+      type === "expense"
+        ? {
+            expenseCategories: arrayRemove(categoryName),
+          }
+        : {
+            incomeCategories: arrayRemove(categoryName),
+          }
+    );
 
     return category;
   }
@@ -409,12 +428,6 @@ export const updateTransaction = createAsyncThunk(
                   budget: increment(budgetDiff),
                   incomesValue: increment(-budgetDiff),
                 }
-
-            // {
-            //   budget: increment(budgetDiff),
-            //   expensesValue: increment(-budgetDiff),
-            //   incomesValue: increment(-budgetDiff),
-            // }
           );
         }
         return {
@@ -443,7 +456,7 @@ export const registerUser = createAsyncThunk(
       expensesValue: 0,
       incomesValue: 0,
       currencyType: "PLN",
-      categories: [
+      expenseCategories: [
         "Shops",
         "Food",
         "Healthcare",
@@ -452,6 +465,7 @@ export const registerUser = createAsyncThunk(
         "Personal care",
         "Other",
       ],
+      incomeCategories: ["salary", "bonus", "additional job"],
     });
   }
 );
@@ -584,10 +598,11 @@ const userSlice = createSlice({
         state.budget = action.payload.budget;
         state.username = action.payload.displayName;
         state.currencyType = action.payload.currencyType;
-        state.categories = action.payload.categories;
+        state.expenseCategories = action.payload.expenseCategories;
         state.expensesValue = action.payload.expensesValue;
         state.budgetAddDate = action.payload.budgetAddDate;
         state.incomesValue = action.payload.incomesValue;
+        state.incomeCategories = action.payload.incomeCategories;
       })
       //----------------------------------------------------
 
@@ -614,19 +629,37 @@ const userSlice = createSlice({
       .addCase(addCategory.fulfilled, (state, action) => {
         if (!action.payload) return;
 
-        const categoryIndex = state.categories.findIndex(
-          (category) => category === action.payload
-        );
+        const { type, categoryName } = action.payload;
 
-        if (categoryIndex === -1) state.categories.push(action.payload);
+        if (type === "expense") {
+          const categoryIndex = state.expenseCategories.findIndex(
+            (category) => category === categoryName
+          );
+
+          if (categoryIndex === -1) state.expenseCategories.push(categoryName);
+        } else if (type === "income") {
+          const categoryIndex = state.incomeCategories.findIndex(
+            (category) => category === categoryName
+          );
+
+          if (categoryIndex === -1) state.incomeCategories.push(categoryName);
+        }
       })
       //----------------------------------------------------------
       .addCase(deleteCategory.fulfilled, (state, action) => {
         if (!action.payload) return;
 
-        state.categories = state.categories.filter(
-          (category) => category !== action.payload
-        );
+        const { type, categoryName } = action.payload;
+
+        if (type === "expense") {
+          state.expenseCategories = state.expenseCategories.filter(
+            (category) => category !== categoryName
+          );
+        } else if (type === "income") {
+          state.incomeCategories = state.incomeCategories.filter(
+            (category) => category !== categoryName
+          );
+        }
       })
 
       //----------------------------------------------------------

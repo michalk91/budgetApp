@@ -1,10 +1,12 @@
 "use client";
-import Categories from "../components/Categories";
+import ExpenseCategories from "../components/ExpenseCategories";
+import IncomeCategories from "../components/IncomeCategories";
 
 export default function Account() {
   return (
     <section className="flex flex-col w-full h-screen max-h-full justify-center items-center">
-      <Categories />
+      <ExpenseCategories />
+      <IncomeCategories />
     </section>
   );
 }
