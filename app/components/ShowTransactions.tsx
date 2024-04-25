@@ -109,7 +109,7 @@ export default function ShowTransactions({
               >
                 <td align="center" colSpan={4} className="px-6 py-6">
                   <span className="ml-2 font-bold text-xl mx-auto">
-                    {`You don't have expenses yet`}
+                    {`You don't have transactions yet`}
                   </span>
                 </td>
               </tr>

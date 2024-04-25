@@ -413,9 +413,13 @@ export const updateTransaction = createAsyncThunk(
 
         await updateDoc(transactionRef, validatedEditedTransaction);
 
-        if (transaction.data().amount !== validatedEditedTransaction.amount) {
+        const { type, amount } = transaction.data();
+
+        if (amount !== validatedEditedTransaction.amount) {
           budgetDiff =
-            transaction.data().amount - validatedEditedTransaction.amount;
+            type === "expense"
+              ? amount - validatedEditedTransaction.amount
+              : -(amount - validatedEditedTransaction.amount);
 
           await updateDoc(
             doc(db, "users", currentUserID),
