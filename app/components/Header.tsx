@@ -51,6 +51,7 @@ export default function Header() {
           <>
             <li className="mr-6 max-lg:p-6 ">
               <Link
+                onClick={() => setIsOpen(false)}
                 className={` ${
                   pathname === "/" ? "text-blue-800" : "text-blue-500"
                 } text-2xl hover:text-blue-800`}
@@ -61,6 +62,7 @@ export default function Header() {
             </li>
             <li className="mr-6 max-lg:p-6">
               <Link
+                onClick={() => setIsOpen(false)}
                 className={` ${
                   pathname === "/setBudget" ? "text-blue-800" : "text-blue-500"
                 } text-2xl hover:text-blue-800`}
@@ -71,6 +73,7 @@ export default function Header() {
             </li>
             <li className="mr-6 max-lg:p-6">
               <Link
+                onClick={() => setIsOpen(false)}
                 className={` ${
                   pathname === "/categorySettings"
                     ? "text-blue-800"
@@ -83,6 +86,7 @@ export default function Header() {
             </li>
             <li className="mr-6 max-lg:p-6">
               <Link
+                onClick={() => setIsOpen(false)}
                 className={` ${
                   pathname === "/accountSettings"
                     ? "text-blue-800"
@@ -95,7 +99,10 @@ export default function Header() {
             </li>
             <li className="mr-6 max-lg:p-6">
               <Link
-                onClick={singOut}
+                onClick={() => {
+                  setIsOpen(false);
+                  singOut();
+                }}
                 className="text-red-500 text-2xl hover:text-red-800"
                 href="/"
               >
@@ -105,8 +112,9 @@ export default function Header() {
           </>
         )}
         {loginStatus !== "succeeded" && (
-          <li className="mr-6">
+          <li className="mr-6 max-lg:p-6 ">
             <Link
+              onClick={() => setIsOpen(false)}
               className={` ${
                 pathname === "/register" ? "text-blue-800" : "text-blue-500"
               } text-2xl hover:text-blue-800`}
@@ -118,8 +126,9 @@ export default function Header() {
         )}
 
         {loginStatus !== "succeeded" && (
-          <li className="mr-6">
+          <li className="mr-6 max-lg:p-6 ">
             <Link
+              onClick={() => setIsOpen(false)}
               className={` ${
                 pathname === "/login" ? "text-blue-800" : "text-blue-500"
               } text-2xl hover:text-blue-800`}
