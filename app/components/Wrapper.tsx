@@ -36,7 +36,7 @@ export default function Wrapper({
   }, [registerStatus]);
 
   return (
-    <div className="flex justify-center">
+    <div>
       {children}
       <ToastContainer
         position="bottom-right"
