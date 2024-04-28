@@ -23,7 +23,7 @@ export default function Header() {
     if (loginStatus !== "succeeded") router.push("/login", { scroll: false });
   }, [loginStatus, router]);
   return (
-    <header className=" sticky top-0 w-full z-10 h-20  ">
+    <header className="fixed top-0 w-full z-10 h-20">
       <div className="absolute top-0 left-0 bottom-0 right-0 bg-slate-300 z-10"></div>
       {loginStatus === "succeeded" && userName && (
         <p className="absolute text-2xl pl-6 z-40  top-2/4 -translate-y-2/4">
@@ -43,9 +43,8 @@ export default function Header() {
         </button>
       </div>
       <ul
-        className={`flex relative bg-slate-300 w-full lg:h-full max-lg:border-t-2 border-gray-400 max-lg:py-6  items-center transition duration-500 z-30 lg:visible justify-end max-lg:flex-col max-lg:item-center max-lg:z-0 max-lg:absolute max-lg:top-1/1 max-lg:${
-          !isOpen ? "-translate-y-full" : "translate-y-full"
-        }`}
+        className={`flex relative  bg-slate-300 w-full lg:h-full max-lg:border-t-2 border-gray-400 max-lg:py-6  items-center transition duration-500 z-30 lg:visible justify-end max-lg:flex-col max-lg:item-center max-lg:z-0 max-lg:absolute max-lg:top-1/1
+        ${!isOpen ? "max-lg:-translate-y-full" : "max-lg:translate-y-0"}`}
       >
         {loginStatus === "succeeded" && (
           <>

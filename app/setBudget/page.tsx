@@ -13,10 +13,11 @@ export default function Budget() {
   const [decision, setDecision] = useState(false);
 
   return (
-    <section className="flex flex-col  h-screen max-h-full justify-center items-center">
+    <section className="flex flex-col flex-wrap  h-screen max-h-full justify-center items-center">
       {(expenses?.length === 0 && !decision) || decision ? (
         <>
           <SetBudget />
+
           <DisplayAmount
             valueFromStore={budgetFromStore}
             currencyType={currencyType}

@@ -7,7 +7,7 @@ export default function BudgetAddDate({
 }: BudgetAddDateProps) {
   return (
     budgetDate && (
-      <span className={`py-5 -ml-3 text-${fontSize}`}>
+      <span className={`py-5 md:-ml-3 text-${fontSize}`}>
         {`(set: `}
         <b>{budgetDate}</b>
         {`)`}

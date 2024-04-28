@@ -16,7 +16,7 @@ export default function IncomeCategories() {
 
   return (
     <form
-      className="text-center"
+      className="text-center m-6 "
       onSubmit={(e) => {
         (e.target as HTMLFormElement).reset();
         setCategoryToDelete("");
@@ -34,8 +34,8 @@ export default function IncomeCategories() {
               }}
               className={
                 category === categoryToDelete
-                  ? "border-solid border-2 border-blue-400 py-2 px-4 m-1 rounded-full bg-blue-200 cursor-pointer"
-                  : "border-solid border-2 border-blue-400 py-2 px-4 m-1 rounded-full hover:bg-blue-200 cursor-pointer"
+                  ? "border-solid border-2 border-green-400 py-2 px-4 m-1 rounded-full bg-green-200 cursor-pointer"
+                  : "border-solid border-2 border-green-400 py-2 px-4 m-1 rounded-full hover:bg-green-200 cursor-pointer"
               }
             >
               {category}
@@ -70,7 +70,7 @@ export default function IncomeCategories() {
 
                 inputRef.current.value = "";
               }}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full "
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full mt-4"
             >
               Add new
             </button>

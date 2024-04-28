@@ -36,7 +36,7 @@ export default function Wrapper({
   }, [registerStatus]);
 
   return (
-    <div>
+    <>
       {children}
       <ToastContainer
         position="bottom-right"
@@ -51,6 +51,6 @@ export default function Wrapper({
         theme="light"
         transition={Bounce}
       />
-    </div>
+    </>
   );
 }

@@ -28,7 +28,7 @@ export default function ControlPanel() {
 
   return (
     <>
-      <div className="flex flex-wrap py-6">
+      <div className="flex flex-wrap py-6 justify-center mt-20">
         <DisplayAmount
           fontSize="2xl"
           valueFromStore={budgetFromStore}
@@ -38,8 +38,9 @@ export default function ControlPanel() {
         />
         <BudgetAddDate budgetDate={budgetDate} />
       </div>
-      <div>
+      <div className="flex flex-wrap justify-center border-solid border-2 border-blue-400 shadow-xl rounded-md ">
         <DisplayAmount
+          fontSize="lg"
           title="Expenses"
           valueFromStore={expensesFromStore}
           currencyType={currencyType}
@@ -48,6 +49,7 @@ export default function ControlPanel() {
           }
         />
         <DisplayAmount
+          fontSize="lg"
           title="Incomes"
           valueFromStore={incomesFromStore}
           currencyType={currencyType}

@@ -35,11 +35,11 @@ export default function ExpensesChart({ transactions }: ExpensesChartProps) {
   return (
     <>
       {expensesFromDataBase.length > 1 && (
-        <div className="w-full mt-20">
+        <div className="w-full m-20">
           <span className="ml-2 font-bold text-xl mx-auto">
             Expenses Visualization
           </span>
-          <section className="overflow-hidden border-2 border-slate-300 rounded-lg">
+          <section className="overflow-hidden border-2 border-slate-300 rounded-lg shadow-xl">
             <Chart
               chartType="PieChart"
               data={data}

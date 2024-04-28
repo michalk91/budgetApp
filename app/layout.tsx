@@ -20,11 +20,13 @@ export default function RootLayout({
 }>) {
   return (
     <Providers>
-      <html lang="en">
-        <body className={`${inter.className} min-h-full`}>
+      <html lang="en" className="min-h-full">
+        <body className={`${inter.className}`}>
           <Wrapper>
             <Header />
-            {children}
+            <main className="flex flex-col items-center px-24 max-md:p-8 h-full ">
+              {children}
+            </main>
             <Footer />
           </Wrapper>
         </body>

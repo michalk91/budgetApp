@@ -11,7 +11,7 @@ export default function Account() {
   return (
     <section className="flex flex-col  w-72 h-screen max-h-full justify-center items-center m-auto ">
       <span className="font-bold text-xl mx-auto">Account settings</span>
-      <div className="w-full rounded-md p-12  text-center border-solid border-2 border-blue-400 shadow-xl">
+      <div className="w-full rounded-md p-8  text-center border-solid border-2 border-blue-400 shadow-xl">
         {active === "" && (
           <>
             <button

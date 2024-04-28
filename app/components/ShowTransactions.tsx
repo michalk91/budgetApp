@@ -76,25 +76,25 @@ export default function ShowTransactions({
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full mt-10">
       <span className="ml-2 font-bold text-xl mx-auto">
         Expenses and incomes
       </span>
 
-      <div className="relative overflow-x-auto border-2 border-slate-300 rounded-lg">
+      <div className="relative overflow-x-auto border-2 border-slate-300 rounded-lg max-md:mb-6 shadow-xl">
         <table className="table-fixed w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
           <thead className="text-xs text-gray-700 uppercase  dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 max-lg:hidden">
                 Date
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 max-lg:hidden">
                 Category
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 max-lg:hidden">
                 Amount
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 max-lg:hidden">
                 Action
               </th>
             </tr>
@@ -107,7 +107,11 @@ export default function ShowTransactions({
                   "bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700"
                 }
               >
-                <td align="center" colSpan={4} className="px-6 py-6">
+                <td
+                  align="center"
+                  colSpan={4}
+                  className="px-6 py-6 max-lg:block "
+                >
                   <span className="ml-2 font-bold text-xl mx-auto">
                     {`You don't have transactions yet`}
                   </span>
@@ -120,7 +124,7 @@ export default function ShowTransactions({
                 key={transaction.id}
                 className={
                   editedTransaction.id === transaction.id
-                    ? `bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700 ${
+                    ? `bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700  ${
                         transaction.type === "expense"
                           ? ""
                           : "border-l-4 border-l-green-500"
@@ -132,14 +136,20 @@ export default function ShowTransactions({
                       } `
                 }
               >
-                <td className="px-6 py-6">
+                <td
+                  data-cell="date"
+                  className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center"
+                >
                   <p>created: {transaction.date}</p>
                   {transaction.editDate && (
                     <p>modified: {transaction.editDate}</p>
                   )}
                 </td>
 
-                <td className="px-6 py-6">
+                <td
+                  data-cell="category"
+                  className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center"
+                >
                   {editedTransaction.id !== transaction.id ? (
                     transaction.category
                   ) : (
@@ -150,7 +160,7 @@ export default function ShowTransactions({
                           category: e.target.value,
                         }))
                       }
-                      className="px-2 py-1 rounded-full -ml-3"
+                      className="px-2 py-1 rounded-full -ml-3 max-w-full max-lg:ml-1"
                       defaultValue={transaction.category}
                       name="choice"
                     >
@@ -170,11 +180,12 @@ export default function ShowTransactions({
                 </td>
 
                 <td
+                  data-cell="amount"
                   className={`${
                     transaction.type === "expense"
                       ? "text-red-600"
                       : "text-green-600"
-                  } px-6 py-6`}
+                  } px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']    max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center`}
                 >
                   {editedTransaction.id !== transaction.id ? (
                     `${transaction.type === "expense" ? "-" : "+"} ${formatter(
@@ -191,13 +202,13 @@ export default function ShowTransactions({
                         }))
                       }
                       defaultValue={transaction.amount}
-                      className="px-2 py-1 rounded-full -ml-2"
+                      className="px-2 py-1 rounded-full -ml-2 max-w-full max-lg: ml-1 max-lg:max-w-32"
                     ></input>
                   )}
                 </td>
 
                 {editedTransaction.id !== transaction.id ? (
-                  <td>
+                  <td className="max-lg:block max-lg:before:content-[attr(data-cell)]  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
                     <button
                       onClick={() => {
                         !addNewExpense &&
@@ -240,7 +251,7 @@ export default function ShowTransactions({
                     </button>
                   </td>
                 ) : (
-                  <td>
+                  <td className="max-lg:block max-lg:before:content-[attr(data-cell)]  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
                     <button
                       onClick={() =>
                         transaction.id &&
@@ -285,7 +296,7 @@ export default function ShowTransactions({
           </tbody>
         </table>
 
-        <div className="flex items-center ml-6">
+        <div className="flex flex-wrap items-center ml-6">
           <p>Sort: </p>
           <select
             className="px-1 m-2 rounded-full "
@@ -302,7 +313,7 @@ export default function ShowTransactions({
             <option value="amount">amount</option>
           </select>
           <select
-            className="px-1  rounded-full "
+            className="px-1 rounded-full max-w-full "
             onChange={(e) => {
               setExpensesSort((state) => ({
                 ...state,

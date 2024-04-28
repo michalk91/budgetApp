@@ -17,6 +17,10 @@
 }
 
 body {
+  min-height: 100%;
+  margin: 0;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,

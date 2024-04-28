@@ -87,7 +87,7 @@ export default function ChangeEmail({ setActive }: ChangeComponentsProps) {
           </div>
         </div>
 
-        <div className="text-center">
+        <div className="text-center pt-4">
           <button
             className="w-4/5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 my-2 px-6 rounded-full "
             type="submit"

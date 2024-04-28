@@ -26,14 +26,14 @@ export default function AddTransaction({
   };
 
   return (
-    <tr className="bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700">
-      <td className="px-6 py-6">
+    <tr className="bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700 max-lg:text-center">
+      <td className="px-6 py-6 max-lg:block">
         <span className="ml-2 font-bold text-xl mx-auto">
           {type === "expense" ? "New expense" : "New income"}
         </span>
       </td>
 
-      <td className="px-6 py-6">
+      <td className="px-6 py-6 max-lg:block">
         <select
           onChange={(e) => {
             setValueFromInput((state) => ({
@@ -41,7 +41,7 @@ export default function AddTransaction({
               category: e.target.value,
             }));
           }}
-          className="px-2 py-1 rounded-full -ml-3"
+          className="px-2 py-1 rounded-full -ml-3 "
           value={category}
           name="choice"
         >
@@ -53,7 +53,7 @@ export default function AddTransaction({
         </select>
       </td>
 
-      <td className="px-6 py-6">
+      <td className="px-6 py-6 max-lg:block">
         <input
           onChange={(e) =>
             setValueFromInput((state) => ({
@@ -65,11 +65,11 @@ export default function AddTransaction({
           type="number"
           value={amount}
           placeholder="amount"
-          className="px-2 py-1 rounded-full -ml-2"
+          className="px-2 py-1 rounded-full  max-w-32"
         ></input>
       </td>
 
-      <td>
+      <td className="max-lg:block max-lg:pb-4">
         <button
           type="submit"
           onClick={addNew}
