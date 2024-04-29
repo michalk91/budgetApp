@@ -27,7 +27,7 @@ export default function ExpenseCategories() {
     >
       <span className="font-bold text-xl mx-auto">Expense categories</span>
       <div className="py-2">
-        <div className="flex flex-wrap -ml-1 py-1 justify-center">
+        <div className="flex flex-wrap -ml-1 py-1 justify-center ">
           {categories?.map((category) => (
             <p
               key={category}
@@ -37,7 +37,7 @@ export default function ExpenseCategories() {
               }}
               className={
                 category === categoryToDelete
-                  ? "border-solid border-2 border-red-400 py-2 px-4 m-1 rounded-full bg-red-200 cursor-pointer"
+                  ? "border-solid border-2 border-red-400 py-2 px-4 m-1 rounded-full bg-red-200 cursor-pointer "
                   : "border-solid border-2 border-red-400 py-2 px-4 m-1 rounded-full hover:bg-red-200 cursor-pointer"
               }
             >
@@ -74,7 +74,7 @@ export default function ExpenseCategories() {
 
                 inputRef.current.value = "";
               }}
-              className={`text-white font-bold py-2 px-6 rounded-full mt-4 ${
+              className={`text-white font-bold py-2 px-6 rounded-full mt-4 max-md:px-6 max-md:py-4 ${
                 userEmail === GUEST_EMAIL
                   ? "cursor-not-allowed bg-blue-300 "
                   : "bg-blue-500 hover:bg-blue-700"
@@ -101,7 +101,7 @@ export default function ExpenseCategories() {
 
                 setCategoryToDelete("");
               }}
-              className={`text-white font-bold py-2 mx-1 px-6 rounded-full ${
+              className={`text-white font-bold py-2 mx-1 px-6 rounded-full max-md:px-6 max-md:py-4 ${
                 userEmail === GUEST_EMAIL
                   ? "cursor-not-allowed bg-red-300 "
                   : "bg-red-600 hover:bg-red-800"
@@ -114,7 +114,7 @@ export default function ExpenseCategories() {
                 e.preventDefault();
                 setCategoryToDelete("");
               }}
-              className="bg-green-600 hover:bg-green-800 text-white font-bold py-2 mx-1 px-6 rounded-full "
+              className="bg-green-600 hover:bg-green-800 text-white font-bold py-2 mx-1 px-6 rounded-full max-md:px-6 max-md:py-4"
             >
               Cancel
             </button>

@@ -32,7 +32,7 @@ export default function SetBudget() {
           </div>
           <button
             onClick={handleUpdateBudget}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 ml-16 px-6 rounded-full mt-4 ml-1 max-md:mx-auto max-md:mt-6"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 ml-16 px-6 rounded-full mt-4 ml-1 max-md:mx-auto max-md:mt-6 max-md:px-6 max-md:py-4"
           >
             confrim
           </button>

@@ -75,7 +75,7 @@ export default function IncomeCategories() {
 
                 inputRef.current.value = "";
               }}
-              className={`text-white font-bold py-2 px-6 rounded-full mt-4 ${
+              className={`text-white font-bold py-2 px-6 rounded-full mt-4 max-md:px-6 max-md:py-4 ${
                 userEmail === GUEST_EMAIL
                   ? "cursor-not-allowed bg-blue-300 "
                   : "bg-blue-500 hover:bg-blue-700"
@@ -102,7 +102,7 @@ export default function IncomeCategories() {
 
                 setCategoryToDelete("");
               }}
-              className={`text-white font-bold py-2 mx-1 px-6 rounded-full ${
+              className={`text-white font-bold py-2 mx-1 px-6 rounded-full max-md:px-6 max-md:py-4 ${
                 userEmail === GUEST_EMAIL
                   ? "cursor-not-allowed bg-red-300 "
                   : "bg-red-600 hover:bg-red-800"
@@ -115,7 +115,7 @@ export default function IncomeCategories() {
                 e.preventDefault();
                 setCategoryToDelete("");
               }}
-              className="bg-green-600 hover:bg-green-800 text-white font-bold py-2 mx-1 px-6 rounded-full "
+              className="bg-green-600 hover:bg-green-800 text-white font-bold py-2 mx-1 px-6 rounded-full max-md:px-6 max-md:py-4"
             >
               Cancel
             </button>
