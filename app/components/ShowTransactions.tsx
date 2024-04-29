@@ -113,7 +113,7 @@ export default function ShowTransactions({
                   className="px-6 py-6 max-lg:block "
                 >
                   <span className="ml-2 font-bold text-xl mx-auto">
-                    {`You don't have transactions yet`}
+                    {`You don't have any transactions yet`}
                   </span>
                 </td>
               </tr>

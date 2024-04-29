@@ -14,7 +14,13 @@ export interface TransactionToDelete {
 
 export interface State {
   registeredStatus: "idle" | "loading" | "succeeded" | "failed";
-  loginStatus: "idle" | "loading" | "succeeded" | "failed" | "loggedOut";
+  loginStatus:
+    | "idle"
+    | "loading"
+    | "loadingGuest"
+    | "succeeded"
+    | "failed"
+    | "loggedOut";
   changePasswordStatus: "idle" | "loading" | "succeeded" | "failed";
   changeUsernameStatus: "idle" | "loading" | "succeeded" | "failed";
   changeEmailStatus: "idle" | "loading" | "succeeded" | "failed";
@@ -30,6 +36,7 @@ export interface State {
   incomeCategories: string[];
   expensesValue: number;
   incomesValue: number;
+  email: string;
 }
 
 export interface User {

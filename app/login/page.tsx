@@ -23,6 +23,17 @@ const Login = () => {
     dispatch(loginUser({ email: email, password: password }));
   };
 
+  const GUEST_EMAIL = process.env.GUEST_EMAIL;
+  const GUEST_PASS = process.env.GUEST_PASS;
+
+  const handleGuestLogin = (e: SyntheticEvent) => {
+    e.preventDefault();
+
+    if (!GUEST_EMAIL || !GUEST_PASS) return;
+
+    dispatch(loginUser({ email: GUEST_EMAIL, password: GUEST_PASS }));
+  };
+
   useEffect(() => {
     if (loginStatus === "succeeded") router.push("/", { scroll: false });
   }, [loginStatus, router]);
@@ -72,12 +83,14 @@ const Login = () => {
         </div>
 
         {loginStatus !== "loading" ? (
-          <button
-            className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full "
-            onClick={onLogin}
-          >
-            Login
-          </button>
+          <>
+            <button
+              className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full "
+              onClick={onLogin}
+            >
+              Login
+            </button>
+          </>
         ) : (
           <button
             className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full "
@@ -95,6 +108,24 @@ const Login = () => {
             Register
           </Link>
         </p>
+
+        {loginStatus !== "loadingGuest" ? (
+          <button
+            type="button"
+            className="bg-green-600 w-3/4 hover:bg-green-800 text-white font-bold py-2 mt-6 px-6 rounded-full -mb-4"
+            onClick={handleGuestLogin}
+          >
+            Login as guest
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="bg-green-600 w-3/4 hover:bg-green-800 text-white font-bold py-2 mt-6 px-6 rounded-full -mb-4"
+            onClick={handleGuestLogin}
+          >
+            <Loader />
+          </button>
+        )}
       </form>
     </section>
   );

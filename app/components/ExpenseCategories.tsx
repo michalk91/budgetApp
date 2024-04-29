@@ -8,11 +8,14 @@ export default function ExpenseCategories() {
   const dispatch = useAppDispatch();
 
   const categories = useAppSelector((state) => state.user.expenseCategories);
+  const userEmail = useAppSelector((state) => state.user.email);
 
   const [categoryToDelete, setCategoryToDelete] = useState("");
   const [newCategory, setNewCategory] = useState(categories);
 
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const GUEST_EMAIL = process.env.GUEST_EMAIL;
 
   return (
     <form
@@ -58,6 +61,7 @@ export default function ExpenseCategories() {
             <button
               onClick={(e) => {
                 e.preventDefault();
+                if (userEmail === GUEST_EMAIL) return;
 
                 dispatch(
                   addCategory({
@@ -70,7 +74,11 @@ export default function ExpenseCategories() {
 
                 inputRef.current.value = "";
               }}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full mt-4"
+              className={`text-white font-bold py-2 px-6 rounded-full mt-4 ${
+                userEmail === GUEST_EMAIL
+                  ? "cursor-not-allowed bg-blue-300 "
+                  : "bg-blue-500 hover:bg-blue-700"
+              }`}
             >
               Add new
             </button>
@@ -81,6 +89,9 @@ export default function ExpenseCategories() {
             <button
               onClick={(e) => {
                 e.preventDefault();
+
+                if (userEmail === GUEST_EMAIL) return;
+
                 dispatch(
                   deleteCategory({
                     categoryName: categoryToDelete,
@@ -90,7 +101,11 @@ export default function ExpenseCategories() {
 
                 setCategoryToDelete("");
               }}
-              className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 mx-1 px-6 rounded-full "
+              className={`text-white font-bold py-2 mx-1 px-6 rounded-full ${
+                userEmail === GUEST_EMAIL
+                  ? "cursor-not-allowed bg-red-300 "
+                  : "bg-red-600 hover:bg-red-800"
+              } `}
             >
               Delete
             </button>

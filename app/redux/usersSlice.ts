@@ -35,6 +35,8 @@ import type {
   Category,
 } from "../types";
 
+const GUEST_EMAIL = process.env.GUEST_EMAIL;
+
 export const fetchUserData = createAsyncThunk(
   "users/fetchUserData",
   async () => {
@@ -469,7 +471,7 @@ export const registerUser = createAsyncThunk(
         "Personal care",
         "Other",
       ],
-      incomeCategories: ["salary", "bonus", "additional job"],
+      incomeCategories: ["Salary", "Bonus", "Additional job"],
     });
   }
 );
@@ -522,7 +524,8 @@ const userSlice = createSlice({
       //-----------------------------------------------------------------------------------------
 
       .addCase(loginUser.pending, (state) => {
-        state.loginStatus = "loading";
+        state.loginStatus =
+          state.email === GUEST_EMAIL ? "loading" : "loadingGuest";
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loginStatus = "succeeded";
@@ -607,6 +610,7 @@ const userSlice = createSlice({
         state.budgetAddDate = action.payload.budgetAddDate;
         state.incomesValue = action.payload.incomesValue;
         state.incomeCategories = action.payload.incomeCategories;
+        state.email = action.payload.email;
       })
       //----------------------------------------------------
 
