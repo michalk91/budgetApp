@@ -4,7 +4,7 @@ import {
   fetchTransactions,
   updateTransaction,
   deleteAllTransactions,
-} from "../redux/usersSlice";
+} from "../redux/transactionsSlice";
 
 import { useEffect, useState } from "react";
 import useFormatter from "../hooks/useFormatter";

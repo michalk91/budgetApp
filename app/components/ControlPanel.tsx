@@ -12,7 +12,9 @@ export default function ControlPanel() {
   const incomesFromStore = useAppSelector((state) => state.user.incomesValue);
   const currencyType = useAppSelector((state) => state.user.currencyType);
   const budgetDate = useAppSelector((state) => state.user.budgetAddDate);
-  const transactions = useAppSelector((state) => state.user.transactions);
+  const transactions = useAppSelector(
+    (state) => state.transactions.transactions
+  );
   const expenseCategories = useAppSelector(
     (state) => state.user.expenseCategories
   );
@@ -24,7 +26,7 @@ export default function ControlPanel() {
 
   useEffect(() => {
     dispatch(fetchUserData());
-  }, [dispatch]);
+  }, [dispatch, transactions]);
 
   return (
     <>

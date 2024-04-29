@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { addTransaction } from "../redux/usersSlice";
+import { addTransaction } from "../redux/transactionsSlice";
 import { useAppDispatch } from "../redux/hooks";
 import type { AddTransactionProps } from "../types";
 
