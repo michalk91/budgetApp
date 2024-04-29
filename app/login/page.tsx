@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAppSelector } from "../redux/hooks";
 import { useAppDispatch } from "../redux/hooks";
-import { loginUser } from "../redux/usersSlice";
+import { loginUser, loginGuest } from "../redux/usersSlice";
 import Loader from "../components/Loader";
 
 const Login = () => {
@@ -23,15 +23,10 @@ const Login = () => {
     dispatch(loginUser({ email: email, password: password }));
   };
 
-  const GUEST_EMAIL = process.env.GUEST_EMAIL;
-  const GUEST_PASS = process.env.GUEST_PASS;
-
   const handleGuestLogin = (e: SyntheticEvent) => {
     e.preventDefault();
 
-    if (!GUEST_EMAIL || !GUEST_PASS) return;
-
-    dispatch(loginUser({ email: GUEST_EMAIL, password: GUEST_PASS }));
+    dispatch(loginGuest());
   };
 
   useEffect(() => {

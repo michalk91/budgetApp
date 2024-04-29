@@ -36,6 +36,7 @@ import type {
 } from "../types";
 
 const GUEST_EMAIL = process.env.GUEST_EMAIL;
+const GUEST_PASS = process.env.GUEST_PASS;
 
 export const fetchUserData = createAsyncThunk(
   "users/fetchUserData",
@@ -491,6 +492,20 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+export const loginGuest = createAsyncThunk("users/loginGuest", async () => {
+  if (!GUEST_EMAIL || !GUEST_PASS) return;
+
+  const userCredential = await signInWithEmailAndPassword(
+    auth,
+    GUEST_EMAIL,
+    GUEST_PASS
+  );
+
+  const userID = userCredential.user.uid;
+
+  return { userID };
+});
+
 export const logoutUser = createAsyncThunk("users/logoutUser", async () => {
   const auth = getAuth();
   signOut(auth);
@@ -524,14 +539,31 @@ const userSlice = createSlice({
       //-----------------------------------------------------------------------------------------
 
       .addCase(loginUser.pending, (state) => {
-        state.loginStatus =
-          state.email === GUEST_EMAIL ? "loading" : "loadingGuest";
+        state.loginStatus = "loading";
       })
       .addCase(loginUser.fulfilled, (state, action) => {
+        if (!action.payload) return;
+
         state.loginStatus = "succeeded";
         state.userID = action.payload.userID;
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.loginStatus = "failed";
+        state.error = action.error.message;
+      })
+
+      //--------------------------------------------------------------------------------
+
+      .addCase(loginGuest.pending, (state) => {
+        state.loginStatus = "loadingGuest";
+      })
+      .addCase(loginGuest.fulfilled, (state, action) => {
+        if (!action.payload) return;
+
+        state.loginStatus = "succeeded";
+        state.userID = action.payload.userID;
+      })
+      .addCase(loginGuest.rejected, (state, action) => {
         state.loginStatus = "failed";
         state.error = action.error.message;
       })
