@@ -12,7 +12,7 @@ export default function DisplayAmount({
 
   return (
     <>
-      <span className={`text-center p-5 text-${fontSize}`}>
+      <span className={`text-center p-5 text-${fontSize} max-md:p-1`}>
         {`${title}: `}
         <b className={titleClass}>
           {formatCurrency(valueFromStore, currencyType)}

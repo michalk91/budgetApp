@@ -34,9 +34,9 @@ const Login = () => {
   }, [loginStatus, router]);
 
   return (
-    <section className="flex flex-col w-full h-full max-h-full justify-center items-center h-screen max-h-full">
+    <section className="flex flex-col w-full justify-center items-center grow">
       <span className="font-bold text-xl mx-auto">Sing in</span>
-      <form className="rounded-md p-10 text-center border-solid border-2 border-blue-400 shadow-xl">
+      <form className="rounded-md p-10 text-center border-solid border-2 border-blue-400 shadow-xl max-md:p-4">
         <div className="p-2">
           <label
             htmlFor="email-address"
@@ -107,7 +107,7 @@ const Login = () => {
         {loginStatus !== "loadingGuest" ? (
           <button
             type="button"
-            className="bg-green-600 w-3/4 hover:bg-green-800 text-white font-bold py-2 mt-6 px-6 rounded-full -mb-4"
+            className="bg-green-600 w-3/4 hover:bg-green-800 text-white font-bold py-2 mt-6 px-6 rounded-full -mb-4 max-md:mb-4"
             onClick={handleGuestLogin}
           >
             Login as guest
@@ -115,7 +115,7 @@ const Login = () => {
         ) : (
           <button
             type="button"
-            className="bg-green-600 w-3/4 hover:bg-green-800 text-white font-bold py-2 mt-6 px-6 rounded-full -mb-4"
+            className="bg-green-600 w-3/4 hover:bg-green-800 text-white font-bold py-2 mt-6 px-6 rounded-full -mb-4 max-md:mb-4"
             onClick={handleGuestLogin}
           >
             <Loader />

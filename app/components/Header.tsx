@@ -23,10 +23,12 @@ export default function Header() {
     if (loginStatus !== "succeeded") router.push("/login", { scroll: false });
   }, [loginStatus, router]);
   return (
-    <header className="fixed top-0 w-full z-10 h-20">
+    <header className="fixed top-0 w-full z-10 h-20 max-md:h-16">
       <div className="absolute top-0 left-0 bottom-0 right-0 bg-slate-300 z-10"></div>
       {loginStatus === "succeeded" && userName && (
-        <p className="absolute text-2xl pl-6 z-40  top-2/4 -translate-y-2/4">
+        <p
+          className={`absolute max-md:text-xl text-2xl pl-6 z-40  top-2/4 -translate-y-2/4`}
+        >
           Welcome {`${userName}`}
         </p>
       )}
@@ -53,7 +55,7 @@ export default function Header() {
                 onClick={() => setIsOpen(false)}
                 className={` ${
                   pathname === "/" ? "text-blue-800" : "text-blue-500"
-                } text-2xl hover:text-blue-800`}
+                } max-md:text-xl text-2xl hover:text-blue-800`}
                 href="/"
               >
                 Dashboard
@@ -64,7 +66,7 @@ export default function Header() {
                 onClick={() => setIsOpen(false)}
                 className={` ${
                   pathname === "/setBudget" ? "text-blue-800" : "text-blue-500"
-                } text-2xl hover:text-blue-800`}
+                } max-md:text-xl text-2xl hover:text-blue-800`}
                 href="/setBudget"
               >
                 Set budget
@@ -77,7 +79,7 @@ export default function Header() {
                   pathname === "/categorySettings"
                     ? "text-blue-800"
                     : "text-blue-500"
-                } text-2xl hover:text-blue-800`}
+                } max-md:text-xl text-2xl hover:text-blue-800`}
                 href="/categorySettings"
               >
                 Categories
@@ -90,7 +92,7 @@ export default function Header() {
                   pathname === "/accountSettings"
                     ? "text-blue-800"
                     : "text-blue-500"
-                } text-2xl hover:text-blue-800`}
+                } max-md:text-xl text-2xl hover:text-blue-800`}
                 href="/accountSettings"
               >
                 Account
@@ -102,7 +104,7 @@ export default function Header() {
                   setIsOpen(false);
                   singOut();
                 }}
-                className="text-red-500 text-2xl hover:text-red-800"
+                className="text-red-500 text-2xl hover:text-red-800 max-md:text-xl"
                 href="/"
               >
                 Logout
@@ -116,7 +118,7 @@ export default function Header() {
               onClick={() => setIsOpen(false)}
               className={` ${
                 pathname === "/register" ? "text-blue-800" : "text-blue-500"
-              } text-2xl hover:text-blue-800`}
+              } text-2xl hover:text-blue-800 max-md:text-xl`}
               href="/register"
             >
               Register
@@ -130,7 +132,7 @@ export default function Header() {
               onClick={() => setIsOpen(false)}
               className={` ${
                 pathname === "/login" ? "text-blue-800" : "text-blue-500"
-              } text-2xl hover:text-blue-800`}
+              } text-2xl hover:text-blue-800 max-md:text-xl`}
               href="/login"
             >
               Login

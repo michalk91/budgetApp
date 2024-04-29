@@ -52,7 +52,6 @@ export interface AddTransactionProps {
 }
 
 export interface BudgetAddDateProps {
-  fontSize?: string;
   budgetDate: string;
 }
 

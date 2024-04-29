@@ -17,7 +17,7 @@ export default function SetBudget() {
 
   return (
     <>
-      <form>
+      <form className="mb-4">
         <div className="flex flex-wrap items-center justify-center ">
           <span className="font-bold text-xl mx-auto mr-1 max-md:mr-0 max-md:w-full max-md:text-center mt-4">{`Set budget:`}</span>
           <input

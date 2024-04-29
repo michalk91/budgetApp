@@ -77,7 +77,7 @@ export default function ShowTransactions({
 
   return (
     <div className="w-full mt-10">
-      <span className="ml-2 font-bold text-xl mx-auto">
+      <span className="ml-2 font-bold text-xl mx-auto max-md:text-lg">
         Expenses and incomes
       </span>
 
@@ -110,7 +110,7 @@ export default function ShowTransactions({
                 <td
                   align="center"
                   colSpan={4}
-                  className="px-6 py-6 max-lg:block "
+                  className="px-6 py-6 max-lg:block bg-white"
                 >
                   <span className="ml-2 font-bold text-xl mx-auto">
                     {`You don't have any transactions yet`}
@@ -138,7 +138,7 @@ export default function ShowTransactions({
               >
                 <td
                   data-cell="date"
-                  className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center"
+                  className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0"
                 >
                   <p>created: {transaction.date}</p>
                   {transaction.editDate && (
@@ -148,7 +148,7 @@ export default function ShowTransactions({
 
                 <td
                   data-cell="category"
-                  className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center"
+                  className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0"
                 >
                   {editedTransaction.id !== transaction.id ? (
                     transaction.category
@@ -296,10 +296,10 @@ export default function ShowTransactions({
           </tbody>
         </table>
 
-        <div className="flex flex-wrap items-center ml-6">
+        <div className="flex flex-wrap items-center ml-6 max-md:m-2">
           <p>Sort: </p>
           <select
-            className="px-1 m-2 rounded-full "
+            className="px-1 m-2 rounded-full bg-white "
             onChange={(e) => {
               setExpensesSort((state) => ({
                 ...state,
@@ -313,7 +313,7 @@ export default function ShowTransactions({
             <option value="amount">amount</option>
           </select>
           <select
-            className="px-1 rounded-full max-w-full "
+            className="px-1 rounded-full max-w-full bg-white"
             onChange={(e) => {
               setExpensesSort((state) => ({
                 ...state,
@@ -328,7 +328,7 @@ export default function ShowTransactions({
           </select>
         </div>
       </div>
-      <div className="text-center">
+      <div className="text-center mt-6">
         {!addNewExpense && !addNewIncome && (
           <>
             <button
@@ -340,7 +340,7 @@ export default function ShowTransactions({
                 editedTransaction.id === ""
                   ? "bg-blue-800 hover:bg-blue-900"
                   : "bg-blue-300 cursor-not-allowed"
-              } text-white font-bold py-2 my-5 mx-2 px-6 rounded-full`}
+              } text-white font-bold py-2 my-2 mx-2 px-6 rounded-full max-md:px-6 max-md:py-4`}
             >
               Add expense
             </button>
@@ -353,7 +353,7 @@ export default function ShowTransactions({
                 editedTransaction.id === ""
                   ? "bg-green-700 hover:bg-green-800"
                   : "bg-green-300 cursor-not-allowed"
-              } text-white font-bold py-2 my-5 mx-2 px-6 rounded-full`}
+              } text-white font-bold py-2 my-2 mx-2 px-6 rounded-full max-md:px-6 max-md:py-4`}
             >
               Add Income
             </button>
@@ -368,7 +368,7 @@ export default function ShowTransactions({
                   editedTransaction.id === ""
                     ? "bg-red-700 hover:bg-red-800"
                     : "bg-red-300 cursor-not-allowed"
-                } text-white font-bold py-2 my-5 mx-2 px-6 rounded-full`}
+                } text-white font-bold py-2 my-2 mx-2 px-6 rounded-full max-md:px-6 max-md:py-4`}
               >
                 Delete All
               </button>

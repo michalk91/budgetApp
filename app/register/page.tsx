@@ -31,7 +31,7 @@ const Register = () => {
   }, [registerStatus]);
 
   return (
-    <section className="flex flex-col w-full h-screen max-h-full justify-center items-center">
+    <section className="flex flex-col w-full justify-center items-center grow">
       <span className="font-bold text-xl mx-auto">Sing up</span>
       <form className="rounded-md p-10 text-center border-solid border-2 border-blue-400 shadow-xl">
         <div className="p-2">

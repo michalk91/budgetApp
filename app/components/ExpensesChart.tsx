@@ -35,7 +35,7 @@ export default function ExpensesChart({ transactions }: ExpensesChartProps) {
   return (
     <>
       {expensesFromDataBase.length > 1 && (
-        <div className="w-full m-20">
+        <div className="w-full my-20">
           <span className="ml-2 font-bold text-xl mx-auto">
             Expenses Visualization
           </span>
@@ -45,14 +45,14 @@ export default function ExpensesChart({ transactions }: ExpensesChartProps) {
               data={data}
               options={options}
               width={"100%"}
-              height={"400px"}
+              height={`${window.innerWidth > 500 ? "400px" : "auto"}`}
             />
             <Chart
               chartType="ColumnChart"
               data={data}
               options={options}
               width={"100%"}
-              height={"500px"}
+              height={`${window.innerWidth > 500 ? "500px" : "auto"}`}
             />
           </section>
         </div>

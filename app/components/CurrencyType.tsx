@@ -15,7 +15,7 @@ export default function CurrencyType() {
 
   return (
     <select
-      className="px-4 py-2 rounded-full mt-4 max-md:mx-auto"
+      className="px-4 py-2 rounded-full mt-4 max-md:mx-auto bg-white"
       onChange={(e: SyntheticEvent) => {
         setCurrency((e.target as HTMLInputElement).value);
       }}

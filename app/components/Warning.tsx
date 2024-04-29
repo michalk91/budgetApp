@@ -7,7 +7,7 @@ export default function Warning({ setDecision }: WarningProps) {
   return (
     <>
       <span className="font-bold text-xl mx-auto">Warning</span>
-      <div className="rounded-md pt-8 px-8 pb-4  text-center border-solid border-2 border-blue-400 shadow-xl">
+      <div className="rounded-md pt-8 px-8 pb-4 max-w-full text-center border-solid border-2 border-blue-400 shadow-xl">
         <div>
           <p className="pb-5">
             Are you sure you want to remove all of your current expenses by

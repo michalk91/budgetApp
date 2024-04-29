@@ -55,7 +55,7 @@ export default function IncomeCategories() {
               required
               type="text"
               placeholder="new category"
-              className="  font-bold py-2 mr-3 px-4 rounded-full "
+              className="  font-bold py-2 mr-3 px-4 rounded-full bg-white"
             ></input>
 
             <button
@@ -86,7 +86,7 @@ export default function IncomeCategories() {
           </div>
         )}
         {categoryToDelete !== "" && (
-          <div className="mt-3">
+          <div className="mt-6">
             <button
               onClick={(e) => {
                 e.preventDefault();
