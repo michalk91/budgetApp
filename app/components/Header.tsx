@@ -45,12 +45,12 @@ export default function Header() {
         </button>
       </div>
       <ul
-        className={`flex relative  bg-slate-300 w-full lg:h-full max-lg:border-t-2 border-gray-400 max-lg:py-6  items-center transition duration-500 z-30 lg:visible justify-end max-lg:flex-col max-lg:item-center max-lg:z-0 max-lg:absolute max-lg:top-1/1
+        className={`flex relative bg-slate-300 w-full lg:h-full max-lg:border-t-2 border-gray-400 max-lg:py-6  items-center transition duration-500 z-30 lg:visible justify-end max-lg:flex-col max-lg:item-center max-lg:z-0 max-lg:absolute max-lg:top-1/1 md:pr-2
         ${!isOpen ? "max-lg:-translate-y-full" : "max-lg:translate-y-0"}`}
       >
         {loginStatus === "succeeded" && (
           <>
-            <li className="mr-6 max-lg:p-6 ">
+            <li className="mr-6 max-lg:p-6 max-md:mr-0">
               <Link
                 onClick={() => setIsOpen(false)}
                 className={` ${
@@ -61,7 +61,7 @@ export default function Header() {
                 Dashboard
               </Link>
             </li>
-            <li className="mr-6 max-lg:p-6">
+            <li className="mr-6 max-lg:p-6 max-md:mr-0">
               <Link
                 onClick={() => setIsOpen(false)}
                 className={` ${
@@ -72,7 +72,7 @@ export default function Header() {
                 Set budget
               </Link>
             </li>
-            <li className="mr-6 max-lg:p-6">
+            <li className="mr-6 max-lg:p-6 max-md:mr-0">
               <Link
                 onClick={() => setIsOpen(false)}
                 className={` ${
@@ -85,7 +85,7 @@ export default function Header() {
                 Categories
               </Link>
             </li>
-            <li className="mr-6 max-lg:p-6">
+            <li className="mr-6 max-lg:p-6 max-md:mr-0">
               <Link
                 onClick={() => setIsOpen(false)}
                 className={` ${
@@ -98,7 +98,7 @@ export default function Header() {
                 Account
               </Link>
             </li>
-            <li className="mr-6 max-lg:p-6">
+            <li className="mr-6 max-lg:p-6 max-md:mr-0">
               <Link
                 onClick={() => {
                   setIsOpen(false);
@@ -113,7 +113,7 @@ export default function Header() {
           </>
         )}
         {loginStatus !== "succeeded" && (
-          <li className="mr-6 max-lg:p-6 ">
+          <li className="mr-6 max-lg:p-6 max-md:mr-0">
             <Link
               onClick={() => setIsOpen(false)}
               className={` ${
@@ -127,7 +127,7 @@ export default function Header() {
         )}
 
         {loginStatus !== "succeeded" && (
-          <li className="mr-6 max-lg:p-6 ">
+          <li className="mr-6 max-lg:p-6 max-md:mr-0">
             <Link
               onClick={() => setIsOpen(false)}
               className={` ${

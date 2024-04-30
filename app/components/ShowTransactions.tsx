@@ -82,8 +82,8 @@ export default function ShowTransactions({
       </span>
 
       <div className="relative overflow-x-auto border-2 border-slate-300 rounded-lg max-md:mb-6 shadow-xl">
-        <table className="table-fixed w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
-          <thead className="text-xs text-gray-700 uppercase  dark:bg-gray-700 dark:text-gray-400">
+        <table className="table-fixed w-full text-sm text-left text-gray-500  ">
+          <thead className="text-xs text-gray-700 uppercase ">
             <tr>
               <th scope="col" className="px-6 py-3 max-lg:hidden">
                 Date
@@ -102,11 +102,7 @@ export default function ShowTransactions({
 
           <tbody>
             {transactions?.length === 0 && !addNewExpense && !addNewIncome && (
-              <tr
-                className={
-                  "bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700"
-                }
-              >
+              <tr className={"bg-gray-100 border-b "}>
                 <td
                   align="center"
                   colSpan={4}
@@ -124,12 +120,12 @@ export default function ShowTransactions({
                 key={transaction.id}
                 className={
                   editedTransaction.id === transaction.id
-                    ? `bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700  ${
+                    ? `bg-gray-100 border-b   ${
                         transaction.type === "expense"
                           ? ""
                           : "border-l-4 border-l-green-500"
                       } `
-                    : `hover:bg-gray-100 bg-white border-b dark:bg-gray-800 dark:border-gray-700 ${
+                    : `hover:bg-gray-100 bg-white border-b  ${
                         transaction.type === "expense"
                           ? ""
                           : "border-l-4 border-l-green-500"
@@ -160,7 +156,7 @@ export default function ShowTransactions({
                           category: e.target.value,
                         }))
                       }
-                      className="px-2 py-1 rounded-full -ml-3 max-w-full max-lg:ml-1"
+                      className="px-2 py-1 rounded-full -ml-3 max-w-full max-lg:ml-1 bg-white"
                       defaultValue={transaction.category}
                       name="choice"
                     >
@@ -202,7 +198,7 @@ export default function ShowTransactions({
                         }))
                       }
                       defaultValue={transaction.amount}
-                      className="px-2 py-1 rounded-full -ml-2 max-w-full max-lg: ml-1 max-lg:max-w-32"
+                      className="px-2 py-1 rounded-full -ml-2 max-w-full max-lg: ml-1 max-lg:max-w-32 bg-white"
                     ></input>
                   )}
                 </td>
