@@ -41,7 +41,7 @@ export default function AddTransaction({
               category: e.target.value,
             }));
           }}
-          className="px-2 py-1 rounded-full -ml-3 "
+          className="bg-white px-2 py-1 rounded-full -ml-3"
           value={category}
           name="choice"
         >
@@ -65,7 +65,7 @@ export default function AddTransaction({
           type="number"
           value={amount}
           placeholder="amount"
-          className="px-2 py-1 rounded-full  max-w-32"
+          className="px-2 py-1 rounded-full bg-white max-w-32"
         ></input>
       </td>
 

@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { logoutUser } from "../redux/usersSlice";
 import { useRouter, usePathname } from "next/navigation";
+import useTouchOutside from "../hooks/useTouchOutside";
 
 export default function Header() {
   const dispatch = useAppDispatch();
@@ -19,11 +20,22 @@ export default function Header() {
     dispatch(logoutUser());
   };
 
+  const menuRef = useRef<HTMLElement>(null);
+
+  const touchedOutside = useTouchOutside(
+    menuRef as React.MutableRefObject<HTMLElement>
+  );
+
+  useEffect(() => {
+    if (touchedOutside) setIsOpen(false);
+  }, [touchedOutside]);
+
   useEffect(() => {
     if (loginStatus !== "succeeded") router.push("/login", { scroll: false });
   }, [loginStatus, router]);
+
   return (
-    <header className="fixed top-0 w-full z-10 h-20 max-md:h-16">
+    <header ref={menuRef} className="fixed top-0 w-full z-10 h-20 max-md:h-16">
       <div className="absolute top-0 left-0 bottom-0 right-0 bg-slate-300 z-10"></div>
       {loginStatus === "succeeded" && userName && (
         <p
