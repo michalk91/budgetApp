@@ -1,36 +1,9 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Description
+This is a budget management app. The application allows you to create users and perform subsequent operations such as changing your password, email address, etc. For presentation purposes, there is a user called "Guest" which has certain restrictions related to deleting the account, changing the email address, etc. Additionally, the user "Guest" cannot add or remove income and expense categories. You can set a budget and then add expenses and income to update the budget. You can also edit and delete expenses. All expenses and revenues have their own category, creation date, and modification date. The application also allows you to add categories of expenses and income (The "Guest" account cannot do this). After adding expenses, the application will display charts showing the percentage of expenses by category.
 
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## NPM Packages used:
+- NextJS 14,
+- Redux-Toolkit,
+- Firebase,
+- React-toastify,
+- React-google-charts
