@@ -1,28 +1,34 @@
 import { Chart } from "react-google-charts";
-import type { Transaction, ExpensesChartProps } from "../types";
+import type { Transaction } from "../types";
+import { useAppSelector } from "../redux/hooks";
 
-export default function ExpensesChart({ transactions }: ExpensesChartProps) {
+export default function ExpensesCharts() {
+  const transactions = useAppSelector((state) => state.budgets.transactions);
+
   const expensesFromDataBase: [[string, number]] = [["", 0]];
 
-  transactions?.map((expense: Transaction) => {
-    if (expense.type === "income") return;
+  transactions?.map((transaction: Transaction) => {
+    if (transaction.type === "income") return;
 
     let sameCategory = "",
       totalAmount = 0,
       sameCategoryIndex = 0;
 
     expensesFromDataBase.filter((item, index) => {
-      if (item[0] === expense.category) {
-        sameCategory = expense.category;
-        totalAmount = item[1] + expense.amount;
+      if (item[0] === transaction.category) {
+        sameCategory = transaction.category;
+        totalAmount = item[1] + transaction.amount;
         sameCategoryIndex = index;
       }
     });
 
-    if (expense.category !== sameCategory) {
-      expensesFromDataBase.push([expense.category, expense.amount]);
-    } else if (expense.category === sameCategory) {
-      expensesFromDataBase[sameCategoryIndex] = [expense.category, totalAmount];
+    if (transaction.category !== sameCategory) {
+      expensesFromDataBase.push([transaction.category, transaction.amount]);
+    } else if (transaction.category === sameCategory) {
+      expensesFromDataBase[sameCategoryIndex] = [
+        transaction.category,
+        totalAmount,
+      ];
     }
   });
 
@@ -34,7 +40,7 @@ export default function ExpensesChart({ transactions }: ExpensesChartProps) {
 
   return (
     <>
-      {expensesFromDataBase.length > 1 && (
+      {expensesFromDataBase.length > 2 ? (
         <div className="w-full my-20">
           <span className="ml-2 font-bold text-xl mx-auto">
             Expenses Visualization
@@ -55,6 +61,12 @@ export default function ExpensesChart({ transactions }: ExpensesChartProps) {
               height={`${window.innerWidth > 500 ? "500px" : "auto"}`}
             />
           </section>
+        </div>
+      ) : (
+        <div className="p-10 border-2 border-gray-500 mt-10 rounded-lg shadow-xl">
+          <span className="text-2xl">
+            There is not enough data to generate a visualization.
+          </span>
         </div>
       )}
     </>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { logoutUser } from "../redux/usersSlice";
@@ -73,30 +73,7 @@ export default function Header() {
                 Dashboard
               </Link>
             </li>
-            <li className="mr-6 max-lg:p-6 max-md:mr-0">
-              <Link
-                onClick={() => setIsOpen(false)}
-                className={` ${
-                  pathname === "/setBudget" ? "text-blue-800" : "text-blue-500"
-                } max-md:text-xl text-2xl hover:text-blue-800`}
-                href="/setBudget"
-              >
-                Set budget
-              </Link>
-            </li>
-            <li className="mr-6 max-lg:p-6 max-md:mr-0">
-              <Link
-                onClick={() => setIsOpen(false)}
-                className={` ${
-                  pathname === "/categorySettings"
-                    ? "text-blue-800"
-                    : "text-blue-500"
-                } max-md:text-xl text-2xl hover:text-blue-800`}
-                href="/categorySettings"
-              >
-                Categories
-              </Link>
-            </li>
+
             <li className="mr-6 max-lg:p-6 max-md:mr-0">
               <Link
                 onClick={() => setIsOpen(false)}

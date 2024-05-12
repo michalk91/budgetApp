@@ -2,12 +2,12 @@ import { useAppDispatch } from "../redux/hooks";
 import { SyntheticEvent } from "react";
 import { useState, useRef } from "react";
 import { useAppSelector } from "../redux/hooks";
-import { addCategory, deleteCategory } from "../redux/usersSlice";
+import { addCategory, deleteCategory } from "../redux/budgetsSlice";
 
 export default function IncomeCategories() {
   const dispatch = useAppDispatch();
 
-  const categories = useAppSelector((state) => state.user.incomeCategories);
+  const categories = useAppSelector((state) => state.budgets.incomeCategories);
   const userEmail = useAppSelector((state) => state.user.email);
 
   const [categoryToDelete, setCategoryToDelete] = useState("");
@@ -55,7 +55,7 @@ export default function IncomeCategories() {
               required
               type="text"
               placeholder="new category"
-              className="  font-bold py-2 mr-3 px-4 rounded-full bg-white"
+              className="  font-bold py-2 mr-3 px-4 rounded-full bg-white border-2 border-black"
             ></input>
 
             <button

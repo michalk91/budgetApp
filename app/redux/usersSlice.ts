@@ -14,15 +14,12 @@ import {
   setDoc,
   doc,
   updateDoc,
-  Timestamp,
   getDoc,
   deleteDoc,
   collection,
   getDocs,
-  arrayUnion,
-  arrayRemove,
 } from "firebase/firestore";
-import type { State, User, Category } from "../types";
+import type { User, UsersSlice } from "../types";
 
 const GUEST_EMAIL = process.env.GUEST_EMAIL;
 const GUEST_PASS = process.env.GUEST_PASS;
@@ -112,110 +109,6 @@ export const changeUsername = createAsyncThunk(
   }
 );
 
-export const setBudget = createAsyncThunk(
-  "users/setBudget",
-  async (editedBudget: number) => {
-    const currentUserID = auth.currentUser?.uid;
-
-    if (!currentUserID) return;
-
-    const budgetAddDate = new Date(
-      Timestamp.now().seconds * 1000
-    ).toLocaleString();
-
-    await updateDoc(doc(db, "users", currentUserID), {
-      budget: editedBudget,
-      budgetAddDate,
-      expensesValue: 0,
-      incomesValue: 0,
-    });
-
-    let areTransactions = false;
-
-    const transactionsFromDatabase = await getDocs(
-      collection(db, `users/${currentUserID}/transactions`)
-    );
-
-    for (const transaction of transactionsFromDatabase.docs) {
-      if (transactionsFromDatabase.docs.length === 0) return;
-
-      await deleteDoc(
-        doc(db, `users/${currentUserID}/transactions`, transaction.id)
-      );
-      areTransactions = true;
-    }
-
-    return {
-      editedBudget,
-      budgetAddDate,
-      transactions: areTransactions ? [] : undefined,
-    };
-  }
-);
-
-export const addCategory = createAsyncThunk(
-  "users/addCategory",
-  async (category: Category) => {
-    const currentUserID = auth.currentUser?.uid;
-
-    if (!currentUserID) return;
-
-    const { categoryName, type } = category;
-
-    await updateDoc(
-      doc(db, "users", currentUserID),
-      type === "expense"
-        ? {
-            expenseCategories: arrayUnion(categoryName),
-          }
-        : {
-            incomeCategories: arrayUnion(categoryName),
-          }
-    );
-
-    return category;
-  }
-);
-
-export const deleteCategory = createAsyncThunk(
-  "users/deleteCategory",
-  async (category: Category) => {
-    const currentUserID = auth.currentUser?.uid;
-
-    if (!currentUserID) return;
-
-    const { categoryName, type } = category;
-
-    await updateDoc(
-      doc(db, "users", currentUserID),
-      type === "expense"
-        ? {
-            expenseCategories: arrayRemove(categoryName),
-          }
-        : {
-            incomeCategories: arrayRemove(categoryName),
-          }
-    );
-
-    return category;
-  }
-);
-
-export const changeCurrencyType = createAsyncThunk(
-  "users/changeCurrencyType",
-  async (editedCurrencyType: string) => {
-    const currentUserID = auth.currentUser?.uid;
-
-    if (!currentUserID) return;
-
-    await updateDoc(doc(db, "users", currentUserID), {
-      currencyType: editedCurrencyType,
-    });
-
-    return editedCurrencyType;
-  }
-);
-
 export const registerUser = createAsyncThunk(
   "users/registerUser",
   async (user: User) => {
@@ -228,20 +121,6 @@ export const registerUser = createAsyncThunk(
     await setDoc(doc(db, "users", currentUser.uid), {
       email: currentUser.email,
       displayName: user.username,
-      budget: 0,
-      expensesValue: 0,
-      incomesValue: 0,
-      currencyType: "PLN",
-      expenseCategories: [
-        "Shops",
-        "Food",
-        "Healthcare",
-        "Entertainment",
-        "Travel & Vacation",
-        "Personal care",
-        "Other",
-      ],
-      incomeCategories: ["Salary", "Bonus", "Additional job"],
     });
   }
 );
@@ -290,7 +169,7 @@ const userSlice = createSlice({
     changeEmailStatus: "idle",
     removeUserStatus: "idle",
     error: undefined,
-  } as State,
+  } as UsersSlice,
   reducers: {},
   extraReducers: (builder) => {
     builder
@@ -403,72 +282,8 @@ const userSlice = createSlice({
       .addCase(fetchUserData.fulfilled, (state, action) => {
         if (!action.payload) return;
 
-        state.budget = action.payload.budget;
         state.username = action.payload.displayName;
-        state.currencyType = action.payload.currencyType;
-        state.expenseCategories = action.payload.expenseCategories;
-        state.expensesValue = action.payload.expensesValue;
-        state.budgetAddDate = action.payload.budgetAddDate;
-        state.incomesValue = action.payload.incomesValue;
-        state.incomeCategories = action.payload.incomeCategories;
         state.email = action.payload.email;
-      })
-      //----------------------------------------------------
-
-      .addCase(setBudget.fulfilled, (state, action) => {
-        if (!action.payload) return;
-
-        state.budget = action.payload.editedBudget;
-        state.budgetAddDate = action.payload.budgetAddDate;
-        state.expensesValue = 0;
-
-        if (action.payload.transactions !== undefined)
-          state.transactions = action.payload.transactions;
-      })
-
-      //--------------------------------------------------------------
-      .addCase(addCategory.fulfilled, (state, action) => {
-        if (!action.payload) return;
-
-        const { type, categoryName } = action.payload;
-
-        if (type === "expense") {
-          const categoryIndex = state.expenseCategories.findIndex(
-            (category) => category === categoryName
-          );
-
-          if (categoryIndex === -1) state.expenseCategories.push(categoryName);
-        } else if (type === "income") {
-          const categoryIndex = state.incomeCategories.findIndex(
-            (category) => category === categoryName
-          );
-
-          if (categoryIndex === -1) state.incomeCategories.push(categoryName);
-        }
-      })
-      //----------------------------------------------------------
-      .addCase(deleteCategory.fulfilled, (state, action) => {
-        if (!action.payload) return;
-
-        const { type, categoryName } = action.payload;
-
-        if (type === "expense") {
-          state.expenseCategories = state.expenseCategories.filter(
-            (category) => category !== categoryName
-          );
-        } else if (type === "income") {
-          state.incomeCategories = state.incomeCategories.filter(
-            (category) => category !== categoryName
-          );
-        }
-      })
-
-      //----------------------------------------------------------
-
-      .addCase(changeCurrencyType.fulfilled, (state, action) => {
-        if (!action.payload) return;
-
-        state.currencyType = action.payload;
       });
   },
 });

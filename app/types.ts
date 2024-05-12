@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export interface Transaction {
   id?: string;
   category: string;
@@ -5,6 +7,7 @@ export interface Transaction {
   date?: string;
   editDate?: string;
   type: "expense" | "income";
+  budgetID?: string;
 }
 
 export interface TransactionToDelete {
@@ -12,7 +15,7 @@ export interface TransactionToDelete {
   type: "expense" | "income";
 }
 
-export interface State {
+export interface UsersSlice {
   registeredStatus: "idle" | "loading" | "succeeded" | "failed";
   loginStatus:
     | "idle"
@@ -28,15 +31,28 @@ export interface State {
   error: string | undefined;
   userID: null | string;
   username: null | string;
-  budget: number;
-  budgetAddDate: string;
-  currencyType: string;
-  transactions: Transaction[];
+  email: string;
+}
+
+export interface State {
+  budgets: BudgetsSlice;
+  user: UsersSlice;
+}
+
+export interface BudgetsSlice {
+  budgetID: string;
+  budgetValue: number;
+  budgetsArray: Budget[];
+  currencyType: "PLN" | "EUR" | "USD";
+  addDate: string;
   expenseCategories: string[];
   incomeCategories: string[];
   expensesValue: number;
   incomesValue: number;
-  email: string;
+  budgetName: string;
+  transactions: Transaction[];
+  fetchTransactionsStatus: "idle" | "loading" | "succeeded" | "failed";
+  selectedOption: string;
 }
 
 export interface User {
@@ -49,6 +65,10 @@ export interface AddTransactionProps {
   setAdd: (value: boolean) => void;
   categories: string[];
   type: "income" | "expense";
+}
+
+export interface AddNewBudgetProps {
+  setNewBudget: (value: boolean) => void;
 }
 
 export interface BudgetAddDateProps {
@@ -71,23 +91,46 @@ export interface WarningProps {
 export interface DisplayAmountProps {
   fontSize?: string;
   valueFromStore: number;
-  currencyType: string;
   title: string;
   titleClass: string;
 }
 
 export interface ShowTransactionsProps {
-  transactions: Transaction[];
-  currencyType: string;
-  expenseCategories: string[];
-  incomeCategories: string[];
-}
-
-export interface ExpensesChartProps {
-  transactions: Transaction[];
+  setExpensesSort: Dispatch<
+    SetStateAction<{
+      sortBy: string;
+      sortDirection: string;
+    }>
+  >;
+  expensesSort: { sortBy: string; sortDirection: string };
 }
 
 export interface Category {
   categoryName: string;
   type: "expense" | "income";
+}
+
+export interface Budget {
+  [key: string]: string | number | string[];
+  budgetID: string;
+  amount: number;
+  addDate: string;
+  budgetName: string;
+  ownerEmail: string;
+  ownerID: string;
+  timestamp: number;
+  usersWithAccess: string[];
+  currencyType: "PLN" | "EUR" | "USD";
+  expensesValue: number;
+  incomesValue: number;
+}
+
+export interface NewBudget {
+  budgetName: string;
+  budgetValue: number;
+  currencyType: "PLN" | "EUR" | "USD";
+}
+
+export interface SubNavigationProps {
+  activeOption: string;
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { addTransaction } from "../redux/transactionsSlice";
+import { addTransaction } from "../redux/budgetsSlice";
 import { useAppDispatch } from "../redux/hooks";
 import type { AddTransactionProps } from "../types";
 
@@ -18,7 +18,11 @@ export default function AddTransaction({
   const { amount, category } = valueFromInput;
 
   const addNew = () => {
-    dispatch(addTransaction({ category, amount: Number(amount), type }));
+    const amountValue = Number(amount);
+
+    if (amountValue <= 0) return;
+
+    dispatch(addTransaction({ category, amount: amountValue, type }));
 
     setValueFromInput((state) => ({ ...state, amount: "" }));
 
@@ -41,7 +45,7 @@ export default function AddTransaction({
               category: e.target.value,
             }));
           }}
-          className="bg-white px-2 py-1 rounded-full -ml-3"
+          className="bg-white px-2 py-1 rounded-full -ml-2 border-2"
           value={category}
           name="choice"
         >
@@ -65,7 +69,7 @@ export default function AddTransaction({
           type="number"
           value={amount}
           placeholder="amount"
-          className="px-2 py-1 rounded-full bg-white max-w-32"
+          className="px-2 py-1 rounded-full bg-white max-w-32 border-2"
         ></input>
       </td>
 
@@ -78,7 +82,9 @@ export default function AddTransaction({
           Add
         </button>
         <button
-          onClick={() => setAdd(false)}
+          onClick={() => {
+            setAdd(false);
+          }}
           className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 m-2 px-6 rounded-full "
         >
           Cancel
