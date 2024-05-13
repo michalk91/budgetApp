@@ -93,7 +93,7 @@ export default function ShowBudgets() {
                     </td>
 
                     <td
-                      data-cell="category"
+                      data-cell="Name"
                       className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0"
                     >
                       {budget.budgetName}
