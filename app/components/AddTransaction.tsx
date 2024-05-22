@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { addTransaction } from "../redux/budgetsSlice";
 import { useAppDispatch } from "../redux/hooks";
 import type { AddTransactionProps } from "../types";
+import Button from "./Button";
 
 export default function AddTransaction({
   setAdd,
@@ -17,7 +18,7 @@ export default function AddTransaction({
 
   const { amount, category } = valueFromInput;
 
-  const addNew = () => {
+  const addNew = useCallback(() => {
     const amountValue = Number(amount);
 
     if (amountValue <= 0) return;
@@ -27,7 +28,7 @@ export default function AddTransaction({
     setValueFromInput((state) => ({ ...state, amount: "" }));
 
     setAdd(false);
-  };
+  }, [amount, category, dispatch, type, setAdd]);
 
   return (
     <tr className="bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700 max-lg:text-center">
@@ -72,23 +73,22 @@ export default function AddTransaction({
           className="px-2 py-1 rounded-full bg-white max-w-32 border-2"
         ></input>
       </td>
-
+      <td className="pl-6 max-lg:hidden">You</td>
       <td className="max-lg:block max-lg:pb-4">
-        <button
-          type="submit"
-          onClick={addNew}
-          className="bg-green-700 hover:bg-green-900 text-white font-bold py-2 m-2 px-6 rounded-full "
+        <Button
+          handleClick={addNew}
+          additionalStyles="bg-green-700 hover:bg-green-900"
         >
           Add
-        </button>
-        <button
-          onClick={() => {
+        </Button>
+        <Button
+          handleClick={() => {
             setAdd(false);
           }}
-          className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 m-2 px-6 rounded-full "
+          additionalStyles="bg-red-600 hover:bg-red-800"
         >
           Cancel
-        </button>
+        </Button>
       </td>
     </tr>
   );

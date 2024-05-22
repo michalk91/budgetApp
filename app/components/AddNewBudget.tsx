@@ -1,7 +1,8 @@
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useCallback, useState } from "react";
 import { useAppDispatch } from "../redux/hooks";
 import { AddNewBudgetProps } from "../types";
 import { addNewBudget } from "../redux/budgetsSlice";
+import Button from "./Button";
 
 export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
   const dispatch = useAppDispatch();
@@ -14,23 +15,26 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
 
   const { name, amount, currencyType } = budgetFromInput;
 
-  const handleAddBudget = (e: SyntheticEvent) => {
-    e.preventDefault();
+  const handleAddBudget = useCallback(
+    (e: SyntheticEvent) => {
+      e.preventDefault();
 
-    const budgetValue = Number(amount);
+      const budgetValue = Number(amount);
 
-    if (budgetValue <= 0) return;
+      if (budgetValue <= 0) return;
 
-    dispatch(
-      addNewBudget({
-        budgetName: name,
-        budgetValue,
-        currencyType: currencyType as "PLN" | "EUR" | "USD",
-      })
-    );
-    setBudgetFromInput({ name: "", amount: "", currencyType: "PLN" });
-    setNewBudget(false);
-  };
+      dispatch(
+        addNewBudget({
+          budgetName: name,
+          budgetValue,
+          currencyType: currencyType as "PLN" | "EUR" | "USD",
+        })
+      );
+      setBudgetFromInput({ name: "", amount: "", currencyType: "PLN" });
+      setNewBudget(false);
+    },
+    [amount, currencyType, dispatch, name, setNewBudget]
+  );
 
   return (
     <>
@@ -87,21 +91,20 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
             <option value="EUR">EUR</option>
           </select>
         </td>
-
+        <td className="pl-6 max-lg:hidden">You</td>
         <td className="max-lg:block max-lg:pb-4">
-          <button
-            type="submit"
-            onClick={handleAddBudget}
-            className="bg-green-700 hover:bg-green-900 text-white font-bold py-2 m-2 px-6 rounded-full "
+          <Button
+            handleClick={handleAddBudget}
+            additionalStyles="bg-green-700 hover:bg-green-900"
           >
             Add
-          </button>
-          <button
-            onClick={() => setNewBudget(false)}
-            className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 m-2 px-6 rounded-full "
+          </Button>
+          <Button
+            handleClick={() => setNewBudget(false)}
+            additionalStyles="bg-red-600 hover:bg-red-800"
           >
             Cancel
-          </button>
+          </Button>
         </td>
       </tr>
     </>

@@ -35,18 +35,29 @@ export const fetchBudgets = createAsyncThunk(
 
     const currentUserID = auth.currentUser?.uid;
 
-    const budgetsQuery = query(
+    const yourBudgetsQuery = query(
       collection(db, "budgets"),
-      where("usersWithAccess", "array-contains", currentUserID)
+      where("ownerID", "==", currentUserID)
     );
 
-    const querySnapshot = await getDocs(budgetsQuery);
+    const querySnapYourBudgets = await getDocs(yourBudgetsQuery);
 
-    const budgets = querySnapshot.docs.map(
+    const yourBudgets = querySnapYourBudgets.docs.map(
       (doc) => ({ budgetID: doc.id, ...doc.data() } as Budget)
     );
 
-    const sortedBudget = useSort(budgets, `${sortBy}`);
+    const sharedBudgetsQuery = query(
+      collection(db, "budgets"),
+      where("usersWithAccess", "array-contains", currentUserID)
+    );
+    const querySnapSharedBudgets = await getDocs(sharedBudgetsQuery);
+
+    const sharedBudgets = querySnapSharedBudgets.docs.map(
+      (doc) => ({ budgetID: doc.id, ...doc.data() } as Budget)
+    );
+    const combinedBudgets = [...yourBudgets, ...sharedBudgets];
+
+    const sortedBudget = useSort(combinedBudgets, `${sortBy}`);
 
     return !descending ? sortedBudget : sortedBudget.reverse();
   }
@@ -131,9 +142,13 @@ export const deleteAllBudgets = createAsyncThunk(
 
 export const addNewBudget = createAsyncThunk(
   "budgets/addNewBudget",
-  async (newBudget: NewBudget) => {
+  async (newBudget: NewBudget, { getState }) => {
     const currentUserID = auth.currentUser?.uid;
     const currentUserEmail = auth.currentUser?.email;
+
+    const state = getState() as State;
+
+    const username = state.user.username;
 
     if (!currentUserEmail || !currentUserID) return;
 
@@ -146,11 +161,15 @@ export const addNewBudget = createAsyncThunk(
       timestamp: Timestamp.now().seconds,
       ownerID: currentUserID,
       ownerEmail: currentUserEmail,
+      ownerUsername: username,
       addDate: currentDate,
-      usersWithAccess: arrayUnion(currentUserID),
+      usersWithAccess: [],
       currencyType: newBudget.currencyType,
       expensesValue: 0,
       incomesValue: 0,
+      allowManageAllTransactions: arrayUnion(currentUserID),
+
+      allowManageCategories: arrayUnion(currentUserID),
 
       expenseCategories: [
         "Shops",
@@ -166,7 +185,7 @@ export const addNewBudget = createAsyncThunk(
     const newBudgetRef = await addDoc(collection(db, "budgets"), createdBudget);
 
     await updateDoc(doc(db, "budgets", newBudgetRef.id), {
-      id: newBudgetRef.id,
+      budgetID: newBudgetRef.id,
     });
 
     return {
@@ -256,17 +275,36 @@ export const deleteTransaction = createAsyncThunk(
     const state = getState() as State;
 
     const budgetID = state.budgets.budgetID;
+    const currentUserID = auth.currentUser?.uid;
 
-    if (!budgetID) return;
+    if (!budgetID || !currentUserID) return;
 
     const transactions = await getDocs(
       collection(db, `budgets/${budgetID}/transactions`)
     );
 
     let transactionAmount = 0;
+    let havePermissionToDelete = false;
+
+    const budgetRef = doc(db, "budgets", budgetID);
+
+    const budgetSnap = await getDoc(budgetRef);
+
+    if (budgetSnap.exists()) {
+      havePermissionToDelete =
+        budgetSnap.data().allowManageAllTransactions.includes(currentUserID) ||
+        budgetSnap.data().ownerID.includes(currentUserID);
+    }
 
     for (const transaction of transactions.docs) {
       if (transaction.id === transactionToDelete.id) {
+        if (
+          transaction.data().ownerID !== currentUserID &&
+          !havePermissionToDelete
+        ) {
+          throw Error("Unauthorized action");
+        }
+
         await deleteDoc(
           doc(db, `budgets/${budgetID}/transactions`, transaction.id)
         );
@@ -301,8 +339,11 @@ export const deleteAllTransactions = createAsyncThunk(
   async (_, { getState }) => {
     const state = getState() as State;
 
+    const currentUserID = auth.currentUser?.uid;
+
     const budgetID = state.budgets.budgetID;
-    if (!budgetID) return;
+
+    if (!budgetID || !currentUserID) return;
 
     const transactions = await getDocs(
       collection(db, `budgets/${budgetID}/transactions`)
@@ -310,7 +351,26 @@ export const deleteAllTransactions = createAsyncThunk(
 
     let allTransactionsAmount = 0;
 
+    let havePermissionToDelete = false;
+
+    const budgetRef = doc(db, "budgets", budgetID);
+
+    const budgetSnap = await getDoc(budgetRef);
+
+    if (budgetSnap.exists()) {
+      havePermissionToDelete = budgetSnap
+        .data()
+        .allowManageAllTransactions.includes(currentUserID);
+    }
+
     for (const transaction of transactions.docs) {
+      if (
+        transaction.data().ownerID !== currentUserID &&
+        !havePermissionToDelete
+      ) {
+        throw Error("Unauthorized action");
+      }
+
       allTransactionsAmount =
         transaction.data().type === "expense"
           ? allTransactionsAmount + transaction.data().amount
@@ -335,8 +395,12 @@ export const addTransaction = createAsyncThunk(
   async (transaction: Transaction, { getState }) => {
     const state = getState() as State;
 
+    const userID = auth.currentUser?.uid;
+
     const budgetID = state.budgets.budgetID;
-    if (!budgetID) return;
+    const username = state.user.username;
+
+    if (!budgetID || !userID || !username) return;
 
     const currentDate = new Date(
       Timestamp.now().seconds * 1000
@@ -347,6 +411,8 @@ export const addTransaction = createAsyncThunk(
       type: transaction.type,
       timestamp: Timestamp.now().seconds,
       date: currentDate,
+      ownerID: userID,
+      ownerUsername: username,
     };
 
     const transactionRef = await addDoc(
@@ -378,10 +444,24 @@ export const updateTransaction = createAsyncThunk(
   async (editedTransaction: Transaction, { getState }) => {
     const state = getState() as State;
 
+    const currentUserID = auth.currentUser?.uid;
+
     const budgetID = state.budgets.budgetID;
-    if (!budgetID) return;
+    if (!budgetID || !currentUserID) return;
 
     let budgetDiff = 0;
+
+    let havePermissionToDelete = false;
+
+    const budgetRef = doc(db, "budgets", budgetID);
+
+    const budgetSnap = await getDoc(budgetRef);
+
+    if (budgetSnap.exists()) {
+      havePermissionToDelete =
+        budgetSnap.data().allowManageAllTransactions.includes(currentUserID) ||
+        budgetSnap.data().ownerID.includes(currentUserID);
+    }
 
     const transactions = await getDocs(
       collection(db, "budgets", budgetID, "transactions")
@@ -393,6 +473,13 @@ export const updateTransaction = createAsyncThunk(
 
     for (const transaction of transactions.docs) {
       if (transaction.id === editedTransaction.id) {
+        if (
+          transaction.data().ownerID !== currentUserID &&
+          !havePermissionToDelete
+        ) {
+          throw Error("Unauthorized action");
+        }
+
         const transactionRef = doc(
           db,
           "budgets",
@@ -400,6 +487,9 @@ export const updateTransaction = createAsyncThunk(
           "transactions",
           transaction.id
         );
+
+        const { type, amount, ownerID, ownerEmail, ownerUsername } =
+          transaction.data();
 
         const validatedEditedTransaction = {
           id: editedTransaction.id,
@@ -418,8 +508,6 @@ export const updateTransaction = createAsyncThunk(
         };
 
         await updateDoc(transactionRef, validatedEditedTransaction);
-
-        const { type, amount } = transaction.data();
 
         if (amount !== validatedEditedTransaction.amount) {
           budgetDiff =
@@ -444,9 +532,31 @@ export const updateTransaction = createAsyncThunk(
           validatedEditedTransaction,
           budgetDiff,
           type: editedTransaction.type,
+          ownerID,
+          ownerEmail,
+          ownerUsername,
         };
       }
     }
+  }
+);
+
+export const leaveBudget = createAsyncThunk(
+  "invitations/leaveBudget",
+  async (budgetID: string) => {
+    const currentUserID = auth.currentUser?.uid;
+
+    if (!currentUserID) return;
+
+    await updateDoc(
+      doc(db, "budgets", budgetID),
+
+      {
+        usersWithAccess: arrayRemove(currentUserID),
+      }
+    );
+
+    return budgetID;
   }
 );
 
@@ -466,6 +576,9 @@ const budgetsSlice = createSlice({
     transactions: [],
     fetchTransactionsStatus: "idle",
     selectedOption: "Expenses",
+    allowManageAllTransactions: [],
+    allowManageCategories: [],
+    ownerID: "",
   } as BudgetsSlice,
   reducers: {
     setSelectedBudgetID: (state, action) => {
@@ -489,6 +602,10 @@ const budgetsSlice = createSlice({
         state.budgetName = action.payload.budgetName;
         state.incomesValue = action.payload.incomesValue;
         state.expensesValue = action.payload.expensesValue;
+        state.allowManageAllTransactions =
+          action.payload.allowManageAllTransactions;
+        state.allowManageCategories = action.payload.allowManageAllTransactions;
+        state.ownerID = action.payload.ownerID;
       })
 
       .addCase(fetchBudgets.fulfilled, (state, action) => {
@@ -625,6 +742,11 @@ const budgetsSlice = createSlice({
         if (transactionIndex !== -1) {
           state.transactions[transactionIndex] = validatedEditedTransaction;
           state.budgetValue += budgetDiff;
+          state.transactions[transactionIndex].ownerID = action.payload.ownerID;
+          state.transactions[transactionIndex].ownerUsername =
+            action.payload.ownerUsername;
+          state.transactions[transactionIndex].ownerEmail =
+            action.payload.ownerEmail;
 
           if (action.payload.type === "expense") {
             state.expensesValue -= budgetDiff;
@@ -632,6 +754,14 @@ const budgetsSlice = createSlice({
             state.incomesValue += budgetDiff;
           }
         }
+      })
+
+      //--------------------------------------------------------------------
+
+      .addCase(leaveBudget.fulfilled, (state, action) => {
+        state.budgetsArray = state.budgetsArray.filter(
+          (budget) => budget.budgetID !== action.payload
+        );
       });
   },
 });

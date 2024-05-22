@@ -121,6 +121,7 @@ export const registerUser = createAsyncThunk(
     await setDoc(doc(db, "users", currentUser.uid), {
       email: currentUser.email,
       displayName: user.username,
+      uid: currentUser.uid,
     });
   }
 );

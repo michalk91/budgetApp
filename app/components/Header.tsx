@@ -6,6 +6,7 @@ import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { logoutUser } from "../redux/usersSlice";
 import { useRouter, usePathname } from "next/navigation";
 import useTouchOutside from "../hooks/useTouchOutside";
+import { fetchInvitations } from "../redux/invitationsSlice";
 
 export default function Header() {
   const dispatch = useAppDispatch();
@@ -13,6 +14,7 @@ export default function Header() {
   const pathname = usePathname();
   const loginStatus = useAppSelector((state) => state.user.loginStatus);
   const userName = useAppSelector((state) => state.user.username);
+  const invitations = useAppSelector((state) => state.invitations.budgets);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -25,6 +27,10 @@ export default function Header() {
   const touchedOutside = useTouchOutside(
     menuRef as React.MutableRefObject<HTMLElement>
   );
+
+  useEffect(() => {
+    if (loginStatus === "succeeded") dispatch(fetchInvitations());
+  }, [dispatch, loginStatus]);
 
   useEffect(() => {
     if (touchedOutside) setIsOpen(false);
@@ -73,7 +79,21 @@ export default function Header() {
                 Dashboard
               </Link>
             </li>
-
+            <li className="mr-6 max-lg:p-6 max-md:mr-0">
+              <Link
+                onClick={() => setIsOpen(false)}
+                className={`${
+                  invitations.length > 0 ? "before:content-['•_']" : ""
+                } ${
+                  pathname === "/notifications"
+                    ? "text-blue-800"
+                    : "text-blue-500"
+                } max-md:text-xl text-2xl hover:text-blue-800`}
+                href="/notifications"
+              >
+                Notifications
+              </Link>
+            </li>
             <li className="mr-6 max-lg:p-6 max-md:mr-0">
               <Link
                 onClick={() => setIsOpen(false)}

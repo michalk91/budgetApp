@@ -1,25 +1,28 @@
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-
 import {
   fetchBudgets,
   deleteBudget,
   deleteAllBudgets,
   setSelectedBudgetID,
+  leaveBudget,
 } from "../redux/budgetsSlice";
-
+import Table from "./Table";
+import type { SortState } from "../types";
 import { useEffect, useState } from "react";
 import useFormatter from "../hooks/useFormatter";
 import AddNewBudget from "./AddNewBudget";
 import ShowSelectedBudget from "./ShowSelectedBudget";
+import Button from "./Button";
 
 export default function ShowBudgets() {
   const dispatch = useAppDispatch();
   const budgets = useAppSelector((state) => state.budgets.budgetsArray);
   const budgetID = useAppSelector((state) => state.budgets.budgetID);
+  const userID = useAppSelector((state) => state.user.userID);
 
   const [addNewBudget, setAddNewBudget] = useState(false);
 
-  const [budgetsSort, setBudgetsSort] = useState({
+  const [budgetsSort, setBudgetsSort] = useState<SortState>({
     sortBy: "timestamp",
     sortDirection: "ascending",
   });
@@ -33,7 +36,7 @@ export default function ShowBudgets() {
       dispatch(fetchBudgets({ sortBy, descending: false }));
     else if (sortDirection === "descending")
       dispatch(fetchBudgets({ sortBy, descending: true }));
-  }, [dispatch, sortBy, sortDirection, budgetID, budgets.length]);
+  }, [dispatch, sortBy, sortDirection, budgetID, budgets.length, userID]);
 
   const handleDeleteBudget = (id: string) => {
     dispatch(deleteBudget(id));
@@ -43,177 +46,139 @@ export default function ShowBudgets() {
     <div className="flex flex-col items-center w-full mt-24">
       {budgetID === "" ? (
         <>
-          <span className="ml-2 font-bold text-xl mx-auto max-md:text-lg">
-            Budgets
-          </span>
-          <div className="relative overflow-x-auto border-2 border-slate-300 rounded-lg max-md:mb-6 shadow-xl">
-            <table className="table-fixed w-full text-sm text-left text-gray-500  ">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-200">
-                <tr>
-                  <th scope="col" className="px-6 py-3 max-lg:hidden">
-                    Date
-                  </th>
-                  <th scope="col" className="px-6 py-3 max-lg:hidden">
-                    Name
-                  </th>
-                  <th scope="col" className="px-6 py-3 max-lg:hidden">
-                    Amount
-                  </th>
-                  <th scope="col" className="px-6 py-3 max-lg:hidden">
-                    Action
-                  </th>
-                </tr>
-              </thead>
+          <Table
+            title="Budgets"
+            headerCells={[
+              { name: "date", sortBy: "timestamp" },
+              { name: "name", sortBy: "budgetName" },
+              { name: "amount", sortBy: "budgetValue" },
+              { name: "owner", sortBy: "ownerUsername" },
+              { name: "action" },
+            ]}
+            emptyTableCondition={budgets?.length === 0 && !addNewBudget}
+            emptyTableTitle="You don't have any budgets yet"
+            addNewRow={
+              addNewBudget && <AddNewBudget setNewBudget={setAddNewBudget} />
+            }
+            setSort={setBudgetsSort}
+            sortDirection={sortDirection}
+            sortBy={sortBy}
+          >
+            {budgets?.map((budget) => (
+              <tr
+                key={budget.budgetID}
+                className={`hover:bg-gray-100 bg-white border-b `}
+              >
+                <td
+                  data-cell="date"
+                  className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0"
+                >
+                  <p>created: {budget.addDate}</p>
+                </td>
 
-              <tbody>
-                {budgets?.length === 0 && !addNewBudget && (
-                  <tr className={"bg-gray-100 border-b "}>
-                    <td
-                      align="center"
-                      colSpan={4}
-                      className="px-6 py-6 max-lg:block bg-white"
-                    >
-                      <span className="ml-2 font-bold text-xl mx-auto">
-                        {`You don't have any budgets yet`}
-                      </span>
-                    </td>
-                  </tr>
-                )}
+                <td
+                  data-cell="Name"
+                  className="font-bold px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0"
+                >
+                  {budget.budgetName}
+                </td>
 
-                {budgets?.map((budget) => (
-                  <tr
-                    key={budget.budgetID}
-                    className={`hover:bg-gray-100 bg-white border-b `}
+                <td
+                  data-cell="amount"
+                  className={`${
+                    (budget.budgetValue as number) < 0
+                      ? "text-red-600"
+                      : "text-black"
+                  } text-black px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center`}
+                >
+                  {formatter(
+                    budget.budgetValue as number,
+                    budget.currencyType as string
+                  )}
+                </td>
+
+                <td
+                  data-cell="owner"
+                  className={`font-bold text-blue-700 px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center`}
+                >
+                  {budget.ownerID === userID ? "You" : budget.ownerUsername}
+                </td>
+
+                <td className="max-lg:block max-lg:before:content-[attr(data-cell)]  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
+                  <Button
+                    handleClick={() => {
+                      !addNewBudget &&
+                        dispatch(
+                          setSelectedBudgetID({
+                            budgetID: budget.budgetID,
+                          })
+                        );
+                    }}
+                    additionalStyles={
+                      !addNewBudget
+                        ? "bg-green-600 hover:bg-green-800"
+                        : "bg-green-200 hover:cursor-not-allowed"
+                    }
                   >
-                    <td
-                      data-cell="date"
-                      className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0"
+                    Show details
+                  </Button>
+                  {budget.ownerID === userID ? (
+                    <Button
+                      handleClick={() => {
+                        !addNewBudget &&
+                          budget.budgetID &&
+                          budget.ownerID === userID &&
+                          handleDeleteBudget(budget.budgetID);
+                      }}
+                      additionalStyles={
+                        !addNewBudget
+                          ? "bg-red-500 hover:bg-red-700"
+                          : "bg-red-200 hover:cursor-not-allowed"
+                      }
                     >
-                      <p>created: {budget.addDate}</p>
-                    </td>
-
-                    <td
-                      data-cell="Name"
-                      className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0"
+                      Delete
+                    </Button>
+                  ) : (
+                    <Button
+                      handleClick={() => {
+                        !addNewBudget &&
+                          budget.budgetID &&
+                          budget.ownerID !== userID &&
+                          dispatch(leaveBudget(budget.budgetID));
+                      }}
+                      additionalStyles={
+                        !addNewBudget
+                          ? "bg-blue-500 hover:bg-blue-700"
+                          : "bg-blue-200 hover:cursor-not-allowed"
+                      }
                     >
-                      {budget.budgetName}
-                    </td>
+                      Leave
+                    </Button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </Table>
 
-                    <td
-                      data-cell="amount"
-                      className={`${
-                        (budget.budgetValue as number) < 0
-                          ? "text-red-600"
-                          : "text-black"
-                      } text-black px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center`}
-                    >
-                      {formatter(
-                        budget.budgetValue as number,
-                        budget.currencyType as string
-                      )}
-                    </td>
-
-                    <td className="max-lg:block max-lg:before:content-[attr(data-cell)]  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
-                      <button
-                        onClick={() => {
-                          dispatch(
-                            setSelectedBudgetID({
-                              budgetID: budget.budgetID,
-                            })
-                          );
-                        }}
-                        className={`${
-                          !addNewBudget
-                            ? "bg-green-600 hover:bg-green-800"
-                            : "bg-green-200 cursor-not-allowed"
-                        } text-white font-bold py-2 m-2 px-6 rounded-full `}
-                      >
-                        Show details
-                      </button>
-                      <button
-                        onClick={() => {
-                          !addNewBudget &&
-                            budget.id &&
-                            handleDeleteBudget(budget.budgetID);
-                        }}
-                        className={`${
-                          !addNewBudget
-                            ? "bg-red-500 hover:bg-red-700"
-                            : "bg-red-200 cursor-not-allowed"
-                        } text-white font-bold py-2 m-2 px-6 rounded-full `}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-
-                {addNewBudget && (
-                  <AddNewBudget setNewBudget={setAddNewBudget} />
-                )}
-              </tbody>
-            </table>
-
-            <div className="flex flex-wrap items-center  max-md:p-2 bg-gray-200">
-              <p className="ml-6">Sort: </p>
-              <select
-                className="px-1 m-2 rounded-full bg-white "
-                onChange={(e) => {
-                  setBudgetsSort((state) => ({
-                    ...state,
-                    sortBy: e.target.value,
-                  }));
-                }}
-                value={sortBy}
-                name="choice"
-              >
-                <option value="timestamp">time</option>
-                <option value="amount">amount</option>
-              </select>
-              <select
-                className="px-1 rounded-full max-w-full bg-white "
-                onChange={(e) => {
-                  setBudgetsSort((state) => ({
-                    ...state,
-                    sortDirection: e.target.value,
-                  }));
-                }}
-                value={sortDirection}
-                name="choice"
-              >
-                <option value="ascending">ascending</option>
-                <option value="descending">descending</option>
-              </select>
-            </div>
-          </div>
           <div className="text-center mt-6">
             {!addNewBudget && (
               <>
-                <button
-                  type="submit"
-                  onClick={() => setAddNewBudget(true)}
-                  className={`
-
-                   bg-blue-800 hover:bg-blue-900
-
-               text-white font-bold py-2 my-2 mx-2 px-6 rounded-full max-md:px-6 max-md:py-4`}
+                <Button
+                  handleClick={() => setAddNewBudget(true)}
+                  additionalStyles="bg-blue-700 hover:bg-blue-900"
                 >
                   Add new budget
-                </button>
+                </Button>
 
                 {budgets?.length > 1 && (
-                  <button
-                    onClick={() => {
+                  <Button
+                    handleClick={() => {
                       dispatch(deleteAllBudgets());
                     }}
-                    className={`
-
-                    bg-red-700 hover:bg-red-800
-
-                 text-white font-bold py-2 my-2 mx-2 px-6 rounded-full max-md:px-6 max-md:py-4`}
+                    additionalStyles="bg-red-700 hover:bg-red-900"
                   >
                     Delete All
-                  </button>
+                  </Button>
                 )}
               </>
             )}
@@ -221,14 +186,15 @@ export default function ShowBudgets() {
         </>
       ) : (
         <>
-          <button
-            onClick={() => {
+          <Button
+            handleClick={() => {
               dispatch(setSelectedBudgetID({ budgetID: "" }));
             }}
-            className={`bg-red-500 hover:bg-red-700 text-white font-bold py-2 mb-12 px-6 rounded-full max-md:px-6 max-md:py-4`}
+            additionalStyles="bg-red-500 hover:hover:bg-red-700"
           >
             Back to budgets
-          </button>
+          </Button>
+
           <ShowSelectedBudget />
         </>
       )}

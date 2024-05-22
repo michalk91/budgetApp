@@ -63,7 +63,7 @@ export default function ExpensesCharts() {
           </section>
         </div>
       ) : (
-        <div className="p-10 border-2 border-gray-500 mt-10 rounded-lg shadow-xl">
+        <div className="p-10 bg-white mt-10 rounded-lg shadow-xl">
           <span className="text-2xl">
             There is not enough data to generate a visualization.
           </span>

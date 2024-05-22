@@ -10,6 +10,8 @@ import {
 } from "../redux/budgetsSlice";
 import Categories from "./Categories";
 import SubNavigation from "./SubNavigation";
+import ShareBudget from "./ShareBudget";
+import type { SortState } from "../types";
 
 export default function ShowSelectedBudget() {
   const dispatch = useAppDispatch();
@@ -25,7 +27,7 @@ export default function ShowSelectedBudget() {
     (state) => state.budgets.incomesValue
   );
 
-  const [expensesSort, setExpensesSort] = useState({
+  const [expensesSort, setExpensesSort] = useState<SortState>({
     sortBy: "timestamp",
     sortDirection: "ascending",
   });
@@ -45,8 +47,8 @@ export default function ShowSelectedBudget() {
 
   return (
     <>
-      <div className="border-solid border-2 border-blue-400 shadow-xl rounded-md p-4">
-        <div className="flex flex-wrap  justify-center   ">
+      <div className="border-solid border-2 border-blue-400 shadow-xl rounded-md p-4 mt-10">
+        <div className="flex flex-wrap  justify-center">
           {budgetName !== "" && (
             <span className={`text-center p-5 text-2xl max-md:p-1`}>
               {`Budget name: `}
@@ -93,6 +95,7 @@ export default function ShowSelectedBudget() {
       {activeOption === "Data visualization" && <ExpensesCharts />}
 
       {activeOption === "Manage categories" && <Categories />}
+      {activeOption === "Share budget" && <ShareBudget />}
     </>
   );
 }

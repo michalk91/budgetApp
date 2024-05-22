@@ -1,13 +1,16 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, SyntheticEvent } from "react";
 
 export interface Transaction {
   id?: string;
   category: string;
+  ownerID?: string;
+  ownerUsername?: string;
   amount: number;
   date?: string;
   editDate?: string;
   type: "expense" | "income";
   budgetID?: string;
+  ownerEmail?: string;
 }
 
 export interface TransactionToDelete {
@@ -53,6 +56,18 @@ export interface BudgetsSlice {
   transactions: Transaction[];
   fetchTransactionsStatus: "idle" | "loading" | "succeeded" | "failed";
   selectedOption: string;
+  allowManageAllTransactions: string[];
+  allowManageCategories: string[];
+  ownerID: string;
+}
+
+export interface InvitationsSlice {
+  inviteFriendStatus: "idle" | "loading" | "succeeded" | "failed";
+  fetchInvitationsStatus: "idle" | "loading" | "succeeded" | "failed";
+  budgets: Budget[];
+  usersWithAccess: UsersWithPermissions[];
+  allowManageAllTransactions: string[];
+  allowManageCategories: string[];
 }
 
 export interface User {
@@ -62,13 +77,13 @@ export interface User {
 }
 
 export interface AddTransactionProps {
-  setAdd: (value: boolean) => void;
+  setAdd: Dispatch<SetStateAction<boolean>>;
   categories: string[];
   type: "income" | "expense";
 }
 
 export interface AddNewBudgetProps {
-  setNewBudget: (value: boolean) => void;
+  setNewBudget: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface BudgetAddDateProps {
@@ -78,14 +93,6 @@ export interface BudgetAddDateProps {
 export interface SortOptions {
   sortBy: string;
   descending: boolean;
-}
-
-export interface ChangeComponentsProps {
-  setActive: (value: string) => void;
-}
-
-export interface WarningProps {
-  setDecision: (value: boolean) => void;
 }
 
 export interface DisplayAmountProps {
@@ -99,10 +106,10 @@ export interface ShowTransactionsProps {
   setExpensesSort: Dispatch<
     SetStateAction<{
       sortBy: string;
-      sortDirection: string;
+      sortDirection: "ascending" | "descending";
     }>
   >;
-  expensesSort: { sortBy: string; sortDirection: string };
+  expensesSort: { sortBy: string; sortDirection: "ascending" | "descending" };
 }
 
 export interface Category {
@@ -112,9 +119,10 @@ export interface Category {
 
 export interface Budget {
   [key: string]: string | number | string[];
+  invitationID: string;
   budgetID: string;
-  amount: number;
   addDate: string;
+  budgetValue: number;
   budgetName: string;
   ownerEmail: string;
   ownerID: string;
@@ -123,6 +131,11 @@ export interface Budget {
   currencyType: "PLN" | "EUR" | "USD";
   expensesValue: number;
   incomesValue: number;
+  ownerUsername: string;
+  expenseCategories: string[];
+  incomeCategories: string[];
+  allowManageAllTransactions: string[];
+  allowManageCategories: string[];
 }
 
 export interface NewBudget {
@@ -133,4 +146,67 @@ export interface NewBudget {
 
 export interface SubNavigationProps {
   activeOption: string;
+}
+
+export interface DecideInvitation {
+  invitationID: string;
+  decision: "decline" | "accept";
+}
+
+export interface SortState {
+  sortDirection: "ascending" | "descending";
+  sortBy: string;
+}
+
+export interface HeaderCell {
+  name: string;
+  sortBy?: string;
+}
+
+export interface TableProps extends SortState {
+  title: string;
+  headerCells: HeaderCell[];
+  emptyTableCondition: boolean;
+  emptyTableTitle: string;
+  addNewRow: React.ReactNode | undefined;
+  children: React.ReactNode;
+  setSort: Dispatch<
+    SetStateAction<{
+      sortBy: string;
+      sortDirection: "ascending" | "descending";
+    }>
+  >;
+}
+
+export interface ButtonProps {
+  children: React.ReactNode;
+  handleClick: (e: SyntheticEvent) => void;
+  additionalStyles: string;
+}
+
+export interface UsersWithPermissions {
+  [key: string]: string | number | string[] | boolean;
+  userID: string;
+  username: string;
+  userEmail: string;
+  allowManageAllTransactions: boolean;
+  allowManageCategories: boolean;
+  budgetID: string;
+}
+
+export interface AddNewUserProps {
+  setNewUser: Dispatch<SetStateAction<boolean>>;
+}
+
+export interface InviteFriend {
+  email: string;
+  allowManageCategories: boolean;
+  allowManageAllTransactions: boolean;
+}
+
+export interface EditJoinedUserPermissions {
+  budgetID: string;
+  allowManageCategories: boolean;
+  allowManageAllTransactions: boolean;
+  userID: string;
 }

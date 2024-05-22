@@ -1,6 +1,6 @@
 const useSort = <
   K extends string,
-  T extends Record<K, number | string | string[]>
+  T extends Record<K, number | string | string[] | boolean>
 >(
   items: T[],
   fieldName: K
