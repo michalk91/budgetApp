@@ -210,3 +210,7 @@ export interface EditJoinedUserPermissions {
   allowManageAllTransactions: boolean;
   userID: string;
 }
+
+export interface ChangeComponentsProps {
+  setActive: (value: string) => void;
+}
