@@ -167,10 +167,6 @@ export const addNewBudget = createAsyncThunk(
       currencyType: newBudget.currencyType,
       expensesValue: 0,
       incomesValue: 0,
-      allowManageAllTransactions: arrayUnion(currentUserID),
-
-      allowManageCategories: arrayUnion(currentUserID),
-
       expenseCategories: [
         "Shops",
         "Food",
@@ -201,19 +197,32 @@ export const addCategory = createAsyncThunk(
     const state = getState() as State;
     const selectedBudgetID = state.budgets.budgetID;
 
+    const currentUserID = auth.currentUser?.uid;
+
     const { categoryName, type } = category;
 
-    await updateDoc(
-      doc(db, "budgets", selectedBudgetID),
-      type === "expense"
-        ? {
-            expenseCategories: arrayUnion(categoryName),
-          }
-        : {
-            incomeCategories: arrayUnion(categoryName),
-          }
-    );
+    const budgetRef = doc(db, "budgets", selectedBudgetID);
 
+    const budgetSnap = await getDoc(budgetRef);
+
+    if (budgetSnap.exists()) {
+      if (
+        !budgetSnap.data().allowManageCategories.includes(currentUserID) &&
+        budgetSnap.data().ownerID !== currentUserID
+      )
+        throw Error("Insufficient permissions to perform this action");
+
+      await updateDoc(
+        doc(db, "budgets", selectedBudgetID),
+        type === "expense"
+          ? {
+              expenseCategories: arrayUnion(categoryName),
+            }
+          : {
+              incomeCategories: arrayUnion(categoryName),
+            }
+      );
+    }
     return category;
   }
 );
@@ -223,20 +232,32 @@ export const deleteCategory = createAsyncThunk(
   async (category: Category, { getState }) => {
     const state = getState() as State;
     const selectedBudgetID = state.budgets.budgetID;
+    const currentUserID = auth.currentUser?.uid;
 
     const { categoryName, type } = category;
 
-    await updateDoc(
-      doc(db, "budgets", selectedBudgetID),
-      type === "expense"
-        ? {
-            expenseCategories: arrayRemove(categoryName),
-          }
-        : {
-            incomeCategories: arrayRemove(categoryName),
-          }
-    );
+    const budgetRef = doc(db, "budgets", selectedBudgetID);
 
+    const budgetSnap = await getDoc(budgetRef);
+
+    if (budgetSnap.exists()) {
+      if (
+        !budgetSnap.data().allowManageCategories.includes(currentUserID) &&
+        budgetSnap.data().ownerID !== currentUserID
+      )
+        throw Error("Insufficient permissions to perform this action");
+
+      await updateDoc(
+        doc(db, "budgets", selectedBudgetID),
+        type === "expense"
+          ? {
+              expenseCategories: arrayRemove(categoryName),
+            }
+          : {
+              incomeCategories: arrayRemove(categoryName),
+            }
+      );
+    }
     return category;
   }
 );
