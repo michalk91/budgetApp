@@ -625,7 +625,7 @@ const budgetsSlice = createSlice({
         state.expensesValue = action.payload.expensesValue;
         state.allowManageAllTransactions =
           action.payload.allowManageAllTransactions;
-        state.allowManageCategories = action.payload.allowManageAllTransactions;
+        state.allowManageCategories = action.payload.allowManageCategories;
         state.ownerID = action.payload.ownerID;
       })
 

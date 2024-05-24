@@ -208,7 +208,11 @@ export default function ShowTransactions({
 
               <td
                 data-cell="owner"
-                className={`font-bold text-blue-700 px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center`}
+                className={`font-bold ${
+                  transaction.ownerID === userID
+                    ? "text-green-600"
+                    : "text-blue-700"
+                } px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center`}
               >
                 {transaction.ownerID === userID
                   ? "You"
@@ -238,7 +242,7 @@ export default function ShowTransactions({
                       !addNewExpense &&
                       !addNewIncome &&
                       editedTransaction.id === "" &&
-                      (allowToManageAllTransactions.includes(userID) ||
+                      (allowToManageAllTransactions?.includes(userID) ||
                         transaction.ownerID === userID ||
                         userID === budgetOwnerID)
                         ? "bg-red-500 hover:bg-red-700"
@@ -264,7 +268,7 @@ export default function ShowTransactions({
                       !addNewExpense &&
                       !addNewIncome &&
                       editedTransaction.id === "" &&
-                      (allowToManageAllTransactions.includes(userID) ||
+                      (allowToManageAllTransactions?.includes(userID) ||
                         transaction.ownerID === userID ||
                         userID === budgetOwnerID)
                         ? "bg-blue-500 hover:bg-blue-700"
@@ -334,23 +338,24 @@ export default function ShowTransactions({
               Add Income
             </Button>
 
-            {transactions?.length > 1 && (
-              <Button
-                handleClick={() =>
-                  userID &&
-                  editedTransaction.id === "" &&
-                  allowToManageAllTransactions.includes(userID) &&
-                  dispatch(deleteAllTransactions())
-                }
-                additionalStyles={
-                  editedTransaction.id === ""
-                    ? "bg-red-700 hover:bg-red-800"
-                    : "bg-red-300 hover:cursor-not-allowed"
-                }
-              >
-                Delete All
-              </Button>
-            )}
+            {transactions?.length > 1 &&
+              ((userID && allowToManageAllTransactions.includes(userID)) ||
+                userID === budgetOwnerID) && (
+                <Button
+                  handleClick={() =>
+                    userID &&
+                    editedTransaction.id === "" &&
+                    dispatch(deleteAllTransactions())
+                  }
+                  additionalStyles={
+                    editedTransaction.id === ""
+                      ? "bg-red-700 hover:bg-red-800"
+                      : "bg-red-300 hover:cursor-not-allowed"
+                  }
+                >
+                  Delete All
+                </Button>
+              )}
           </>
         )}
       </div>

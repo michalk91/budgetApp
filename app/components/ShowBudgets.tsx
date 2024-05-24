@@ -99,7 +99,11 @@ export default function ShowBudgets() {
 
                 <td
                   data-cell="owner"
-                  className={`font-bold text-blue-700 px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center`}
+                  className={`font-bold ${
+                    budget.ownerID === userID
+                      ? "text-green-600"
+                      : "text-blue-700"
+                  } px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center`}
                 >
                   {budget.ownerID === userID ? "You" : budget.ownerUsername}
                 </td>

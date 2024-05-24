@@ -131,28 +131,20 @@ export const editJoinedUserPermissions = createAsyncThunk(
     allowManageCategories,
     allowManageAllTransactions,
   }: EditJoinedUserPermissions) => {
-    const budgetRef = doc(db, "budgets", budgetID);
+    await updateDoc(doc(db, "budgets", budgetID), {
+      allowManageCategories: allowManageCategories
+        ? arrayUnion(userID)
+        : arrayRemove(userID),
+      allowManageAllTransactions: allowManageAllTransactions
+        ? arrayUnion(userID)
+        : arrayRemove(userID),
+    });
 
-    const budgetSnap = await getDoc(budgetRef);
-
-    if (budgetSnap.exists()) {
-      const data = budgetSnap.data();
-
-      await updateDoc(doc(db, "budgets", budgetID), {
-        allowManageCategories: allowManageCategories
-          ? arrayUnion(userID)
-          : arrayRemove(userID),
-        allowManageAllTransactions: allowManageAllTransactions
-          ? arrayUnion(userID)
-          : arrayRemove(userID),
-      });
-
-      return {
-        userID,
-        allowManageCategories,
-        allowManageAllTransactions,
-      };
-    }
+    return {
+      userID,
+      allowManageCategories,
+      allowManageAllTransactions,
+    };
   }
 );
 
