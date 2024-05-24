@@ -214,3 +214,7 @@ export interface EditJoinedUserPermissions {
 export interface ChangeComponentsProps {
   setActive: (value: string) => void;
 }
+
+export interface CategoriesProps {
+  type: "expense" | "income";
+}

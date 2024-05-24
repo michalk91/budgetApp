@@ -94,7 +94,12 @@ export default function ShowSelectedBudget() {
       )}
       {activeOption === "Data visualization" && <ExpensesCharts />}
 
-      {activeOption === "Manage categories" && <Categories />}
+      {activeOption === "Manage categories" && (
+        <>
+          <Categories type="expense" />
+          <Categories type="income" />
+        </>
+      )}
       {activeOption === "Share budget" && <ShareBudget />}
     </>
   );
