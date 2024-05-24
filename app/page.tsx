@@ -5,6 +5,7 @@ import ShowBudgets from "./components/ShowBudgets";
 import { useEffect } from "react";
 import { setSelectedBudgetID } from "./redux/budgetsSlice";
 import { fetchUserData } from "./redux/usersSlice";
+import { setSelectedOption } from "./redux/budgetsSlice";
 
 export default function Dashboard() {
   const dispatch = useAppDispatch();
@@ -17,8 +18,10 @@ export default function Dashboard() {
   }, [dispatch, loginStatus]);
 
   useEffect(() => {
-    loginStatus === "loggedOut" &&
+    if (loginStatus === "loggedOut") {
       dispatch(setSelectedBudgetID({ budgetID: "" }));
+      dispatch(setSelectedOption("Expenses"));
+    }
   }, [loginStatus, dispatch]);
 
   return (
