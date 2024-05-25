@@ -27,11 +27,14 @@ export default function InvitedUsers() {
   const { sortBy, sortDirection } = usersSort;
 
   useEffect(() => {
-    dispatch(fetchInvitedUsers());
-  }, [dispatch]);
+    if (sortDirection === "ascending")
+      dispatch(fetchInvitedUsers({ sortBy, descending: false }));
+    else if (sortDirection === "descending")
+      dispatch(fetchInvitedUsers({ sortBy, descending: true }));
+  }, [dispatch, sortBy, sortDirection]);
 
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="flex flex-col items-center w-full ">
       <Table
         title="Invited users"
         emptyTableTitle="You haven't invited any users yet"
@@ -39,7 +42,7 @@ export default function InvitedUsers() {
           { name: "username", sortBy: "invitedUsername" },
           { name: "email", sortBy: "invitedUserEmail" },
           { name: "manage categories" },
-          { name: "manage transactions" },
+          { name: "manage all transactions" },
           { name: "action" },
         ]}
         emptyTableCondition={invitedUsers?.length === 0 && !addNewUser}

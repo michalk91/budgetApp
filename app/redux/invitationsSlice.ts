@@ -47,7 +47,9 @@ export const fetchInvitations = createAsyncThunk(
 
 export const fetchInvitedUsers = createAsyncThunk(
   "invitations/fetchInvitedUsers",
-  async (_, { getState }) => {
+  async (sortOptions: SortOptions, { getState }) => {
+    const { sortBy, descending } = sortOptions;
+
     const state = getState() as State;
     const selectedBudgetID = state.budgets.budgetID;
 
@@ -66,7 +68,9 @@ export const fetchInvitedUsers = createAsyncThunk(
       return { invitedUserEmail, invitedUsername, invitedUserID, invitationID };
     });
 
-    return invitedUsers;
+    const sortedUsers = useSort(invitedUsers, `${sortBy}`);
+
+    return !descending ? sortedUsers : sortedUsers.reverse();
   }
 );
 
