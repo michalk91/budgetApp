@@ -13,15 +13,23 @@ export default function Wrapper({
 }>) {
   const registerStatus = useAppSelector((state) => state.user.registeredStatus);
   const loginStatus = useAppSelector((state) => state.user.loginStatus);
+  const inviteUserStatus = useAppSelector(
+    (state) => state.invitations.inviteUserStatus
+  );
+
   const notifyRegistered = () =>
     toast.success("You have successfully created your account");
+  const notifyInvited = () =>
+    toast.success("The user has been successfully invited");
+  const notifyFailedInvite = () =>
+    toast.error("The user with the provided email address does not exist");
   const notifyLoggedIn = () => toast.success("You have successfully logged in");
   const notifyLoggedOut = () =>
     toast.success("You have successfully logged out");
   const notifyFailedLogin = () => toast.error("Wrong email or password");
   const notifyFailedRegister = () =>
     toast.error(
-      "Username and email are probably taken. Use a different email and username."
+      "Username and email are probably taken. Use a different email and username"
     );
 
   useEffect(() => {
@@ -34,6 +42,11 @@ export default function Wrapper({
     if (registerStatus === "succeeded") notifyRegistered();
     else if (registerStatus === "failed") notifyFailedRegister();
   }, [registerStatus]);
+
+  useEffect(() => {
+    if (inviteUserStatus === "succeeded") notifyInvited();
+    else if (inviteUserStatus === "failed") notifyFailedInvite();
+  }, [inviteUserStatus]);
 
   return (
     <>

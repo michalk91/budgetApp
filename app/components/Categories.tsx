@@ -28,13 +28,15 @@ export default function Categories({ type }: CategoriesProps) {
 
   return (
     <form
-      className="text-center m-6"
+      className="text-center m-10"
       onSubmit={(e) => {
         (e.target as HTMLFormElement).reset();
         setCategoryToDelete("");
       }}
     >
-      <span className="font-bold text-xl mx-auto">Expense categories</span>
+      <span className="font-bold text-xl mx-auto">
+        {type === "expense" ? "Expense categories" : "Income categories"}
+      </span>
       <div className="py-2">
         <div className="flex flex-wrap -ml-1 py-1 justify-center ">
           {categories?.map((category) => (

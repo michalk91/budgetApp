@@ -32,7 +32,7 @@ export const fetchInvitations = createAsyncThunk(
 
     const invitationsQuery = query(
       collection(db, "invitations"),
-      where("userID", "==", currentUserID)
+      where("invitedUserID", "==", currentUserID)
     );
 
     const querySnapshot = await getDocs(invitationsQuery);
@@ -42,6 +42,53 @@ export const fetchInvitations = createAsyncThunk(
     );
 
     return budgets;
+  }
+);
+
+export const fetchInvitedUsers = createAsyncThunk(
+  "invitations/fetchInvitedUsers",
+  async (_, { getState }) => {
+    const state = getState() as State;
+    const selectedBudgetID = state.budgets.budgetID;
+
+    const invitedUsersQuery = query(
+      collection(db, "invitations"),
+      where("budgetID", "==", selectedBudgetID)
+    );
+
+    const querySnapshot = await getDocs(invitedUsersQuery);
+
+    const invitedUsers = querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      const { invitedUsername, invitedUserEmail, invitedUserID, invitationID } =
+        data;
+
+      return { invitedUserEmail, invitedUsername, invitedUserID, invitationID };
+    });
+
+    return invitedUsers;
+  }
+);
+
+export const deleteInvitation = createAsyncThunk(
+  "invitations/deleteInvitation",
+  async (invitationID: string) => {
+    await deleteDoc(doc(db, "invitations", invitationID));
+
+    return invitationID;
+  }
+);
+
+export const deleteAllInvitations = createAsyncThunk(
+  "invitations/deleteAllInvitations",
+  async () => {
+    const invitations = await getDocs(collection(db, `invitations`));
+
+    for (const invitation of invitations.docs) {
+      await deleteDoc(doc(db, `invitations`, invitation.id));
+    }
+
+    return [];
   }
 );
 
@@ -72,6 +119,8 @@ export const deleteAllUsers = createAsyncThunk(
       allowManageCategories: [],
       allowManageAllTransactions: [],
     });
+
+    return [];
   }
 );
 
@@ -195,6 +244,8 @@ export const inviteFriend = createAsyncThunk(
     const selectedBudgetID = state.budgets.budgetID;
 
     let passedUserID = "";
+    let passedUsername = "";
+
     const usersWithAccess = [];
 
     const q = query(collection(db, "users"), where("email", "==", email));
@@ -203,6 +254,7 @@ export const inviteFriend = createAsyncThunk(
 
     querySnapshot.forEach((doc) => {
       passedUserID = doc.data().uid;
+      passedUsername = doc.data().displayName;
     });
 
     if (passedUserID === "") throw Error("Wrong email");
@@ -222,9 +274,11 @@ export const inviteFriend = createAsyncThunk(
       if (userAlreadyHasAccess.length > 0)
         throw Error("This user already has access to this budget.");
 
-      const invitationRef = await addDoc(collection(db, `invitations`), {
+      const invitationData = {
         budgetID: selectedBudgetID,
-        userID: passedUserID,
+        invitedUserID: passedUserID,
+        invitedUserEmail: email,
+        invitedUsername: passedUsername,
         allowManageCategories,
         allowManageAllTransactions,
         ownerID: data.ownerID,
@@ -233,11 +287,18 @@ export const inviteFriend = createAsyncThunk(
         budgetName: data.budgetName,
         currencyType: data.currencyType,
         budgetValue: data.budgetValue,
-      });
+      };
+
+      const invitationRef = await addDoc(
+        collection(db, `invitations`),
+        invitationData
+      );
 
       await updateDoc(doc(db, "invitations", invitationRef.id), {
         invitationID: invitationRef.id,
       });
+
+      return { invitationID: invitationRef.id, ...invitationData };
     }
   }
 );
@@ -246,27 +307,29 @@ const invitationsSlice = createSlice({
   name: "invitations",
   initialState: {
     budgets: [],
-    inviteFriendStatus: "idle",
+    inviteUserStatus: "idle",
     fetchInvitationsStatus: "idle",
     usersWithAccess: [],
     allowManageAllTransactions: [],
     allowManageCategories: [],
+    invitedUsers: [],
   } as InvitationsSlice,
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(inviteFriend.pending, (state) => {
-        state.inviteFriendStatus = "loading";
+        state.inviteUserStatus = "loading";
       })
 
-      .addCase(inviteFriend.fulfilled, (state) => {
-        state.inviteFriendStatus = "succeeded";
-        alert("success");
+      .addCase(inviteFriend.fulfilled, (state, action) => {
+        if (!action.payload) return;
+
+        state.inviteUserStatus = "succeeded";
+        state.invitedUsers.push(action.payload);
       })
 
       .addCase(inviteFriend.rejected, (state) => {
-        alert("failed");
-        state.inviteFriendStatus = "failed";
+        state.inviteUserStatus = "failed";
       })
 
       //----------------------------------------------------------------------------
@@ -282,6 +345,12 @@ const invitationsSlice = createSlice({
 
       .addCase(fetchInvitations.rejected, (state) => {
         state.fetchInvitationsStatus = "failed";
+      })
+
+      //------------------------------------------------------------------------
+
+      .addCase(fetchInvitedUsers.fulfilled, (state, action) => {
+        state.invitedUsers = action.payload;
       })
 
       //----------------------------------------------------------------------
@@ -321,8 +390,22 @@ const invitationsSlice = createSlice({
 
       //--------------------------------------------------------------------------
 
-      .addCase(deleteAllUsers.fulfilled, (state) => {
-        state.usersWithAccess = [];
+      .addCase(deleteInvitation.fulfilled, (state, action) => {
+        state.invitedUsers = state.invitedUsers.filter(
+          (user) => user.invitationID !== action.payload
+        );
+      })
+
+      //---------------------------------------------------------------------
+
+      .addCase(deleteAllInvitations.fulfilled, (state, action) => {
+        state.invitedUsers = action.payload;
+      })
+
+      //------------------------------------------------------------------------
+
+      .addCase(deleteAllUsers.fulfilled, (state, action) => {
+        state.usersWithAccess = action.payload;
       });
   },
 });

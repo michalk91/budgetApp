@@ -61,13 +61,21 @@ export interface BudgetsSlice {
   ownerID: string;
 }
 
+export interface InvitedUser {
+  invitedUserEmail: string;
+  invitedUsername: string;
+  invitedUserID: string;
+  invitationID: string;
+}
+
 export interface InvitationsSlice {
-  inviteFriendStatus: "idle" | "loading" | "succeeded" | "failed";
+  inviteUserStatus: "idle" | "loading" | "succeeded" | "failed";
   fetchInvitationsStatus: "idle" | "loading" | "succeeded" | "failed";
   budgets: Budget[];
   usersWithAccess: UsersWithPermissions[];
   allowManageAllTransactions: string[];
   allowManageCategories: string[];
+  invitedUsers: InvitedUser[];
 }
 
 export interface User {
@@ -168,7 +176,7 @@ export interface TableProps extends SortState {
   headerCells: HeaderCell[];
   emptyTableCondition: boolean;
   emptyTableTitle: string;
-  addNewRow: React.ReactNode | undefined;
+  addNewRow?: React.ReactNode | undefined;
   children: React.ReactNode;
   setSort: Dispatch<
     SetStateAction<{
@@ -181,7 +189,7 @@ export interface TableProps extends SortState {
 export interface ButtonProps {
   children: React.ReactNode;
   handleClick: (e: SyntheticEvent) => void;
-  additionalStyles: string;
+  additionalStyles?: string;
 }
 
 export interface UsersWithPermissions {

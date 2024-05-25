@@ -41,7 +41,7 @@ export default function ExpensesCharts() {
   return (
     <>
       {expensesFromDataBase.length > 2 ? (
-        <div className="w-full my-20">
+        <div className="w-full my-10">
           <span className="ml-2 font-bold text-xl mx-auto">
             Expenses Visualization
           </span>
