@@ -110,16 +110,6 @@ export interface DisplayAmountProps {
   titleClass: string;
 }
 
-export interface ShowTransactionsProps {
-  setExpensesSort: Dispatch<
-    SetStateAction<{
-      sortBy: string;
-      sortDirection: "ascending" | "descending";
-    }>
-  >;
-  expensesSort: { sortBy: string; sortDirection: "ascending" | "descending" };
-}
-
 export interface Category {
   categoryName: string;
   type: "expense" | "income";

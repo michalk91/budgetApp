@@ -3,15 +3,11 @@ import ExpensesCharts from "./ExpensesCharts";
 import BudgetAddDate from "./BudgetAddDate";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import DisplayAmount from "./DisplayAmount";
-import { useEffect, useState } from "react";
-import {
-  fetchSelectedBudgetInfo,
-  fetchTransactions,
-} from "../redux/budgetsSlice";
+import { useEffect } from "react";
+import { fetchSelectedBudgetInfo } from "../redux/budgetsSlice";
 import Categories from "./Categories";
 import SubNavigation from "./SubNavigation";
 import ShareBudget from "./ShareBudget";
-import type { SortState } from "../types";
 
 export default function ShowSelectedBudget() {
   const dispatch = useAppDispatch();
@@ -27,23 +23,9 @@ export default function ShowSelectedBudget() {
     (state) => state.budgets.incomesValue
   );
 
-  const [expensesSort, setExpensesSort] = useState<SortState>({
-    sortBy: "timestamp",
-    sortDirection: "ascending",
-  });
-
   useEffect(() => {
     dispatch(fetchSelectedBudgetInfo());
   }, [dispatch]);
-
-  const { sortBy, sortDirection } = expensesSort;
-
-  useEffect(() => {
-    if (sortDirection === "ascending")
-      dispatch(fetchTransactions({ sortBy, descending: false }));
-    else if (sortDirection === "descending")
-      dispatch(fetchTransactions({ sortBy, descending: true }));
-  }, [dispatch, sortBy, sortDirection]);
 
   return (
     <>
@@ -86,12 +68,7 @@ export default function ShowSelectedBudget() {
       </div>
       <SubNavigation activeOption={activeOption} />
 
-      {activeOption === "Expenses" && (
-        <ShowTransactions
-          expensesSort={expensesSort}
-          setExpensesSort={setExpensesSort}
-        />
-      )}
+      {activeOption === "Expenses" && <ShowTransactions />}
       {activeOption === "Data visualization" && <ExpensesCharts />}
 
       {activeOption === "Manage categories" && (
