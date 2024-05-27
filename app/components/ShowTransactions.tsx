@@ -346,7 +346,7 @@ export default function ShowTransactions() {
             </Button>
 
             {transactions?.length > 1 &&
-              ((userID && allowToManageAllTransactions.includes(userID)) ||
+              ((userID && allowToManageAllTransactions?.includes(userID)) ||
                 userID === budgetOwnerID) && (
                 <Button
                   handleClick={() =>
