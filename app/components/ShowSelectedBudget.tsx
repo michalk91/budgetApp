@@ -27,6 +27,7 @@ export default function ShowSelectedBudget() {
   const incomesFromStore = useAppSelector(
     (state) => state.budgets.incomesValue
   );
+  const userID = useAppSelector((state) => state.user.userID);
 
   useEffect(() => {
     dispatch(fetchSelectedBudgetInfo());
@@ -71,24 +72,26 @@ export default function ShowSelectedBudget() {
             }
           />
         </div>
-        {usersWithAccess.length > 0 && (
-          <div className="text-center border-t-2 border-blue-400">
-            <p className="text-xl font-bold mt-6">
-              Users with whom you share the budget:{" "}
-            </p>
-            <ul>
-              {usersWithAccess.map((user) => (
-                <li
-                  className="m-2 flex items-center justify-center flex-wrap"
-                  key={user.userID}
-                >
-                  <FaUser /> <b className="pl-2">{` ${user.username}`}</b>{" "}
-                  {`(${user.userEmail})`}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        {userID &&
+          usersWithAccess.length > 0 &&
+          usersWithAccess.some((e) => e.userID !== userID) && (
+            <div className="text-center border-t-2 border-blue-400">
+              <p className="text-xl font-bold mt-6">
+                Users with whom you share the budget:
+              </p>
+              <ul>
+                {usersWithAccess.map((user) => (
+                  <li
+                    className="m-2 flex items-center justify-center flex-wrap"
+                    key={user.userID}
+                  >
+                    <FaUser /> <b className="pl-2">{` ${user.username}`}</b>{" "}
+                    {`(${user.userEmail})`}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
       </div>
       <SubNavigation activeOption={activeOption} />
 
