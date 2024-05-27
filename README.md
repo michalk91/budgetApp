@@ -1,8 +1,19 @@
 ## Description
-This is a budget management app. The application allows you to create users and perform subsequent operations such as changing your password, email address, etc. For presentation purposes, there is a user called "Guest" which has certain restrictions related to deleting the account, changing the email address, etc. Additionally, the user "Guest" cannot add or remove income and expense categories. You can set a budget and then add expenses and income to update the budget. You can also edit and delete expenses. All expenses and revenues have their own category, creation date, and modification date. The application also allows you to add categories of expenses and income (The "Guest" account cannot do this). After adding expenses, the application will display charts showing the percentage of expenses by category.
+This is a budget management app.
+
+## Features:
+- Users are able to register an account and log in to the application.
+- Users have the capability to update their profile information, including changing their password (excluding the "guest" account).
+- Option to log in as a "guest" for demonstration purposes.
+- Users can create budgets which can be managed jointly with other users.
+- The app provides the option to select the currency for the budget.
+- Users can add or delete expense and income categories when updating their budget.
+- Charts displaying the percentage of expenses by category are visible in the application.
+- A user who invites another user to their budget can assign them permissions to manage categories and manage all transactions. By default, the invited user can only delete their own expenses. The user who is the owner of the budget can delete all expenses.
 
 ## NPM Packages used:
 - NextJS 14,
+- Tailwindcss
 - Redux-Toolkit,
 - Firebase,
 - React-toastify,
