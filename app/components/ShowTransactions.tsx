@@ -208,7 +208,7 @@ export default function ShowTransactions() {
                       }))
                     }
                     defaultValue={transaction.amount}
-                    className="px-2 -ml-[10px] py-1 rounded-full -ml-[11px] max-lg: ml-1 max-lg:max-w-32 bg-white border-2 "
+                    className="px-2 -ml-[10px] py-1 rounded-full -ml-[11px] max-w-40 bg-white border-2 "
                   ></input>
                 )}
               </td>
