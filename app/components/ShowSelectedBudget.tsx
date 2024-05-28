@@ -77,38 +77,46 @@ export default function ShowSelectedBudget() {
           />
         </div>
         {
-          <span className="mb-6 mt-1 text-lg text-blue-700 flex items-center justify-center flex-wrap">
+          <span className="text-center mb-6 mt-1 text-lg text-blue-700 flex items-center justify-center flex-wrap">
             <RiAdminFill />
             {userID !== ownerID ? (
-              <p>
+              <p className="pl-2">
                 OWNER:<b className="pl-2">{`${ownerUsername}`}</b>
                 {` (${ownerEmail})`}
               </p>
             ) : (
-              <p>OWNER: You</p>
+              <p className="pl-2">
+                OWNER: <b>{`You`}</b>
+              </p>
             )}
           </span>
         }
-        {userID &&
-          usersWithAccess.length > 0 &&
-          usersWithAccess.some((e) => e.userID !== userID) && (
-            <div className="text-center border-t-2 border-blue-400">
-              <p className="text-xl font-bold mt-6">
-                Users with whom you share the budget:
-              </p>
-              <ul>
-                {usersWithAccess.map((user) => (
-                  <li
-                    className="mt-2 flex items-center justify-center flex-wrap"
-                    key={user.userID}
-                  >
-                    <FaUser /> <b className="pl-2">{` ${user.username} `}</b>
-                    {` (${user.userEmail})`}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+        {userID && usersWithAccess.length > 0 && (
+          <div className="text-center border-t-2 border-blue-400">
+            <p className="text-xl font-bold mt-6">
+              Users with access to the budget:
+            </p>
+            <ul>
+              {usersWithAccess.map((user) => (
+                <li
+                  className="mt-2 flex items-center justify-center flex-wrap"
+                  key={user.userID}
+                >
+                  {user.userID !== userID ? (
+                    <>
+                      <FaUser /> <b className="px-2">{` ${user.username} `}</b>
+                      {` (${user.userEmail})`}
+                    </>
+                  ) : (
+                    <>
+                      <FaUser /> <b className="px-2">You</b>
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
       <SubNavigation activeOption={activeOption} />
 
