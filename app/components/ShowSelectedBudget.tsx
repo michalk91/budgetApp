@@ -10,6 +10,7 @@ import SubNavigation from "./SubNavigation";
 import ShareBudget from "./ShareBudget";
 import { fetchJoinedUsers } from "../redux/invitationsSlice";
 import { FaUser } from "react-icons/fa";
+import { RiAdminFill } from "react-icons/ri";
 
 export default function ShowSelectedBudget() {
   const dispatch = useAppDispatch();
@@ -28,6 +29,9 @@ export default function ShowSelectedBudget() {
     (state) => state.budgets.incomesValue
   );
   const userID = useAppSelector((state) => state.user.userID);
+  const ownerUsername = useAppSelector((state) => state.budgets.ownerUsername);
+  const ownerEmail = useAppSelector((state) => state.budgets.ownerEmail);
+  const ownerID = useAppSelector((state) => state.budgets.ownerID);
 
   useEffect(() => {
     dispatch(fetchSelectedBudgetInfo());
@@ -72,6 +76,19 @@ export default function ShowSelectedBudget() {
             }
           />
         </div>
+        {
+          <span className="mb-6 mt-1 text-lg text-blue-700 flex items-center justify-center flex-wrap">
+            <RiAdminFill />
+            {userID !== ownerID ? (
+              <p>
+                OWNER:<b className="pl-2">{`${ownerUsername}`}</b>
+                {` (${ownerEmail})`}
+              </p>
+            ) : (
+              <p>OWNER: You</p>
+            )}
+          </span>
+        }
         {userID &&
           usersWithAccess.length > 0 &&
           usersWithAccess.some((e) => e.userID !== userID) && (
@@ -82,11 +99,11 @@ export default function ShowSelectedBudget() {
               <ul>
                 {usersWithAccess.map((user) => (
                   <li
-                    className="m-2 flex items-center justify-center flex-wrap"
+                    className="mt-2 flex items-center justify-center flex-wrap"
                     key={user.userID}
                   >
-                    <FaUser /> <b className="pl-2">{` ${user.username}`}</b>{" "}
-                    {`(${user.userEmail})`}
+                    <FaUser /> <b className="pl-2">{` ${user.username} `}</b>
+                    {` (${user.userEmail})`}
                   </li>
                 ))}
               </ul>

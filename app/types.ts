@@ -59,6 +59,8 @@ export interface BudgetsSlice {
   allowManageAllTransactions: string[];
   allowManageCategories: string[];
   ownerID: string;
+  ownerUsername: string;
+  ownerEmail: string;
 }
 
 export interface InvitedUser {

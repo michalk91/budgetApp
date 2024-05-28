@@ -600,6 +600,8 @@ const budgetsSlice = createSlice({
     allowManageAllTransactions: [],
     allowManageCategories: [],
     ownerID: "",
+    ownerUsername: "",
+    ownerEmail: "",
   } as BudgetsSlice,
   reducers: {
     setSelectedBudgetID: (state, action) => {
@@ -627,6 +629,8 @@ const budgetsSlice = createSlice({
           action.payload.allowManageAllTransactions;
         state.allowManageCategories = action.payload.allowManageCategories;
         state.ownerID = action.payload.ownerID;
+        state.ownerUsername = action.payload.ownerUsername;
+        state.ownerEmail = action.payload.ownerEmail;
       })
 
       .addCase(fetchBudgets.fulfilled, (state, action) => {
