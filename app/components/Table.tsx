@@ -38,7 +38,7 @@ export default function Table({
   let childNode: null | ReactNode = null;
 
   const filterDataFromChildren = (children: ReactNode) => {
-    Children.map(children, (child: ReactNode) => {
+    Children.forEach(children, (child: ReactNode) => {
       if (isValidElement(child) && child.type === "tr") childNode = child;
 
       if (
