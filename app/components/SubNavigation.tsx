@@ -1,12 +1,22 @@
 import type { SubNavigationProps } from "../types";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setSelectedOption } from "../redux/budgetsSlice";
+import { useEffect } from "react";
 
 export default function SubNavigation({ activeOption }: SubNavigationProps) {
   const dispatch = useAppDispatch();
 
   const budgetOwnerID = useAppSelector((state) => state.budgets.ownerID);
   const userID = useAppSelector((state) => state.user.userID);
+  const selectedOption = useAppSelector(
+    (state) => state.budgets.selectedOption
+  );
+
+  useEffect(() => {
+    if (selectedOption !== "Share budget") return;
+
+    budgetOwnerID !== userID && dispatch(setSelectedOption("Expenses"));
+  }, [budgetOwnerID, dispatch, selectedOption, userID]);
 
   return (
     <div className="flex justify-center  flex-wrap text-xl mt-10">
