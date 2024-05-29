@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { useAppSelector } from "../redux/hooks";
 import { addCategory, deleteCategory } from "../redux/budgetsSlice";
 import type { CategoriesProps } from "../types";
+import Button from "./Button";
 
 export default function Categories({ type }: CategoriesProps) {
   const dispatch = useAppDispatch();
@@ -29,7 +30,7 @@ export default function Categories({ type }: CategoriesProps) {
 
   return (
     <form
-      className="text-center m-10"
+      className="text-center my-10"
       onSubmit={(e) => {
         (e.target as HTMLFormElement).reset();
         setCategoryToDelete("");
@@ -78,8 +79,8 @@ export default function Categories({ type }: CategoriesProps) {
               className="font-bold py-2 mr-3 px-4 rounded-full bg-white border-2 border-black"
             ></input>
 
-            <button
-              onClick={(e) => {
+            <Button
+              handleClick={(e) => {
                 e.preventDefault();
                 if (
                   // userEmail === GUEST_EMAIL ||
@@ -100,7 +101,7 @@ export default function Categories({ type }: CategoriesProps) {
 
                 inputRef.current.value = "";
               }}
-              className={`text-white font-bold py-2 px-6 rounded-full mt-4 max-md:px-6 max-md:py-4 ${
+              additionalStyles={`text-white font-bold py-2 px-6 rounded-full mt-4 max-md:px-6 max-md:py-4 ${
                 // userEmail === GUEST_EMAIL ||
                 userID !== ownerID &&
                 userID &&
@@ -110,13 +111,13 @@ export default function Categories({ type }: CategoriesProps) {
               }`}
             >
               Add new
-            </button>
+            </Button>
           </div>
         )}
         {categoryToDelete !== "" && (
-          <div className="mt-6">
-            <button
-              onClick={(e) => {
+          <div className="mt-6 max-md:-mt-1">
+            <Button
+              handleClick={(e) => {
                 e.preventDefault();
 
                 if (
@@ -136,7 +137,7 @@ export default function Categories({ type }: CategoriesProps) {
 
                 setCategoryToDelete("");
               }}
-              className={`text-white font-bold py-2 mx-1 px-6 rounded-full max-md:px-6 max-md:py-4 ${
+              additionalStyles={`text-white font-bold py-2 mx-1 px-6 rounded-full max-md:px-6 max-md:py-4 ${
                 // userEmail === GUEST_EMAIL ||
                 userID !== ownerID &&
                 userID &&
@@ -146,7 +147,7 @@ export default function Categories({ type }: CategoriesProps) {
               } `}
             >
               Delete
-            </button>
+            </Button>
             <button
               onClick={(e) => {
                 e.preventDefault();

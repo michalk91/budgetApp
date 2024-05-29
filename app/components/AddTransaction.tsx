@@ -38,7 +38,10 @@ export default function AddTransaction({
         </span>
       </td>
 
-      <td className="px-6 py-6 max-lg:block">
+      <td
+        data-cell="category"
+        className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0 max-lg:flex max-lg:flex-col max-lg:items-center"
+      >
         <select
           onChange={(e) => {
             setValueFromInput((state) => ({
@@ -58,7 +61,10 @@ export default function AddTransaction({
         </select>
       </td>
 
-      <td className="px-6 py-6 max-lg:block">
+      <td
+        data-cell="amount"
+        className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0 max-lg:flex max-lg:flex-col max-lg:items-center"
+      >
         <input
           onChange={(e) =>
             setValueFromInput((state) => ({
@@ -74,7 +80,7 @@ export default function AddTransaction({
         ></input>
       </td>
       <td className="pl-6 max-lg:hidden">You</td>
-      <td className="max-lg:block max-lg:pb-4">
+      <td className="max-lg:block max-lg:pb-4 max-md:mt-5">
         <Button
           handleClick={addNew}
           additionalStyles="bg-green-700 hover:bg-green-900"

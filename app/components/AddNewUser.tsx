@@ -52,8 +52,10 @@ export default function AddNewUser({ setNewUser }: AddNewUserProps) {
           </span>
         </td>
 
-        <td data-cell="e-mail"
-         className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0 max-lg:flex max-lg:flex-col max-lg:items-center">
+        <td
+          data-cell="e-mail"
+          className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0 max-lg:flex max-lg:flex-col max-lg:items-center"
+        >
           <input
             onChange={(e) =>
               setUserFromInput((state) => ({
@@ -69,8 +71,10 @@ export default function AddNewUser({ setNewUser }: AddNewUserProps) {
           ></input>
         </td>
 
-        <td data-cell="manage categories"
-         className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0 max-lg:flex max-lg:flex-col max-lg:items-center">
+        <td
+          data-cell="manage categories"
+          className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0 max-lg:flex max-lg:flex-col max-lg:items-center"
+        >
           <select
             className="px-2 py-1 -ml-2 rounded-full bg-white max-w-32 bg-white border-2"
             onChange={(e) => {
@@ -86,8 +90,10 @@ export default function AddNewUser({ setNewUser }: AddNewUserProps) {
             <option value="no">no</option>
           </select>
         </td>
-        <td data-cell="manage all transactions"
-         className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0 max-lg:flex max-lg:flex-col max-lg:items-center">
+        <td
+          data-cell="manage all transactions"
+          className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0 max-lg:flex max-lg:flex-col max-lg:items-center"
+        >
           <select
             className="px-2 py-1 -ml-2 rounded-full bg-white max-w-32 bg-white border-2"
             onChange={(e) => {
@@ -104,7 +110,7 @@ export default function AddNewUser({ setNewUser }: AddNewUserProps) {
             <option value="no">no</option>
           </select>
         </td>
-        <td className="max-lg:block max-lg:pb-4">
+        <td className="max-lg:block max-lg:pb-4 max-md:mt-5">
           <Button
             handleClick={handleAddUser}
             additionalStyles="bg-green-700 hover:bg-green-900"

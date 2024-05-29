@@ -43,7 +43,7 @@ export default function ShowBudgets() {
   };
 
   return (
-    <div className="flex flex-col items-center w-full mt-24">
+    <div className="flex flex-col items-center w-full mt-20">
       {budgetID === "" ? (
         <>
           <Table
