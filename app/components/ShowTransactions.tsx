@@ -236,7 +236,7 @@ export default function ShowTransactions() {
                         transaction.id &&
                         transaction.type &&
                         editedTransaction.id === "" &&
-                        (allowToManageAllTransactions.includes(userID) ||
+                        (allowToManageAllTransactions?.includes(userID) ||
                           transaction.ownerID === userID ||
                           userID === budgetOwnerID) &&
                         handleDeleteTransaction(
@@ -265,7 +265,7 @@ export default function ShowTransactions() {
                       !addNewIncome &&
                       transaction.id &&
                       editedTransaction.id === "" &&
-                      (allowToManageAllTransactions.includes(userID) ||
+                      (allowToManageAllTransactions?.includes(userID) ||
                         transaction.ownerID === userID ||
                         userID === budgetOwnerID) &&
                       handleStartEdit(transaction.id)
