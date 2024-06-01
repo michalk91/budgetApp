@@ -10,6 +10,7 @@ import AddTransaction from "./AddTransaction";
 import Table from "./Table";
 import Button from "./Button";
 import type { ShowTransactionsProps } from "../types";
+import useSearch from "../hooks/useSearch";
 
 export default function ShowTransactions({
   expensesSort,
@@ -28,6 +29,7 @@ export default function ShowTransactions({
   const allowToManageAllTransactions = useAppSelector(
     (state) => state.budgets.allowManageAllTransactions
   );
+  const userName = useAppSelector((state) => state.user.username);
   const budgetOwnerID = useAppSelector((state) => state.budgets.ownerID);
 
   const [addNewExpense, setAddNewExpense] = useState(false);
@@ -74,6 +76,20 @@ export default function ShowTransactions({
     }));
   };
 
+  const findByKeys = [
+    "category",
+    "date",
+    "editDate",
+    "ownerUsername",
+    "amount",
+  ];
+
+  const { handleSearch, filteredArray, searchKeywords, notFound } = useSearch({
+    data: transactions,
+    keys: findByKeys,
+    exception: userName ? { keyword: "you", as: userName } : undefined,
+  });
+
   return (
     <div className="w-full mt-10">
       <Table
@@ -111,9 +127,12 @@ export default function ShowTransactions({
         setSort={setExpensesSort}
         sortDirection={sortDirection}
         sortBy={sortBy}
+        handleSearch={handleSearch}
+        searchKeywords={searchKeywords}
+        notFound={notFound}
       >
-        {transactions.length > 0 &&
-          transactions?.map((transaction) => (
+        {filteredArray.length > 0 &&
+          filteredArray?.map((transaction) => (
             <tr
               key={transaction.id}
               className={

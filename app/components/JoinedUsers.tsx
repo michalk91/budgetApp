@@ -10,6 +10,7 @@ import {
   deleteAllUsers,
 } from "../redux/invitationsSlice";
 import { ImCross, ImCheckmark } from "react-icons/im";
+import useSearch from "../hooks/useSearch";
 
 export default function JoinedUsers() {
   const dispatch = useAppDispatch();
@@ -53,6 +54,13 @@ export default function JoinedUsers() {
     setEditedUserPermissions((state) => ({ ...state, id: "" }));
   };
 
+  const findByKeys = ["userEmail", "username"];
+
+  const { handleSearch, filteredArray, searchKeywords, notFound } = useSearch({
+    data: usersWithAccess,
+    keys: findByKeys,
+  });
+
   return (
     usersWithAccess.length > 0 && (
       <div className="flex flex-col items-center">
@@ -70,8 +78,11 @@ export default function JoinedUsers() {
           setSort={setUsersSort}
           sortDirection={sortDirection}
           sortBy={sortBy}
+          handleSearch={handleSearch}
+          searchKeywords={searchKeywords}
+          notFound={notFound}
         >
-          {usersWithAccess?.map((user) => (
+          {filteredArray?.map((user) => (
             <tr
               key={user.userID}
               className={`hover:bg-gray-100 bg-white border-b `}

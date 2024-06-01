@@ -13,12 +13,14 @@ import useFormatter from "../hooks/useFormatter";
 import AddNewBudget from "./AddNewBudget";
 import ShowSelectedBudget from "./ShowSelectedBudget";
 import Button from "./Button";
+import useSearch from "../hooks/useSearch";
 
 export default function ShowBudgets() {
   const dispatch = useAppDispatch();
   const budgets = useAppSelector((state) => state.budgets.budgetsArray);
   const budgetID = useAppSelector((state) => state.budgets.budgetID);
   const userID = useAppSelector((state) => state.user.userID);
+  const userName = useAppSelector((state) => state.user.username);
 
   const [addNewBudget, setAddNewBudget] = useState(false);
 
@@ -42,6 +44,14 @@ export default function ShowBudgets() {
     dispatch(deleteBudget(id));
   };
 
+  const findByKeys = ["budgetName", "budgetValue", "ownerUsername", "amount"];
+
+  const { handleSearch, filteredArray, searchKeywords, notFound } = useSearch({
+    data: budgets,
+    keys: findByKeys,
+    exception: userName ? { keyword: "you", as: userName } : undefined,
+  });
+
   return (
     <div className="flex flex-col items-center w-full mt-20">
       {budgetID === "" ? (
@@ -63,8 +73,11 @@ export default function ShowBudgets() {
             setSort={setBudgetsSort}
             sortDirection={sortDirection}
             sortBy={sortBy}
+            handleSearch={handleSearch}
+            searchKeywords={searchKeywords}
+            notFound={notFound}
           >
-            {budgets?.map((budget) => (
+            {filteredArray?.map((budget) => (
               <tr
                 key={budget.budgetID}
                 className={`hover:bg-gray-100 bg-white border-b `}

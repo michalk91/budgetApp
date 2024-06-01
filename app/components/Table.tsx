@@ -1,10 +1,6 @@
-import { ReactNode, isValidElement, useCallback, useState } from "react";
+import { useCallback } from "react";
 import type { SortState, TableProps } from "../types";
 import { TbArrowsSort } from "react-icons/tb";
-import { Children } from "react";
-import Button from "./Button";
-import type { PropsWithChildren } from "react";
-import { useDebounce } from "use-debounce";
 
 export default function Table({
   title,
@@ -16,10 +12,10 @@ export default function Table({
   setSort,
   sortDirection,
   sortBy,
+  handleSearch,
+  searchKeywords,
+  notFound,
 }: TableProps) {
-  const [searchKeywords, setSearchKeyrods] = useState("");
-  const [deouncedKeywords] = useDebounce(searchKeywords, 600);
-
   const handleSort = useCallback(
     (sortBy: string, sortDirection: "ascending" | "descending") => {
       setSort(
@@ -33,36 +29,6 @@ export default function Table({
     },
     [setSort]
   );
-
-  const filtredChildren: Array<ReactNode> = [];
-  let childNode: null | ReactNode = null;
-
-  const filterDataFromChildren = (children: ReactNode) => {
-    Children.forEach(children, (child: ReactNode) => {
-      if (isValidElement(child) && child.type === "tr") childNode = child;
-
-      if (
-        typeof child === "string" &&
-        child
-          .split(",")
-          .join("")
-          .toLocaleLowerCase()
-          .includes(searchKeywords.split(",").join("").toLocaleLowerCase())
-      ) {
-        filtredChildren.push(childNode);
-        childNode = null;
-      } else if (
-        isValidElement(child) &&
-        child.props &&
-        child.type !== Button &&
-        child.type !== "button"
-      ) {
-        filterDataFromChildren((child.props as PropsWithChildren).children);
-      }
-    });
-  };
-
-  deouncedKeywords !== "" && filterDataFromChildren(children);
 
   return (
     <>
@@ -103,7 +69,7 @@ export default function Table({
           <p>Search: </p>
           <input
             value={searchKeywords}
-            onChange={(e) => setSearchKeyrods(e.target.value)}
+            onChange={handleSearch}
             className="px-2 py-1 rounded-full max-lg: ml-1 max-lg:max-w-32 bg-white border-gray-300 border-2 "
           ></input>
         </div>
@@ -155,22 +121,18 @@ export default function Table({
               </tr>
             )}
 
-            {deouncedKeywords !== "" ? (
-              filtredChildren.length > 0 ? (
-                filtredChildren
-              ) : (
-                <tr className={"bg-gray-100 border-b "}>
-                  <td
-                    align="center"
-                    colSpan={headerCells.length}
-                    className="px-6 py-6 max-lg:block bg-white"
-                  >
-                    <span className="ml-2 font-bold text-xl mx-auto">
-                      Not found
-                    </span>
-                  </td>
-                </tr>
-              )
+            {notFound ? (
+              <tr className={"bg-gray-100 border-b "}>
+                <td
+                  align="center"
+                  colSpan={headerCells.length}
+                  className="px-6 py-6 max-lg:block bg-white"
+                >
+                  <span className="ml-2 font-bold text-xl mx-auto">
+                    Not found
+                  </span>
+                </td>
+              </tr>
             ) : (
               children
             )}

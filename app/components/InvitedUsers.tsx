@@ -9,6 +9,7 @@ import {
   deleteInvitation,
   deleteAllInvitations,
 } from "../redux/invitationsSlice";
+import useSearch from "../hooks/useSearch";
 
 export default function InvitedUsers() {
   const dispatch = useAppDispatch();
@@ -33,6 +34,13 @@ export default function InvitedUsers() {
       dispatch(fetchInvitedUsers({ sortBy, descending: true }));
   }, [dispatch, sortBy, sortDirection]);
 
+  const findByKeys = ["invitedUserEmail", " invitedUsername"];
+
+  const { handleSearch, filteredArray, searchKeywords, notFound } = useSearch({
+    data: invitedUsers,
+    keys: findByKeys,
+  });
+
   return (
     <div className="flex flex-col items-center w-full ">
       <Table
@@ -50,9 +58,12 @@ export default function InvitedUsers() {
         setSort={setUsersSort}
         sortDirection={sortDirection}
         sortBy={sortBy}
+        handleSearch={handleSearch}
+        searchKeywords={searchKeywords}
+        notFound={notFound}
       >
-        {invitedUsers.length > 0 &&
-          invitedUsers.map((user) => (
+        {filteredArray.length > 0 &&
+          filteredArray.map((user) => (
             <>
               <tr className={"hover:bg-gray-100 bg-white border-b  "}>
                 <td

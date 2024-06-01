@@ -171,6 +171,9 @@ export interface TableProps extends SortState {
   emptyTableTitle: string;
   addNewRow?: React.ReactNode | undefined;
   children: React.ReactNode;
+  handleSearch: (e: SyntheticEvent<Element, Event>) => void;
+  searchKeywords: string;
+  notFound: boolean;
   setSort: Dispatch<
     SetStateAction<{
       sortBy: string;
