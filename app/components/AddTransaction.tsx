@@ -76,7 +76,7 @@ export default function AddTransaction({
           type="number"
           value={amount}
           placeholder="amount"
-          className="px-2 py-1 rounded-full bg-white max-w-32 border-2"
+          className="px-2 py-1 -ml-1 rounded-full bg-white max-w-32 border-2"
         ></input>
       </td>
       <td className="pl-6 max-lg:hidden">You</td>
