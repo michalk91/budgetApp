@@ -2,7 +2,7 @@ import { SyntheticEvent, useCallback, useState } from "react";
 import { useAppDispatch } from "../redux/hooks";
 import { AddNewUserProps } from "../types";
 import Button from "./Button";
-import { inviteFriend } from "../redux/invitationsSlice";
+import { inviteUser } from "../redux/invitationsSlice";
 
 export default function AddNewUser({ setNewUser }: AddNewUserProps) {
   const dispatch = useAppDispatch();
@@ -21,7 +21,7 @@ export default function AddNewUser({ setNewUser }: AddNewUserProps) {
       e.preventDefault();
 
       dispatch(
-        inviteFriend({
+        inviteUser({
           email,
           allowManageAllTransactions,
           allowManageCategories,

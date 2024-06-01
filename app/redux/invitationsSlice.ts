@@ -238,8 +238,8 @@ export const decideInvitation = createAsyncThunk(
   }
 );
 
-export const inviteFriend = createAsyncThunk(
-  "invitations/inviteFirend",
+export const inviteUser = createAsyncThunk(
+  "invitations/inviteUser",
   async (
     { email, allowManageCategories, allowManageAllTransactions }: InviteFriend,
     { getState }
@@ -247,42 +247,56 @@ export const inviteFriend = createAsyncThunk(
     const state = getState() as State;
     const selectedBudgetID = state.budgets.budgetID;
 
-    let passedUserID = "";
-    let passedUsername = "";
+    let userID = "";
+    let username = "";
 
-    const usersWithAccess = [];
+    const userQuery = query(
+      collection(db, "users"),
+      where("email", "==", email)
+    );
 
-    const q = query(collection(db, "users"), where("email", "==", email));
+    const userSnapshot = await getDocs(userQuery);
 
-    const querySnapshot = await getDocs(q);
-
-    querySnapshot.forEach((doc) => {
-      passedUserID = doc.data().uid;
-      passedUsername = doc.data().displayName;
+    userSnapshot.forEach((doc) => {
+      userID = doc.data().uid;
+      username = doc.data().displayName;
     });
 
-    if (passedUserID === "") throw Error("Wrong email");
+    if (userID === "") throw Error("Wrong email");
 
-    const docRef = doc(db, "budgets", selectedBudgetID);
-    const docSnap = await getDoc(docRef);
+    const invitationsRef = collection(db, "invitations");
+    const invitationsQuery = query(
+      invitationsRef,
+      where("budgetID", "==", selectedBudgetID),
+      where("invitedUserEmail", "==", email)
+    );
 
-    if (docSnap.exists()) {
-      const data = docSnap.data();
+    const invitationsSnapshot = await getDocs(invitationsQuery);
 
-      usersWithAccess.push(...data.usersWithAccess);
+    invitationsSnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.budgetID === selectedBudgetID)
+        throw Error("You cannot invite the same user twice");
+    });
 
-      const userAlreadyHasAccess = usersWithAccess.filter(
-        (item) => item === passedUserID
+    const budgetRef = doc(db, "budgets", selectedBudgetID);
+    const budgetSnap = await getDoc(budgetRef);
+
+    if (budgetSnap.exists()) {
+      const data = budgetSnap.data();
+
+      const userAlreadyHasAccess = data.usersWithAccess.filter(
+        (item: string) => item === userID
       );
 
       if (userAlreadyHasAccess.length > 0)
-        throw Error("This user already has access to this budget.");
+        throw Error("This user already has access to this budget");
 
       const invitationData = {
         budgetID: selectedBudgetID,
-        invitedUserID: passedUserID,
+        invitedUserID: userID,
         invitedUserEmail: email,
-        invitedUsername: passedUsername,
+        invitedUsername: username,
         allowManageCategories,
         allowManageAllTransactions,
         ownerID: data.ownerID,
@@ -317,23 +331,25 @@ const invitationsSlice = createSlice({
     allowManageAllTransactions: [],
     allowManageCategories: [],
     invitedUsers: [],
+    inviteUserErrorMessage: "",
   } as InvitationsSlice,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(inviteFriend.pending, (state) => {
+      .addCase(inviteUser.pending, (state) => {
         state.inviteUserStatus = "loading";
       })
 
-      .addCase(inviteFriend.fulfilled, (state, action) => {
+      .addCase(inviteUser.fulfilled, (state, action) => {
         if (!action.payload) return;
 
         state.inviteUserStatus = "succeeded";
         state.invitedUsers.push(action.payload);
       })
 
-      .addCase(inviteFriend.rejected, (state) => {
+      .addCase(inviteUser.rejected, (state, error) => {
         state.inviteUserStatus = "failed";
+        state.inviteUserErrorMessage = error.error.message;
       })
 
       //----------------------------------------------------------------------------

@@ -16,13 +16,15 @@ export default function Wrapper({
   const inviteUserStatus = useAppSelector(
     (state) => state.invitations.inviteUserStatus
   );
+  const inviteUserErrorMessage = useAppSelector(
+    (state) => state.invitations.inviteUserErrorMessage
+  );
 
   const notifyRegistered = () =>
     toast.success("You have successfully created your account");
   const notifyInvited = () =>
     toast.success("The user has been successfully invited");
-  const notifyFailedInvite = () =>
-    toast.error("The user with the provided email address does not exist");
+  const notifyFailedInvite = () => toast.error(inviteUserErrorMessage);
   const notifyLoggedIn = () => toast.success("You have successfully logged in");
   const notifyLoggedOut = () =>
     toast.success("You have successfully logged out");
