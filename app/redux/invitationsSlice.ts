@@ -85,8 +85,16 @@ export const deleteInvitation = createAsyncThunk(
 
 export const deleteAllInvitations = createAsyncThunk(
   "invitations/deleteAllInvitations",
-  async () => {
-    const invitations = await getDocs(collection(db, `invitations`));
+  async (_, { getState }) => {
+    const state = getState() as State;
+    const selectedBudgetID = state.budgets.budgetID;
+
+    const invitations = await getDocs(
+      query(
+        collection(db, `invitations`),
+        where("budgetID", "==", selectedBudgetID)
+      )
+    );
 
     for (const invitation of invitations.docs) {
       await deleteDoc(doc(db, `invitations`, invitation.id));
