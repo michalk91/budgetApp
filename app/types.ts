@@ -78,6 +78,7 @@ export interface InvitationsSlice {
   allowManageAllTransactions: string[];
   allowManageCategories: string[];
   invitedUsers: InvitedUser[];
+  inviteUserErrorMessage?: string;
 }
 
 export interface User {
@@ -217,4 +218,9 @@ export interface ChangeComponentsProps {
 
 export interface CategoriesProps {
   type: "expense" | "income";
+}
+
+export interface ShowTransactionsProps {
+  setExpensesSort: Dispatch<SetStateAction<SortState>>;
+  expensesSort: SortState;
 }

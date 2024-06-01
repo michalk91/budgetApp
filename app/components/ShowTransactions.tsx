@@ -4,16 +4,17 @@ import {
   updateTransaction,
   deleteAllTransactions,
 } from "../redux/budgetsSlice";
-
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import useFormatter from "../hooks/useFormatter";
 import AddTransaction from "./AddTransaction";
 import Table from "./Table";
 import Button from "./Button";
-import type { SortState } from "../types";
-import { fetchTransactions } from "../redux/budgetsSlice";
+import type { ShowTransactionsProps } from "../types";
 
-export default function ShowTransactions() {
+export default function ShowTransactions({
+  expensesSort,
+  setExpensesSort,
+}: ShowTransactionsProps) {
   const dispatch = useAppDispatch();
   const transactions = useAppSelector((state) => state.budgets.transactions);
   const expenseCategories = useAppSelector(
@@ -39,19 +40,7 @@ export default function ShowTransactions() {
     type: "",
   });
 
-  const [expensesSort, setExpensesSort] = useState<SortState>({
-    sortBy: "timestamp",
-    sortDirection: "ascending",
-  });
-
   const { sortBy, sortDirection } = expensesSort;
-
-  useEffect(() => {
-    if (sortDirection === "ascending")
-      dispatch(fetchTransactions({ sortBy, descending: false }));
-    else if (sortDirection === "descending")
-      dispatch(fetchTransactions({ sortBy, descending: true }));
-  }, [dispatch, sortBy, sortDirection]);
 
   const formatter = useFormatter();
 

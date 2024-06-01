@@ -3,14 +3,18 @@ import ExpensesCharts from "./ExpensesCharts";
 import BudgetAddDate from "./BudgetAddDate";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import DisplayAmount from "./DisplayAmount";
-import { useEffect } from "react";
-import { fetchSelectedBudgetInfo } from "../redux/budgetsSlice";
+import { useEffect, useState } from "react";
+import {
+  fetchSelectedBudgetInfo,
+  fetchTransactions,
+} from "../redux/budgetsSlice";
 import Categories from "./Categories";
 import SubNavigation from "./SubNavigation";
 import ShareBudget from "./ShareBudget";
 import { fetchJoinedUsers } from "../redux/invitationsSlice";
 import { FaUser } from "react-icons/fa";
 import { RiAdminFill } from "react-icons/ri";
+import type { SortState } from "../types";
 
 export default function ShowSelectedBudget() {
   const dispatch = useAppDispatch();
@@ -33,10 +37,24 @@ export default function ShowSelectedBudget() {
   const ownerEmail = useAppSelector((state) => state.budgets.ownerEmail);
   const ownerID = useAppSelector((state) => state.budgets.ownerID);
 
+  const [expensesSort, setExpensesSort] = useState<SortState>({
+    sortBy: "timestamp",
+    sortDirection: "ascending",
+  });
+
+  const { sortBy, sortDirection } = expensesSort;
+
   useEffect(() => {
     dispatch(fetchSelectedBudgetInfo());
     dispatch(fetchJoinedUsers({ sortBy: "username", descending: false }));
   }, [dispatch]);
+
+  useEffect(() => {
+    if (sortDirection === "ascending")
+      dispatch(fetchTransactions({ sortBy, descending: false }));
+    else if (sortDirection === "descending")
+      dispatch(fetchTransactions({ sortBy, descending: true }));
+  }, [dispatch, sortBy, sortDirection]);
 
   return (
     <>
@@ -92,8 +110,8 @@ export default function ShowSelectedBudget() {
           </span>
         }
         {userID && usersWithAccess.length > 0 && (
-          <div className="text-center border-t-2 border-blue-400">
-            <p className="text-xl font-bold mt-6">
+          <div className="text-center p-6 border-t-2 border-blue-400">
+            <p className="text-xl font-bold">
               Users with access to the budget:
             </p>
             <ul>
@@ -120,7 +138,12 @@ export default function ShowSelectedBudget() {
       </div>
       <SubNavigation activeOption={activeOption} />
 
-      {activeOption === "Expenses" && <ShowTransactions />}
+      {activeOption === "Expenses" && (
+        <ShowTransactions
+          expensesSort={expensesSort}
+          setExpensesSort={setExpensesSort}
+        />
+      )}
       {activeOption === "Data visualization" && <ExpensesCharts />}
 
       {activeOption === "Manage categories" && (
