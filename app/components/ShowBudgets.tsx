@@ -44,7 +44,13 @@ export default function ShowBudgets() {
     dispatch(deleteBudget(id));
   };
 
-  const findByKeys = ["budgetName", "budgetValue", "ownerUsername", "amount"];
+  const findByKeys = [
+    "addDate",
+    "budgetName",
+    "budgetValue",
+    "ownerUsername",
+    "amount",
+  ];
 
   const { handleSearch, filteredArray, searchKeywords, notFound } = useSearch({
     data: budgets,
