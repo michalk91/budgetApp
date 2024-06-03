@@ -19,19 +19,17 @@ const useSearch = <T extends Record<string, any>>({
 
   const findValuesBy = useCallback(
     (arr: T[], key: string[], value: string | number): T[] => {
-      const filteredKey =
-        exception?.as.localeCompare(debouncedKeywords, undefined, {
-          sensitivity: "accent",
-        }) !== -1
-          ? key.filter((key) => key !== exception?.inKey)
-          : key;
+      const filteredKey = exception?.as
+        .toLocaleLowerCase()
+        .includes(debouncedKeywords.toLocaleLowerCase())
+        ? key.filter((key) => key !== exception?.inKey)
+        : key;
 
-      const filteredValue =
-        exception?.keyword.localeCompare(debouncedKeywords, undefined, {
-          sensitivity: "accent",
-        }) !== -1
-          ? exception?.as
-          : value;
+      const filteredValue = exception?.keyword
+        .toLocaleLowerCase()
+        .includes(debouncedKeywords.toLocaleLowerCase())
+        ? exception?.as.toLocaleLowerCase()
+        : value;
 
       return arr.filter((obj) =>
         filteredKey.some((k) => {
