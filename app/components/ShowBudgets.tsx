@@ -55,7 +55,9 @@ export default function ShowBudgets() {
   const { handleSearch, filteredArray, searchKeywords, notFound } = useSearch({
     data: budgets,
     keys: findByKeys,
-    exception: userName ? { keyword: "you", as: userName } : undefined,
+    exception: userName
+      ? { keyword: "you", as: userName, inKey: "ownerUsername" }
+      : undefined,
   });
 
   return (

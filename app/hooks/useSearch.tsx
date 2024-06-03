@@ -8,7 +8,7 @@ const useSearch = <T extends Record<string, any>>({
 }: {
   data: T[];
   keys: string[];
-  exception?: { keyword: string; as: string };
+  exception?: { keyword: string; as: string; inKey: string };
 }) => {
   const [searchKeywords, setSearchKeywords] = useState<string>("");
   const [debouncedKeywords] = useDebounce(searchKeywords, 600);
@@ -42,8 +42,14 @@ const useSearch = <T extends Record<string, any>>({
     debouncedKeywords !== ""
       ? findValuesBy(
           data,
-          keys,
-          exception?.keyword.includes(debouncedKeywords)
+          exception?.as
+            .toLocaleLowerCase()
+            .includes(debouncedKeywords.toLocaleLowerCase())
+            ? keys.filter((key) => key !== exception?.inKey)
+            : keys,
+          exception?.keyword
+            .toLocaleLowerCase()
+            .includes(debouncedKeywords.toLocaleLowerCase())
             ? exception?.as.toLocaleLowerCase()
             : debouncedKeywords
         )

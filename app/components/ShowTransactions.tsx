@@ -87,7 +87,9 @@ export default function ShowTransactions({
   const { handleSearch, filteredArray, searchKeywords, notFound } = useSearch({
     data: transactions,
     keys: findByKeys,
-    exception: userName ? { keyword: "you", as: userName } : undefined,
+    exception: userName
+      ? { keyword: "you", as: userName, inKey: "ownerUsername" }
+      : undefined,
   });
 
   return (
