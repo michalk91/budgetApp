@@ -65,7 +65,10 @@ export default function InvitedUsers() {
         {filteredArray.length > 0 &&
           filteredArray.map((user) => (
             <>
-              <tr className={"hover:bg-gray-100 bg-white border-b  "}>
+              <tr
+                key={user.invitationID}
+                className={"hover:bg-gray-100 bg-white border-b  "}
+              >
                 <td
                   data-cell="username"
                   className="font-bold px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0"
