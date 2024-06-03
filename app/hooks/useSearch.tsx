@@ -34,18 +34,7 @@ const useSearch = <T extends Record<string, any>>({
       return arr.filter((obj) =>
         filteredKey.some((k) => {
           if (typeof obj[k] === "string" && typeof filteredValue === "string") {
-            for (let i = 0; i < filteredValue.length; i++) {
-              if (
-                obj[k]
-                  .charAt(i)
-                  .localeCompare(filteredValue.charAt(i), undefined, {
-                    sensitivity: "accent",
-                  }) !== 0
-              ) {
-                return false;
-              }
-            }
-            return true;
+            return obj[k].toLowerCase().includes(filteredValue.toLowerCase());
           } else {
             return obj[k] === value;
           }
