@@ -130,7 +130,7 @@ export default function JoinedUsers() {
                           e.target.value === "yes" ? true : false,
                       }))
                     }
-                    className="px-2 py-1 rounded-full -ml-3 max-w-full max-lg:ml-1 bg-white border-2 "
+                    className="px-2 mt-2 py-1 rounded-full -ml-3 max-w-full max-lg:ml-1 bg-white border-2 "
                     value={
                       editedUserPermissions.allowManageCategories ? "yes" : "no"
                     }
@@ -171,7 +171,7 @@ export default function JoinedUsers() {
                           e.target.value === "yes" ? true : false,
                       }))
                     }
-                    className="px-2 py-1 rounded-full -ml-3 max-w-full max-lg:ml-1 bg-white border-2 "
+                    className="px-2 py-1 mt-2 rounded-full -ml-3 max-w-full max-lg:ml-1 bg-white border-2 "
                     name="choice"
                     value={
                       editedUserPermissions.allowManageAllTransactions
@@ -185,71 +185,69 @@ export default function JoinedUsers() {
                 )}
               </td>
 
-              <td className="max-lg:block max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
-                {editedUserPermissions.id !== user.userID ? (
-                  <td className="max-lg:block max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
-                    <Button
-                      handleClick={() => {
-                        dispatch(deleteUser(user.userID));
-                      }}
-                      additionalStyles={
-                        editedUserPermissions.id === ""
-                          ? "bg-red-500 hover:bg-red-700"
-                          : "bg-red-200 hover:cursor-not-allowed"
-                      }
-                    >
-                      Delete
-                    </Button>
-                    <Button
-                      handleClick={() =>
-                        editedUserPermissions.id === "" &&
-                        handleStartEdit(
-                          user.userID,
-                          user.allowManageCategories,
-                          user.allowManageAllTransactions
-                        )
-                      }
-                      additionalStyles={
-                        editedUserPermissions.id === ""
-                          ? "bg-blue-500 hover:bg-blue-700"
-                          : "bg-blue-200 hover:cursor-not-allowed"
-                      }
-                    >
-                      Edit
-                    </Button>
-                  </td>
-                ) : (
-                  <td className="max-lg:block max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
-                    <Button
-                      handleClick={() => {
-                        dispatch(
-                          editJoinedUserPermissions({
-                            budgetID: user.budgetID,
-                            userID: user.userID,
-                            allowManageCategories:
-                              editedUserPermissions.allowManageCategories,
-                            allowManageAllTransactions:
-                              editedUserPermissions.allowManageAllTransactions,
-                          })
-                        );
-                        setEditedUserPermissions((state) => ({
-                          ...state,
-                          id: "",
-                        }));
-                      }}
-                      additionalStyles="bg-green-700 hover:bg-green-900"
-                    >
-                      Confirm
-                    </Button>
-                    <Button
-                      handleClick={handleCancelEdit}
-                      additionalStyles="bg-red-600 hover:bg-red-800"
-                    >
-                      Cancel
-                    </Button>
-                  </td>
-                )}
-              </td>
+              {editedUserPermissions.id !== user.userID ? (
+                <td className="max-lg:block max-lg:mt-6 max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
+                  <Button
+                    handleClick={() => {
+                      dispatch(deleteUser(user.userID));
+                    }}
+                    additionalStyles={
+                      editedUserPermissions.id === ""
+                        ? "bg-red-500 hover:bg-red-700"
+                        : "bg-red-200 hover:cursor-not-allowed"
+                    }
+                  >
+                    Delete
+                  </Button>
+                  <Button
+                    handleClick={() =>
+                      editedUserPermissions.id === "" &&
+                      handleStartEdit(
+                        user.userID,
+                        user.allowManageCategories,
+                        user.allowManageAllTransactions
+                      )
+                    }
+                    additionalStyles={
+                      editedUserPermissions.id === ""
+                        ? "bg-blue-500 hover:bg-blue-700"
+                        : "bg-blue-200 hover:cursor-not-allowed"
+                    }
+                  >
+                    Edit
+                  </Button>
+                </td>
+              ) : (
+                <td className="max-lg:block max-lg:mt-6 max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
+                  <Button
+                    handleClick={() => {
+                      dispatch(
+                        editJoinedUserPermissions({
+                          budgetID: user.budgetID,
+                          userID: user.userID,
+                          allowManageCategories:
+                            editedUserPermissions.allowManageCategories,
+                          allowManageAllTransactions:
+                            editedUserPermissions.allowManageAllTransactions,
+                        })
+                      );
+                      setEditedUserPermissions((state) => ({
+                        ...state,
+                        id: "",
+                      }));
+                    }}
+                    additionalStyles="bg-green-700 hover:bg-green-900"
+                  >
+                    Confirm
+                  </Button>
+                  <Button
+                    handleClick={handleCancelEdit}
+                    additionalStyles="bg-red-600 hover:bg-red-800"
+                  >
+                    Cancel
+                  </Button>
+                </td>
+              )}
             </tr>
           ))}
         </Table>
