@@ -254,6 +254,9 @@ export const inviteUser = createAsyncThunk(
   ) => {
     const state = getState() as State;
     const selectedBudgetID = state.budgets.budgetID;
+    const loggedUserEmail = state.user.email;
+
+    if (loggedUserEmail === email) throw Error("You can't invite yourself");
 
     let userID = "";
     let username = "";
