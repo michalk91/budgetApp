@@ -45,7 +45,10 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
           </span>
         </td>
 
-        <td className=" px-6 py-6 max-lg:block">
+        <td
+          data-cell="name"
+          className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0 max-lg:flex max-lg:flex-col max-lg:items-center"
+        >
           <input
             onChange={(e) =>
               setBudgetFromInput((state) => ({
@@ -61,7 +64,10 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
           ></input>
         </td>
 
-        <td className="px-6 py-6 max-lg:block">
+        <td
+          data-cell="amount"
+          className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0 max-lg:flex max-lg:flex-col max-lg:items-center"
+        >
           <input
             onChange={(e) => {
               setBudgetFromInput((state) => ({
@@ -92,7 +98,7 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
           </select>
         </td>
         <td className="pl-6 max-lg:hidden">You</td>
-        <td className="max-lg:block max-lg:pb-4">
+        <td className="max-lg:block max-lg:pb-4 max-lg:my-4">
           <Button
             handleClick={handleAddBudget}
             additionalStyles="bg-green-700 hover:bg-green-900"
