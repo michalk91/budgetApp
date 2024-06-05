@@ -11,6 +11,7 @@ export interface Transaction {
   type: "expense" | "income";
   budgetID?: string;
   ownerEmail?: string;
+  comment: string;
 }
 
 export interface TransactionToDelete {
@@ -173,6 +174,7 @@ export interface TableProps extends SortState {
   children: React.ReactNode;
   handleSearch: (e: SyntheticEvent<Element, Event>) => void;
   searchKeywords: string;
+  responsiveBreakpoint?: string;
   notFound: boolean;
   setSort: Dispatch<
     SetStateAction<{

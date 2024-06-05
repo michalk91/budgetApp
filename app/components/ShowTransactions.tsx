@@ -40,6 +40,7 @@ export default function ShowTransactions({
     category: "",
     amount: "",
     type: "",
+    comment: "",
   });
 
   const { sortBy, sortDirection } = expensesSort;
@@ -62,8 +63,15 @@ export default function ShowTransactions({
     date: string,
     type: "income" | "expense"
   ) => {
-    const { category, amount } = editedTransaction;
-    const transaction = { id, date, category, amount: Number(amount), type };
+    const { category, amount, comment } = editedTransaction;
+    const transaction = {
+      id,
+      date,
+      category,
+      amount: Number(amount),
+      type,
+      comment,
+    };
 
     dispatch(updateTransaction(transaction));
 
@@ -82,6 +90,7 @@ export default function ShowTransactions({
     "editDate",
     "ownerUsername",
     "amount",
+    "comment",
   ];
 
   const { handleSearch, filteredArray, searchKeywords, notFound } = useSearch({
@@ -96,11 +105,14 @@ export default function ShowTransactions({
     <div className="w-full mt-10">
       <Table
         title="Expenses"
+        responsiveBreakpoint="max-xl"
         headerCells={[
           { name: "date", sortBy: "timestamp" },
           { name: "category", sortBy: "category" },
           { name: "amount", sortBy: "amount" },
           { name: "owner", sortBy: "ownerUsername" },
+          { name: "comment", sortBy: "comment" },
+          { name: "" },
           { name: "action" },
         ]}
         emptyTableCondition={
@@ -153,7 +165,7 @@ export default function ShowTransactions({
             >
               <td
                 data-cell="date"
-                className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0"
+                className="px-6 py-6 max-xl:block max-xl:before:content-[attr(data-cell)':_'] max-xl:before:font-bold max-xl:before:uppercase max-xl:text-center max-md:pb-0"
               >
                 <div className="h-full w-1"></div>
                 <p>created: {transaction.date}</p>
@@ -164,7 +176,7 @@ export default function ShowTransactions({
 
               <td
                 data-cell="category"
-                className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0"
+                className="px-6 py-6 max-xl:block max-xl:before:content-[attr(data-cell)':_']  max-xl:before:font-bold max-xl:before:uppercase max-xl:text-center max-md:pb-0"
               >
                 {editedTransaction.id !== transaction.id ? (
                   transaction.category
@@ -176,7 +188,7 @@ export default function ShowTransactions({
                         category: e.target.value,
                       }))
                     }
-                    className="px-2 py-1 rounded-full -ml-3 max-w-full max-lg:ml-1 bg-white border-2 "
+                    className="px-2 py-1 rounded-full -ml-3 max-w-full max-xl:ml-1 bg-white border-2 "
                     defaultValue={transaction.category}
                     name="choice"
                   >
@@ -201,7 +213,7 @@ export default function ShowTransactions({
                   transaction.type === "expense"
                     ? "text-red-600"
                     : "text-green-600"
-                } px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']    max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center`}
+                } px-6 py-6 max-xl:block max-xl:before:content-[attr(data-cell)':_'] max-xl:before:font-bold max-xl:before:uppercase max-xl:text-center`}
               >
                 {editedTransaction.id !== transaction.id ? (
                   `${transaction.type === "expense" ? "-" : "+"} ${formatter(
@@ -218,7 +230,7 @@ export default function ShowTransactions({
                       }))
                     }
                     defaultValue={transaction.amount}
-                    className="px-2 -ml-[10px] py-1 rounded-full -ml-[11px] max-w-40 max-lg:ml-1 max-md:max-w-32 bg-white border-2 "
+                    className="px-2 -ml-[10px] py-1 rounded-full -ml-[11px] max-w-40 max-xl:ml-1 max-md:max-w-32 bg-white border-2 "
                   ></input>
                 )}
               </td>
@@ -229,15 +241,44 @@ export default function ShowTransactions({
                   transaction.ownerID === userID
                     ? "text-green-600"
                     : "text-blue-700"
-                } px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center`}
+                } px-6 py-4 max-xl:block max-xl:before:content-[attr(data-cell)':_'] max-xl:before:font-bold max-xl:before:uppercase max-xl:text-center`}
               >
                 {transaction.ownerID === userID
                   ? "You"
                   : transaction.ownerUsername}
               </td>
 
+              <td
+                colSpan={2}
+                data-cell="comment"
+                className="px-6 py-6 max-xl:px-48 max-lg:px-24 max-md:px-8 max-xl:block max-xl:before:content-[attr(data-cell)':_']  max-xl:before:font-bold max-xl:before:uppercase max-xl:text-center max-md:pb-0"
+              >
+                {editedTransaction.id !== transaction.id ? (
+                  transaction.comment && transaction.comment !== "" ? (
+                    transaction.comment
+                  ) : (
+                    "-"
+                  )
+                ) : (
+                  <>
+                    <textarea
+                      onChange={(e) =>
+                        setEditedTransaction((state) => ({
+                          ...state,
+                          comment: e.target.value,
+                        }))
+                      }
+                      defaultValue={transaction.comment}
+                      className="p-2 w-5/6 rounded-lg border-2 -ml-2 max-xl:w-full border-2"
+                      name="comment"
+                      id="comment"
+                    ></textarea>
+                  </>
+                )}
+              </td>
+
               {editedTransaction.id !== transaction.id ? (
-                <td className="max-lg:block max-lg:before:content-[attr(data-cell)]  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
+                <td className="max-xl:block max-xl:mt-4  max-xl:before:content-[attr(data-cell)]  max-xl:before:font-bold max-xl:before:uppercase max-xl:text-center max-xl:pb-4">
                   <Button
                     handleClick={() => {
                       userID &&
@@ -296,7 +337,7 @@ export default function ShowTransactions({
                   </Button>
                 </td>
               ) : (
-                <td className="max-lg:block max-lg:before:content-[attr(data-cell)]  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
+                <td className="max-xl:block max-xl:before:content-[attr(data-cell)] max-xl:mt-4  max-xl:before:font-bold max-xl:before:uppercase max-xl:text-center max-xl:pb-4">
                   <Button
                     handleClick={() => {
                       if (

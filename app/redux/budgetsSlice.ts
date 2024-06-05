@@ -442,6 +442,7 @@ export const addTransaction = createAsyncThunk(
       date: currentDate,
       ownerID: userID,
       ownerUsername: username,
+      comment: transaction.comment,
     };
 
     const transactionRef = await addDoc(
@@ -517,8 +518,15 @@ export const updateTransaction = createAsyncThunk(
           transaction.id
         );
 
-        const { type, amount, ownerID, ownerEmail, ownerUsername } =
-          transaction.data();
+        const {
+          type,
+          amount,
+          ownerID,
+          ownerEmail,
+          ownerUsername,
+          category,
+          comment,
+        } = transaction.data();
 
         const validatedEditedTransaction = {
           id: editedTransaction.id,
@@ -529,11 +537,13 @@ export const updateTransaction = createAsyncThunk(
           category:
             editedTransaction.category !== ""
               ? editedTransaction.category
-              : transaction.data().category,
+              : category,
           amount:
-            editedTransaction.amount !== 0
-              ? editedTransaction.amount
-              : transaction.data().amount,
+            editedTransaction.amount !== 0 ? editedTransaction.amount : amount,
+          comment:
+            editedTransaction.comment !== ""
+              ? editedTransaction.comment
+              : comment,
         };
 
         await updateDoc(transactionRef, validatedEditedTransaction);

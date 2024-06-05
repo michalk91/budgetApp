@@ -15,6 +15,7 @@ export default function Table({
   handleSearch,
   searchKeywords,
   notFound,
+  responsiveBreakpoint = "max-lg",
 }: TableProps) {
   const handleSort = useCallback(
     (sortBy: string, sortDirection: "ascending" | "descending") => {
@@ -36,7 +37,9 @@ export default function Table({
         {title}
       </span>
       <div className="relative bg-gray-200 text-center overflow-x-auto border-2 border-slate-300 rounded-lg max-md:mb-6 shadow-xl">
-        <div className="flex flex-wrap justify-center items-center  max-lg:p-4 lg:hidden">
+        <div
+          className={`hidden ${responsiveBreakpoint}:p-4 ${responsiveBreakpoint}:flex flex-wrap justify-center items-center`}
+        >
           <p>Sort by: </p>
           <select
             className="px-1 m-2 rounded-full bg-white "
@@ -80,7 +83,7 @@ export default function Table({
                 <th
                   key={cell.name}
                   scope="col"
-                  className=" px-6 py-3 max-lg:hidden"
+                  className={`px-6 py-3 ${responsiveBreakpoint}:hidden`}
                 >
                   <div className="flex items-center text-xs">
                     <div>{cell.name}</div>
