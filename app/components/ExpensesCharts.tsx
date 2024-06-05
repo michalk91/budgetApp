@@ -1,36 +1,28 @@
 import { Chart } from "react-google-charts";
-import type { Transaction } from "../types";
 import { useAppSelector } from "../redux/hooks";
 
 export default function ExpensesCharts() {
   const transactions = useAppSelector((state) => state.budgets.transactions);
 
-  const expensesFromDataBase: [[string, number]] = [["", 0]];
+  const expensesFromDataBase = transactions.reduce(
+    (acc, transaction) => {
+      if (transaction.type === "income") return acc;
 
-  transactions?.map((transaction: Transaction) => {
-    if (transaction.type === "income") return;
+      const index = acc.findIndex((item) => item[0] === transaction.category);
 
-    let sameCategory = "",
-      totalAmount = 0,
-      sameCategoryIndex = 0;
-
-    expensesFromDataBase.filter((item, index) => {
-      if (item[0] === transaction.category) {
-        sameCategory = transaction.category;
-        totalAmount = item[1] + transaction.amount;
-        sameCategoryIndex = index;
+      if (index !== -1) {
+        acc[index] = [
+          transaction.category,
+          Number(acc[index][1]) + transaction.amount,
+        ];
+      } else {
+        acc.push([transaction.category, transaction.amount]);
       }
-    });
 
-    if (transaction.category !== sameCategory) {
-      expensesFromDataBase.push([transaction.category, transaction.amount]);
-    } else if (transaction.category === sameCategory) {
-      expensesFromDataBase[sameCategoryIndex] = [
-        transaction.category,
-        totalAmount,
-      ];
-    }
-  });
+      return acc;
+    },
+    [["", 0]]
+  );
 
   const data = [["Expense", "Amount"], ...expensesFromDataBase];
 
