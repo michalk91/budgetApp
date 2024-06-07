@@ -76,40 +76,38 @@ export default function Table({
             <option value="descending">descending</option>
           </select>
         </div>
-        {dataLength > 1 && (
-          <div>
-            <div className="flex justify-center sm:space-x-6 items-center flex-wrap m-2">
-              <div className="flex items-center justify-center flex-wrap py-2">
-                <p>Search: </p>
-                <input
-                  value={searchKeywords}
-                  onChange={handleSearch}
-                  className="px-2 py-1 rounded-full max-lg: ml-1 max-lg:max-w-32 bg-white border-gray-300 border-2 "
-                ></input>
-              </div>
-              <div className="flex items-center justify-center flex-wrap py-2">
-                <p>Show per page: </p>
-                <select
-                  className="px-2 py-1 rounded-full max-lg: ml-1 max-lg:max-w-32 bg-white border-gray-300 border-2  "
-                  onChange={(e) =>
-                    setRowsPerPage(
-                      e.target.value === "all"
-                        ? Infinity
-                        : Number(e.target.value)
-                    )
-                  }
-                  value={rowsPerPage}
-                  name="choice"
-                >
-                  <option value="all">all</option>
-                  <option value="5">5</option>
-                  <option value="10">10</option>
-                  <option value="20">20</option>
-                </select>
-              </div>
+
+        <div>
+          <div className="flex justify-center sm:space-x-6 items-center flex-wrap m-2">
+            <div className="flex items-center justify-center flex-wrap py-2">
+              <p>Search: </p>
+              <input
+                value={searchKeywords}
+                onChange={handleSearch}
+                className="px-2 py-1 rounded-full max-lg: ml-1 max-lg:max-w-32 bg-white border-gray-300 border-2 "
+              ></input>
+            </div>
+            <div className="flex items-center justify-center flex-wrap py-2">
+              <p>Show per page: </p>
+              <select
+                className="px-2 py-1 rounded-full max-lg: ml-1 max-lg:max-w-32 bg-white border-gray-300 border-2  "
+                onChange={(e) =>
+                  setRowsPerPage(
+                    e.target.value === "all" ? Infinity : Number(e.target.value)
+                  )
+                }
+                value={rowsPerPage}
+                name="choice"
+              >
+                <option value="all">all</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+              </select>
             </div>
           </div>
-        )}
+        </div>
+
         <table className="table-fixed w-full text-sm text-left text-gray-500  ">
           <thead
             className={`text-xs text-gray-700 uppercase bg-gray-200 ${
