@@ -14,6 +14,7 @@ import AddNewBudget from "./AddNewBudget";
 import ShowSelectedBudget from "./ShowSelectedBudget";
 import Button from "./Button";
 import useSearch from "../hooks/useSearch";
+import usePagination from "../hooks/usePagination";
 
 export default function ShowBudgets() {
   const dispatch = useAppDispatch();
@@ -60,6 +61,14 @@ export default function ShowBudgets() {
       : undefined,
   });
 
+  const {
+    paginatedData,
+    setRowsPerPage,
+    currentPage,
+    rowsPerPage,
+    setCurrentPage,
+  } = usePagination(filteredArray);
+
   return (
     <div className="flex flex-col items-center w-full mt-20">
       {budgetID === "" ? (
@@ -73,6 +82,11 @@ export default function ShowBudgets() {
               { name: "owner", sortBy: "ownerUsername" },
               { name: "action" },
             ]}
+            setRowsPerPage={setRowsPerPage}
+            dataLength={filteredArray.length}
+            currentPage={currentPage}
+            rowsPerPage={rowsPerPage}
+            setCurrentPage={setCurrentPage}
             emptyTableCondition={budgets?.length === 0 && !addNewBudget}
             emptyTableTitle="You don't have any budgets yet"
             addNewRow={
@@ -85,7 +99,7 @@ export default function ShowBudgets() {
             searchKeywords={searchKeywords}
             notFound={notFound}
           >
-            {filteredArray?.map((budget) => (
+            {paginatedData?.map((budget) => (
               <tr
                 key={budget.budgetID}
                 className={`hover:bg-gray-100 bg-white border-b `}

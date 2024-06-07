@@ -11,6 +11,7 @@ import Table from "./Table";
 import Button from "./Button";
 import type { ShowTransactionsProps } from "../types";
 import useSearch from "../hooks/useSearch";
+import usePagination from "../hooks/usePagination";
 
 export default function ShowTransactions({
   expensesSort,
@@ -101,6 +102,14 @@ export default function ShowTransactions({
       : undefined,
   });
 
+  const {
+    paginatedData,
+    setRowsPerPage,
+    currentPage,
+    rowsPerPage,
+    setCurrentPage,
+  } = usePagination(filteredArray);
+
   return (
     <div className="w-full mt-10">
       <Table
@@ -115,6 +124,11 @@ export default function ShowTransactions({
           { name: "" },
           { name: "action" },
         ]}
+        setRowsPerPage={setRowsPerPage}
+        dataLength={filteredArray.length}
+        currentPage={currentPage}
+        rowsPerPage={rowsPerPage}
+        setCurrentPage={setCurrentPage}
         emptyTableCondition={
           transactions?.length === 0 && !addNewExpense && !addNewIncome
         }
@@ -145,8 +159,8 @@ export default function ShowTransactions({
         searchKeywords={searchKeywords}
         notFound={notFound}
       >
-        {filteredArray.length > 0 &&
-          filteredArray?.map((transaction) => (
+        {paginatedData.length > 0 &&
+          paginatedData?.map((transaction) => (
             <tr
               key={transaction.id}
               className={

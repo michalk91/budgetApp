@@ -182,6 +182,11 @@ export interface TableProps extends SortState {
       sortDirection: "ascending" | "descending";
     }>
   >;
+  currentPage: number;
+  dataLength: number;
+  rowsPerPage: number;
+  setRowsPerPage: Dispatch<SetStateAction<number>>;
+  setCurrentPage: Dispatch<SetStateAction<number>>;
 }
 
 export interface ButtonProps {
@@ -228,4 +233,12 @@ export interface CategoriesProps {
 export interface ShowTransactionsProps {
   setExpensesSort: Dispatch<SetStateAction<SortState>>;
   expensesSort: SortState;
+}
+
+export interface PaginationProps {
+  rowsPerPage: number;
+  dataLength: number;
+  currentPage: number;
+  setCurrentPage: Dispatch<SetStateAction<number>>;
+  scrollElementRef: React.RefObject<HTMLDivElement>;
 }

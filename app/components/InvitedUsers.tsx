@@ -10,6 +10,7 @@ import {
   deleteAllInvitations,
 } from "../redux/invitationsSlice";
 import useSearch from "../hooks/useSearch";
+import usePagination from "../hooks/usePagination";
 
 export default function InvitedUsers() {
   const dispatch = useAppDispatch();
@@ -41,6 +42,14 @@ export default function InvitedUsers() {
     keys: findByKeys,
   });
 
+  const {
+    paginatedData,
+    setRowsPerPage,
+    currentPage,
+    rowsPerPage,
+    setCurrentPage,
+  } = usePagination(filteredArray);
+
   return (
     <div className="flex flex-col items-center w-full ">
       <Table
@@ -53,6 +62,11 @@ export default function InvitedUsers() {
           { name: "manage all transactions" },
           { name: "action" },
         ]}
+        setRowsPerPage={setRowsPerPage}
+        dataLength={filteredArray.length}
+        currentPage={currentPage}
+        rowsPerPage={rowsPerPage}
+        setCurrentPage={setCurrentPage}
         emptyTableCondition={invitedUsers?.length === 0 && !addNewUser}
         addNewRow={addNewUser && <AddNewUser setNewUser={setAddNewUser} />}
         setSort={setUsersSort}
@@ -62,8 +76,8 @@ export default function InvitedUsers() {
         searchKeywords={searchKeywords}
         notFound={notFound}
       >
-        {filteredArray.length > 0 &&
-          filteredArray.map((user) => (
+        {paginatedData.length > 0 &&
+          paginatedData.map((user) => (
             <>
               <tr
                 key={user.invitationID}

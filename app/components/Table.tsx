@@ -1,6 +1,7 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import type { SortState, TableProps } from "../types";
 import { TbArrowsSort } from "react-icons/tb";
+import Pagination from "./Pagination";
 
 export default function Table({
   title,
@@ -16,7 +17,14 @@ export default function Table({
   searchKeywords,
   notFound,
   responsiveBreakpoint = "max-lg",
+  currentPage,
+  dataLength,
+  rowsPerPage,
+  setRowsPerPage,
+  setCurrentPage,
 }: TableProps) {
+  const tableRef = useRef<HTMLDivElement>(null);
+
   const handleSort = useCallback(
     (sortBy: string, sortDirection: "ascending" | "descending") => {
       setSort(
@@ -32,13 +40,13 @@ export default function Table({
   );
 
   return (
-    <>
+    <div ref={tableRef}>
       <span className="ml-2 font-bold text-xl mx-auto max-md:text-lg">
         {title}
       </span>
       <div className="relative bg-gray-200 text-center overflow-x-auto border-2 border-slate-300 rounded-lg max-md:mb-6 shadow-xl">
         <div
-          className={`hidden ${responsiveBreakpoint}:p-4 ${responsiveBreakpoint}:flex flex-wrap justify-center items-center`}
+          className={`mt-4 hidden ${responsiveBreakpoint}:p-4 ${responsiveBreakpoint}:flex flex-wrap justify-center items-center`}
         >
           <p>Sort by: </p>
           <select
@@ -68,16 +76,46 @@ export default function Table({
             <option value="descending">descending</option>
           </select>
         </div>
-        <div className="flex justify-center items-center flex-wrap m-4">
-          <p>Search: </p>
-          <input
-            value={searchKeywords}
-            onChange={handleSearch}
-            className="px-2 py-1 rounded-full max-lg: ml-1 max-lg:max-w-32 bg-white border-gray-300 border-2 "
-          ></input>
-        </div>
+        {dataLength > 1 && (
+          <div>
+            <div className="flex justify-center sm:space-x-6 items-center flex-wrap m-2">
+              <div className="flex items-center justify-center flex-wrap py-2">
+                <p>Search: </p>
+                <input
+                  value={searchKeywords}
+                  onChange={handleSearch}
+                  className="px-2 py-1 rounded-full max-lg: ml-1 max-lg:max-w-32 bg-white border-gray-300 border-2 "
+                ></input>
+              </div>
+              <div className="flex items-center justify-center flex-wrap py-2">
+                <p>Show per page: </p>
+                <select
+                  className="px-2 py-1 rounded-full max-lg: ml-1 max-lg:max-w-32 bg-white border-gray-300 border-2  "
+                  onChange={(e) =>
+                    setRowsPerPage(
+                      e.target.value === "all"
+                        ? Infinity
+                        : Number(e.target.value)
+                    )
+                  }
+                  value={rowsPerPage}
+                  name="choice"
+                >
+                  <option value="all">all</option>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
         <table className="table-fixed w-full text-sm text-left text-gray-500  ">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-200 border-gray-300 border-t-2">
+          <thead
+            className={`text-xs text-gray-700 uppercase bg-gray-200 ${
+              dataLength > 1 ? "border-gray-300 border-t-2" : ""
+            }`}
+          >
             <tr>
               {headerCells.map((cell) => (
                 <th
@@ -143,7 +181,16 @@ export default function Table({
             {addNewRow}
           </tbody>
         </table>
+        {dataLength > rowsPerPage && (
+          <Pagination
+            rowsPerPage={rowsPerPage}
+            dataLength={dataLength}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            scrollElementRef={tableRef}
+          />
+        )}
       </div>
-    </>
+    </div>
   );
 }

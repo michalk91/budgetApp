@@ -11,6 +11,7 @@ import {
 } from "../redux/invitationsSlice";
 import { ImCross, ImCheckmark } from "react-icons/im";
 import useSearch from "../hooks/useSearch";
+import usePagination from "../hooks/usePagination";
 
 export default function JoinedUsers() {
   const dispatch = useAppDispatch();
@@ -61,6 +62,14 @@ export default function JoinedUsers() {
     keys: findByKeys,
   });
 
+  const {
+    paginatedData,
+    setRowsPerPage,
+    currentPage,
+    rowsPerPage,
+    setCurrentPage,
+  } = usePagination(filteredArray);
+
   return (
     usersWithAccess.length > 0 && (
       <div className="flex flex-col items-center">
@@ -73,6 +82,11 @@ export default function JoinedUsers() {
             { name: "manage all transactions" },
             { name: "action" },
           ]}
+          setRowsPerPage={setRowsPerPage}
+          dataLength={filteredArray.length}
+          currentPage={currentPage}
+          rowsPerPage={rowsPerPage}
+          setCurrentPage={setCurrentPage}
           emptyTableCondition={usersWithAccess?.length === 0}
           emptyTableTitle="You don't have any budgets yet"
           setSort={setUsersSort}
@@ -82,7 +96,7 @@ export default function JoinedUsers() {
           searchKeywords={searchKeywords}
           notFound={notFound}
         >
-          {filteredArray?.map((user) => (
+          {paginatedData?.map((user) => (
             <tr
               key={user.userID}
               className={`hover:bg-gray-100 bg-white border-b `}
