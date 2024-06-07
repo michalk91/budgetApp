@@ -29,6 +29,17 @@ export default function Header() {
   );
 
   useEffect(() => {
+    const preventScrolling = (e: TouchEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    menuRef.current?.addEventListener("touchmove", preventScrolling, {
+      passive: false,
+    });
+  }, []);
+
+  useEffect(() => {
     if (loginStatus === "succeeded") dispatch(fetchInvitations());
   }, [dispatch, loginStatus]);
 
