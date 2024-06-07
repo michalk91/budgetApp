@@ -115,7 +115,7 @@ export default function Categories({ type }: CategoriesProps) {
           </div>
         )}
         {categoryToDelete !== "" && (
-          <div className="mt-6 max-md:-mt-1">
+          <div className="mt-5 max-md:-mt-1">
             <Button
               handleClick={(e) => {
                 e.preventDefault();
