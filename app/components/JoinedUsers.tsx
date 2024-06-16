@@ -268,9 +268,13 @@ export default function JoinedUsers() {
         {usersWithAccess?.length > 1 && (
           <Button
             handleClick={() => {
-              dispatch(deleteAllUsers());
+              editedUserPermissions.id === "" && dispatch(deleteAllUsers());
             }}
-            additionalStyles="bg-red-700 hover:bg-red-800 mt-8"
+            additionalStyles={` mt-8  ${
+              editedUserPermissions.id === ""
+                ? "bg-red-700 hover:bg-red-700 hover:bg-red-800"
+                : "bg-red-200 hover:cursor-not-allowed"
+            }`}
           >
             Delete All
           </Button>

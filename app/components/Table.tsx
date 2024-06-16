@@ -44,7 +44,7 @@ export default function Table({
       <span className="ml-2 font-bold text-xl mx-auto max-md:text-lg">
         {title}
       </span>
-      <div className="relative bg-gray-200 text-center overflow-x-auto border-2 border-slate-300 rounded-lg max-md:mb-6 shadow-xl">
+      <div className="relative bg-gray-200 text-center overflow-visible border-2 border-slate-300 rounded-lg max-md:mb-6 shadow-xl">
         <div
           className={`mt-4 hidden ${responsiveBreakpoint}:p-4 ${responsiveBreakpoint}:flex flex-wrap justify-center items-center`}
         >
