@@ -5,9 +5,31 @@ import userReducer from "./usersSlice";
 import budgetsRecuer from "./budgetsSlice";
 import invitationsReducer from "./invitationsSlice";
 import transitionReducer from "./transitionSlice";
-import storage from "redux-persist/lib/storage";
+import createWebStorage from "redux-persist/es/storage/createWebStorage";
 import persistReducer from "redux-persist/lib/persistReducer";
 import { combineReducers } from "@reduxjs/toolkit";
+
+export function createPersistStore() {
+  const isServer = typeof window === "undefined";
+  if (isServer) {
+    return {
+      getItem() {
+        return Promise.resolve(null);
+      },
+      setItem() {
+        return Promise.resolve();
+      },
+      removeItem() {
+        return Promise.resolve();
+      },
+    };
+  }
+  return createWebStorage("local");
+}
+const storage =
+  typeof window !== "undefined"
+    ? createWebStorage("local")
+    : createPersistStore();
 
 const persistConfig = {
   key: "root",
