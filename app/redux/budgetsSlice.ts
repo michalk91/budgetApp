@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { auth, db } from "../firebase/config";
+import { db } from "../firebase/config";
 import {
   doc,
   updateDoc,
@@ -33,10 +33,12 @@ import useSort from "../hooks/useSort";
 
 export const fetchBudgets = createAsyncThunk(
   "budgets/fetchBudgets",
-  async (sortOptions: SortOptions) => {
+  async (sortOptions: SortOptions, { getState }) => {
+    const state = getState() as State;
+
     const { sortBy, descending } = sortOptions;
 
-    const currentUserID = auth.currentUser?.uid;
+    const currentUserID = state.user.userID;
 
     const yourBudgetsQuery = query(
       collection(db, "budgets"),
@@ -68,8 +70,10 @@ export const fetchBudgets = createAsyncThunk(
 
 export const fetchSelectedBudgetInfo = createAsyncThunk(
   "budgets/fetchSelectedBudgetInfo",
-  async (budgetID: string) => {
-    const userID = auth.currentUser?.uid;
+  async (budgetID: string, { getState }) => {
+    const state = getState() as State;
+
+    const userID = state.user.userID;
 
     if (!budgetID || budgetID === "") return;
 
@@ -90,8 +94,10 @@ export const fetchSelectedBudgetInfo = createAsyncThunk(
 
 export const deleteBudget = createAsyncThunk(
   "budgets/deleteBudget",
-  async (id: string) => {
-    const currentUserID = auth.currentUser?.uid;
+  async (id: string, { getState }) => {
+    const state = getState() as State;
+
+    const currentUserID = state.user.userID;
 
     if (!currentUserID) return;
 
@@ -129,8 +135,10 @@ export const deleteBudget = createAsyncThunk(
 
 export const deleteAllBudgets = createAsyncThunk(
   "budgets/deleteAllBudgets",
-  async () => {
-    const currentUserID = auth.currentUser?.uid;
+  async (_, { getState }) => {
+    const state = getState() as State;
+
+    const currentUserID = state.user.userID;
 
     if (!currentUserID) return;
 
@@ -161,10 +169,11 @@ export const deleteAllBudgets = createAsyncThunk(
 export const addNewBudget = createAsyncThunk(
   "budgets/addNewBudget",
   async (newBudget: NewBudget, { getState }) => {
-    const currentUserID = auth.currentUser?.uid;
-    const currentUserEmail = auth.currentUser?.email;
-
     const state = getState() as State;
+
+    const currentUserID = state.user.userID;
+
+    const currentUserEmail = state.user.email;
 
     const username = state.user.username;
 
@@ -211,8 +220,10 @@ export const addNewBudget = createAsyncThunk(
 
 export const addCategory = createAsyncThunk(
   "users/addCategory",
-  async ({ budgetID, category }: CategoryArgs) => {
-    const currentUserID = auth.currentUser?.uid;
+  async ({ budgetID, category }: CategoryArgs, { getState }) => {
+    const state = getState() as State;
+
+    const currentUserID = state.user.userID;
 
     const { categoryName, type } = category;
 
@@ -244,8 +255,10 @@ export const addCategory = createAsyncThunk(
 
 export const deleteCategory = createAsyncThunk(
   "users/deleteCategory",
-  async ({ category, budgetID }: CategoryArgs) => {
-    const currentUserID = auth.currentUser?.uid;
+  async ({ category, budgetID }: CategoryArgs, { getState }) => {
+    const state = getState() as State;
+
+    const currentUserID = state.user.userID;
 
     const { categoryName, type } = category;
 
@@ -302,8 +315,13 @@ export const fetchTransactions = createAsyncThunk(
 
 export const deleteTransaction = createAsyncThunk(
   "transactions/deleteTransaction",
-  async ({ budgetID, transactionToDelete }: DeleteTransactionArgs) => {
-    const currentUserID = auth.currentUser?.uid;
+  async (
+    { budgetID, transactionToDelete }: DeleteTransactionArgs,
+    { getState }
+  ) => {
+    const state = getState() as State;
+
+    const currentUserID = state.user.userID;
 
     if (!budgetID || !currentUserID) return;
 
@@ -364,8 +382,10 @@ export const deleteTransaction = createAsyncThunk(
 
 export const deleteAllTransactions = createAsyncThunk(
   "transactions/deleteAllTransactions",
-  async (budgetID: string) => {
-    const currentUserID = auth.currentUser?.uid;
+  async (budgetID: string, { getState }) => {
+    const state = getState() as State;
+
+    const currentUserID = state.user.userID;
 
     if (!budgetID || !currentUserID) return;
 
@@ -419,7 +439,7 @@ export const addTransaction = createAsyncThunk(
   async ({ budgetID, transaction }: AddTransactionArgs, { getState }) => {
     const state = getState() as State;
 
-    const userID = auth.currentUser?.uid;
+    const userID = state.user.userID;
 
     const username = state.user.username;
 
@@ -465,8 +485,13 @@ export const addTransaction = createAsyncThunk(
 
 export const updateTransaction = createAsyncThunk(
   "transactions/updateTransaction",
-  async ({ budgetID, editedTransaction }: EditedTransactionArgs) => {
-    const currentUserID = auth.currentUser?.uid;
+  async (
+    { budgetID, editedTransaction }: EditedTransactionArgs,
+    { getState }
+  ) => {
+    const state = getState() as State;
+
+    const currentUserID = state.user.userID;
 
     if (!budgetID || !currentUserID) return;
 
@@ -573,8 +598,10 @@ export const updateTransaction = createAsyncThunk(
 
 export const leaveBudget = createAsyncThunk(
   "invitations/leaveBudget",
-  async (budgetID: string) => {
-    const currentUserID = auth.currentUser?.uid;
+  async (budgetID: string, { getState }) => {
+    const state = getState() as State;
+
+    const currentUserID = state.user.userID;
 
     if (!currentUserID) return;
 

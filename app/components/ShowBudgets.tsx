@@ -53,7 +53,7 @@ export default function ShowBudgets() {
       dispatch(fetchBudgets({ sortBy, descending: false }));
     else if (sortDirection === "descending")
       dispatch(fetchBudgets({ sortBy, descending: true }));
-  }, [dispatch, sortBy, sortDirection, budgets.length, userID]);
+  }, [dispatch, sortBy, sortDirection, budgets.length]);
 
   const handleDeleteBudget = (id: string) => {
     dispatch(deleteBudget(id));

@@ -12,7 +12,7 @@ import {
   deleteDoc,
   arrayRemove,
 } from "firebase/firestore";
-import { auth, db } from "../firebase/config";
+import { db } from "../firebase/config";
 import type {
   State,
   InvitationsSlice,
@@ -28,8 +28,10 @@ import useSort from "../hooks/useSort";
 
 export const fetchInvitations = createAsyncThunk(
   "invitations/fetchInvitations",
-  async () => {
-    const currentUserID = auth.currentUser?.uid;
+  async (_, { getState }) => {
+    const state = getState() as State;
+
+    const currentUserID = state.user.userID;
 
     const invitationsQuery = query(
       collection(db, "invitations"),
@@ -193,8 +195,10 @@ export const editJoinedUserPermissions = createAsyncThunk(
 
 export const decideInvitation = createAsyncThunk(
   "invitations/decideInvitation",
-  async ({ invitationID, decision }: DecideInvitation) => {
-    const currentUserID = auth.currentUser?.uid;
+  async ({ invitationID, decision }: DecideInvitation, { getState }) => {
+    const state = getState() as State;
+
+    const currentUserID = state.user.userID;
 
     if (!currentUserID) return;
 
