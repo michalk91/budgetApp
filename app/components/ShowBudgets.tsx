@@ -21,6 +21,7 @@ import {
   setActiveElemIndex,
   setAllowTransition,
 } from "../redux/transitionSlice";
+import ArrowsLoader from "./ArrowsLoader";
 
 export default function ShowBudgets() {
   const dispatch = useAppDispatch();
@@ -35,6 +36,9 @@ export default function ShowBudgets() {
   );
   const allowTransition = useAppSelector(
     (state) => state.transition.allowTransition
+  );
+  const fetchBudgetsStatus = useAppSelector(
+    (state) => state.budgets.fetchBudgetsStatus
   );
 
   const [addNewBudget, setAddNewBudget] = useState(false);
@@ -124,7 +128,11 @@ export default function ShowBudgets() {
           currentPage={currentPage}
           rowsPerPage={rowsPerPage}
           setCurrentPage={setCurrentPage}
-          emptyTableCondition={budgets?.length === 0 && !addNewBudget}
+          emptyTableCondition={
+            fetchBudgetsStatus === "succeeded" &&
+            budgets?.length === 0 &&
+            !addNewBudget
+          }
           emptyTableTitle="You don't have any budgets yet"
           addNewRow={
             addNewBudget && <AddNewBudget setNewBudget={setAddNewBudget} />
@@ -136,101 +144,113 @@ export default function ShowBudgets() {
           searchKeywords={searchKeywords}
           notFound={notFound}
         >
-          {paginatedData?.map((budget, index) => (
-            <tr
-              id={`${index}`}
-              key={budget.budgetID}
-              className={`hover:bg-gray-100 bg-white border-b `}
-              ref={activeIndex === index ? handleCallbackRefs : null}
-            >
-              <td
-                data-cell="date"
-                className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0"
-              >
-                <p>created: {budget.addDate}</p>
-              </td>
-
-              <td
-                data-cell="Name"
-                className="font-bold px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0"
-              >
-                {budget.budgetName}
-              </td>
-
-              <td
-                data-cell="amount"
-                className={`${
-                  (budget.budgetValue as number) < 0
-                    ? "text-red-600"
-                    : "text-black"
-                } text-black px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center`}
-              >
-                {formatter(
-                  budget.budgetValue as number,
-                  budget.currencyType as string
-                )}
-              </td>
-
-              <td
-                data-cell="owner"
-                className={`font-bold ${
-                  budget.ownerID === userID ? "text-green-600" : "text-blue-700"
-                } px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center`}
-              >
-                {budget.ownerID === userID ? "You" : budget.ownerUsername}
-              </td>
-
-              <td className="max-lg:block max-lg:before:content-[attr(data-cell)]  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
-                <Link href={`/budgets/${budget.budgetID}`}>
-                  <Button
-                    handleClick={(e) => {
-                      dispatch(setActiveElemIndex(index));
-                    }}
-                    additionalStyles={
-                      !addNewBudget
-                        ? "bg-green-600 hover:bg-green-800"
-                        : "bg-green-200 hover:cursor-not-allowed"
-                    }
+          {paginatedData?.map(
+            (budget, index) =>
+              fetchBudgetsStatus === "succeeded" && (
+                <tr
+                  id={`${index}`}
+                  key={budget.budgetID}
+                  className={`hover:bg-gray-100 bg-white border-b `}
+                  ref={activeIndex === index ? handleCallbackRefs : null}
+                >
+                  <td
+                    data-cell="date"
+                    className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0"
                   >
-                    Show details
-                  </Button>
-                </Link>
-                {budget.ownerID === userID ? (
-                  <Button
-                    handleClick={() => {
-                      !addNewBudget &&
-                        budget.budgetID &&
-                        budget.ownerID === userID &&
-                        handleDeleteBudget(budget.budgetID);
-                    }}
-                    additionalStyles={
-                      !addNewBudget
-                        ? "bg-red-500 hover:bg-red-700"
-                        : "bg-red-200 hover:cursor-not-allowed"
-                    }
+                    <p>created: {budget.addDate}</p>
+                  </td>
+
+                  <td
+                    data-cell="Name"
+                    className="font-bold px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0"
                   >
-                    Delete
-                  </Button>
-                ) : (
-                  <Button
-                    handleClick={() => {
-                      !addNewBudget &&
-                        budget.budgetID &&
-                        budget.ownerID !== userID &&
-                        dispatch(leaveBudget(budget.budgetID));
-                    }}
-                    additionalStyles={
-                      !addNewBudget
-                        ? "bg-blue-500 hover:bg-blue-700"
-                        : "bg-blue-200 hover:cursor-not-allowed"
-                    }
+                    {budget.budgetName}
+                  </td>
+
+                  <td
+                    data-cell="amount"
+                    className={`${
+                      (budget.budgetValue as number) < 0
+                        ? "text-red-600"
+                        : "text-black"
+                    } text-black px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center`}
                   >
-                    Leave
-                  </Button>
-                )}
+                    {formatter(
+                      budget.budgetValue as number,
+                      budget.currencyType as string
+                    )}
+                  </td>
+
+                  <td
+                    data-cell="owner"
+                    className={`font-bold ${
+                      budget.ownerID === userID
+                        ? "text-green-600"
+                        : "text-blue-700"
+                    } px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center`}
+                  >
+                    {budget.ownerID === userID ? "You" : budget.ownerUsername}
+                  </td>
+
+                  <td className="max-lg:block max-lg:before:content-[attr(data-cell)]  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
+                    <Link href={`/budgets/${budget.budgetID}`}>
+                      <Button
+                        handleClick={(e) => {
+                          dispatch(setActiveElemIndex(index));
+                        }}
+                        additionalStyles={
+                          !addNewBudget
+                            ? "bg-green-600 hover:bg-green-800"
+                            : "bg-green-200 hover:cursor-not-allowed"
+                        }
+                      >
+                        Show details
+                      </Button>
+                    </Link>
+                    {budget.ownerID === userID ? (
+                      <Button
+                        handleClick={() => {
+                          !addNewBudget &&
+                            budget.budgetID &&
+                            budget.ownerID === userID &&
+                            handleDeleteBudget(budget.budgetID);
+                        }}
+                        additionalStyles={
+                          !addNewBudget
+                            ? "bg-red-500 hover:bg-red-700"
+                            : "bg-red-200 hover:cursor-not-allowed"
+                        }
+                      >
+                        Delete
+                      </Button>
+                    ) : (
+                      <Button
+                        handleClick={() => {
+                          !addNewBudget &&
+                            budget.budgetID &&
+                            budget.ownerID !== userID &&
+                            dispatch(leaveBudget(budget.budgetID));
+                        }}
+                        additionalStyles={
+                          !addNewBudget
+                            ? "bg-blue-500 hover:bg-blue-700"
+                            : "bg-blue-200 hover:cursor-not-allowed"
+                        }
+                      >
+                        Leave
+                      </Button>
+                    )}
+                  </td>
+                </tr>
+              )
+          )}
+          {fetchBudgetsStatus === "loading" && (
+            <tr>
+              <td colSpan={5} className="h-full w-full p-10 bg-white">
+                <ArrowsLoader />
               </td>
             </tr>
-          ))}
+          )}
         </Table>
 
         <div className="text-center mt-6">

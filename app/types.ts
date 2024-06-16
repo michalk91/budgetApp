@@ -57,6 +57,7 @@ export interface BudgetsSlice {
   budgetName: string;
   transactions: Transaction[];
   fetchTransactionsStatus: "idle" | "loading" | "succeeded" | "failed";
+  fetchBudgetsStatus: "idle" | "loading" | "succeeded" | "failed";
   selectedOption: string;
   allowManageAllTransactions: string[];
   allowManageCategories: string[];

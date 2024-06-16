@@ -632,6 +632,7 @@ const budgetsSlice = createSlice({
     budgetName: "",
     transactions: [],
     fetchTransactionsStatus: "idle",
+    fetchBudgetsStatus: "idle",
     selectedOption: "Expenses",
     allowManageAllTransactions: [],
     allowManageCategories: [],
@@ -676,10 +677,15 @@ const budgetsSlice = createSlice({
 
       //----------------------------------------------------------------------------
 
+      .addCase(fetchBudgets.pending, (state) => {
+        state.fetchBudgetsStatus = "loading";
+      })
+
       .addCase(fetchBudgets.fulfilled, (state, action) => {
         if (!action.payload) return;
 
         state.budgetsArray = action.payload;
+        state.fetchBudgetsStatus = "succeeded";
       })
 
       //---------------------------------------------------------
