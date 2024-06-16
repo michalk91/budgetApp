@@ -67,13 +67,22 @@ export const fetchSelectedBudgetInfo = createAsyncThunk(
   "budgets/fetchSelectedBudgetInfo",
   async (_, { getState }) => {
     const state = getState() as State;
-    const selectedBudgetID = state.budgets.budgetID;
+    const budgetID = state.budgets.budgetID;
+    const userID = auth.currentUser?.uid;
 
-    const docRef = doc(db, "budgets", `${selectedBudgetID}`);
+    if (!budgetID || budgetID === "") return;
+
+    const docRef = doc(db, "budgets", `${budgetID}`);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      return docSnap.data();
+      const data = docSnap.data();
+
+      if (data.ownerID !== userID && !data.usersWithAccess.includes(userID)) {
+        throw Error("You are not authorized to look at this budget.");
+      } else {
+        return data;
+      }
     }
   }
 );
@@ -617,6 +626,7 @@ const budgetsSlice = createSlice({
     selectedOption: "Expenses",
     allowManageAllTransactions: [],
     allowManageCategories: [],
+    showSelectedBudgetError: "",
     ownerID: "",
     ownerUsername: "",
     ownerEmail: "",
@@ -635,6 +645,7 @@ const budgetsSlice = createSlice({
       .addCase(fetchSelectedBudgetInfo.fulfilled, (state, action) => {
         if (!action.payload) return;
 
+        state.showSelectedBudgetError = "";
         state.budgetValue = action.payload.budgetValue;
         state.addDate = action.payload.addDate;
         state.incomeCategories = action.payload.incomeCategories;
@@ -650,6 +661,14 @@ const budgetsSlice = createSlice({
         state.ownerUsername = action.payload.ownerUsername;
         state.ownerEmail = action.payload.ownerEmail;
       })
+
+      .addCase(fetchSelectedBudgetInfo.rejected, (state, error) => {
+        state.showSelectedBudgetError = error.error.message
+          ? error.error.message
+          : "";
+      })
+
+      //----------------------------------------------------------------------------
 
       .addCase(fetchBudgets.fulfilled, (state, action) => {
         if (!action.payload) return;

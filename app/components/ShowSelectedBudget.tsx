@@ -15,6 +15,7 @@ import { fetchJoinedUsers } from "../redux/invitationsSlice";
 import { FaUser } from "react-icons/fa";
 import { RiAdminFill } from "react-icons/ri";
 import type { SortState } from "../types";
+import ShowError from "./ShowError";
 
 export default function ShowSelectedBudget() {
   const dispatch = useAppDispatch();
@@ -36,6 +37,9 @@ export default function ShowSelectedBudget() {
   const ownerUsername = useAppSelector((state) => state.budgets.ownerUsername);
   const ownerEmail = useAppSelector((state) => state.budgets.ownerEmail);
   const ownerID = useAppSelector((state) => state.budgets.ownerID);
+  const fetchSelectedBudgetError = useAppSelector(
+    (state) => state.budgets.showSelectedBudgetError
+  );
 
   const [expensesSort, setExpensesSort] = useState<SortState>({
     sortBy: "timestamp",
@@ -57,102 +61,113 @@ export default function ShowSelectedBudget() {
   }, [dispatch, sortBy, sortDirection]);
 
   return (
-    <>
-      <div className="border-solid border-2 border-blue-400 shadow-xl rounded-md p-4 mt-10">
-        <div className="flex flex-wrap  justify-center">
-          {budgetName !== "" && (
-            <span className={`text-center p-5 text-2xl max-md:p-1`}>
-              {`Budget name: `}
-              <b className="text-blac">{`"${budgetName}"`}</b>
-            </span>
-          )}
-
-          <DisplayAmount
-            fontSize="2xl"
-            valueFromStore={budgetValue}
-            title="Budget amount"
-            titleClass={budgetValue > 0 ? " text-lime-600" : " text-rose-500"}
-          />
-          <BudgetAddDate budgetDate={budgetAddDate} />
-        </div>
-
-        <div className="flex flex-wrap justify-center  self-center max-md:p-2">
-          <DisplayAmount
-            fontSize="xl"
-            title="Expenses"
-            valueFromStore={expensesFromStore}
-            titleClass={
-              expensesFromStore === 0 ? " text-lime-600" : " text-rose-500"
-            }
-          />
-          <DisplayAmount
-            fontSize="xl"
-            title="Incomes"
-            valueFromStore={incomesFromStore}
-            titleClass={
-              incomesFromStore > 0 ? " text-lime-600" : " text-rose-500"
-            }
-          />
-        </div>
-        {
-          <span className="text-center mb-6 mt-1 text-lg text-blue-700 flex items-center justify-center flex-wrap">
-            <RiAdminFill />
-            {userID !== ownerID ? (
-              <p className="pl-2 mb-4 mt-2">
-                OWNER:<b className="pl-2">{`${ownerUsername}`}</b>
-                {` (${ownerEmail})`}
-              </p>
-            ) : (
-              <p className="pl-2 mb-4 mt-2">
-                OWNER: <b>{`You`}</b>
-              </p>
-            )}
-          </span>
-        }
-        {userID && usersWithAccess.length > 0 && (
-          <div className="text-center p-6 border-t-2 border-blue-400">
-            <p className="text-xl font-bold mt-3">
-              Users with access to the budget:
-            </p>
-            <ul>
-              {usersWithAccess.map((user) => (
-                <li
-                  className="mt-2 flex items-center justify-center flex-wrap"
-                  key={user.userID}
-                >
-                  {user.userID !== userID ? (
-                    <>
-                      <FaUser /> <b className="px-2">{` ${user.username} `}</b>
-                      {` (${user.userEmail})`}
-                    </>
-                  ) : (
-                    <>
-                      <FaUser /> <b className="px-2">You</b>
-                    </>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-      <SubNavigation activeOption={activeOption} />
-
-      {activeOption === "Expenses" && (
-        <ShowTransactions
-          expensesSort={expensesSort}
-          setExpensesSort={setExpensesSort}
-        />
-      )}
-      {activeOption === "Data visualization" && <ExpensesCharts />}
-
-      {activeOption === "Manage categories" && (
+    <div className="flex flex-col items-center animate-fadeInUp w-full opacity-0">
+      {fetchSelectedBudgetError === "" ? (
         <>
-          <Categories type="expense" />
-          <Categories type="income" />
+          <div className="border-solid border-2 border-blue-400 shadow-xl rounded-md p-4 mt-10">
+            <div className="flex flex-wrap  justify-center">
+              {budgetName !== "" && (
+                <span className={`text-center p-5 text-2xl max-md:p-1`}>
+                  {`Budget name: `}
+                  <b className="text-blac">{`"${budgetName}"`}</b>
+                </span>
+              )}
+
+              <DisplayAmount
+                fontSize="2xl"
+                valueFromStore={budgetValue}
+                title="Budget amount"
+                titleClass={
+                  budgetValue > 0 ? " text-lime-600" : " text-rose-500"
+                }
+              />
+              <BudgetAddDate budgetDate={budgetAddDate} />
+            </div>
+
+            <div className="flex flex-wrap justify-center  self-center max-md:p-2">
+              <DisplayAmount
+                fontSize="xl"
+                title="Expenses"
+                valueFromStore={expensesFromStore}
+                titleClass={
+                  expensesFromStore === 0 ? " text-lime-600" : " text-rose-500"
+                }
+              />
+              <DisplayAmount
+                fontSize="xl"
+                title="Incomes"
+                valueFromStore={incomesFromStore}
+                titleClass={
+                  incomesFromStore > 0 ? " text-lime-600" : " text-rose-500"
+                }
+              />
+            </div>
+            {
+              <span className="text-center mb-6 mt-1 text-lg text-blue-700 flex items-center justify-center flex-wrap">
+                <RiAdminFill />
+                {userID !== ownerID ? (
+                  <p className="pl-2 mb-4 mt-2">
+                    OWNER:<b className="pl-2">{`${ownerUsername}`}</b>
+                    {` (${ownerEmail})`}
+                  </p>
+                ) : (
+                  <p className="pl-2 mb-4 mt-2">
+                    OWNER: <b>{`You`}</b>
+                  </p>
+                )}
+              </span>
+            }
+            {userID && usersWithAccess.length > 0 && (
+              <div className="text-center p-6 border-t-2 border-blue-400">
+                <p className="text-xl font-bold mt-3">
+                  Users with access to the budget:
+                </p>
+                <ul>
+                  {usersWithAccess.map((user) => (
+                    <li
+                      className="mt-2 flex items-center justify-center flex-wrap"
+                      key={user.userID}
+                    >
+                      {user.userID !== userID ? (
+                        <>
+                          <FaUser />
+                          <b className="px-2">{` ${user.username} `}</b>
+                          {` (${user.userEmail})`}
+                        </>
+                      ) : (
+                        <>
+                          <FaUser /> <b className="px-2">You</b>
+                        </>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col items-center min-h-screen w-full">
+            <SubNavigation activeOption={activeOption} />
+
+            {activeOption === "Expenses" && (
+              <ShowTransactions
+                expensesSort={expensesSort}
+                setExpensesSort={setExpensesSort}
+              />
+            )}
+            {activeOption === "Data visualization" && <ExpensesCharts />}
+
+            {activeOption === "Manage categories" && (
+              <>
+                <Categories type="expense" />
+                <Categories type="income" />
+              </>
+            )}
+            {activeOption === "Share budget" && <ShareBudget />}
+          </div>
         </>
+      ) : (
+        <ShowError message={fetchSelectedBudgetError} />
       )}
-      {activeOption === "Share budget" && <ShareBudget />}
-    </>
+    </div>
   );
 }
