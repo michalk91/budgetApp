@@ -12,12 +12,16 @@ import Button from "./Button";
 import type { ShowTransactionsProps } from "../types";
 import useSearch from "../hooks/useSearch";
 import usePagination from "../hooks/usePagination";
+import { useIDfromPathname } from "../hooks/useIDfromPathname";
 
 export default function ShowTransactions({
   expensesSort,
   setExpensesSort,
 }: ShowTransactionsProps) {
   const dispatch = useAppDispatch();
+
+  const budgetID = useIDfromPathname();
+
   const transactions = useAppSelector((state) => state.budgets.transactions);
   const expenseCategories = useAppSelector(
     (state) => state.budgets.expenseCategories
@@ -49,7 +53,9 @@ export default function ShowTransactions({
   const formatter = useFormatter();
 
   const handleDeleteTransaction = (id: string, type: "expense" | "income") => {
-    dispatch(deleteTransaction({ id, type }));
+    dispatch(
+      deleteTransaction({ budgetID, transactionToDelete: { id, type } })
+    );
   };
 
   const handleStartEdit = (id: string) => {
@@ -74,7 +80,7 @@ export default function ShowTransactions({
       comment,
     };
 
-    dispatch(updateTransaction(transaction));
+    dispatch(updateTransaction({ budgetID, editedTransaction: transaction }));
 
     setEditedTransaction((state) => ({
       ...state,
@@ -137,6 +143,7 @@ export default function ShowTransactions({
           <>
             {editedTransaction.id === "" && addNewExpense && (
               <AddTransaction
+                budgetID={budgetID}
                 setAdd={setAddNewExpense}
                 categories={expenseCategories}
                 type="expense"
@@ -145,6 +152,7 @@ export default function ShowTransactions({
 
             {editedTransaction.id === "" && addNewIncome && (
               <AddTransaction
+                budgetID={budgetID}
                 setAdd={setAddNewIncome}
                 categories={incomeCategories}
                 type="income"
@@ -417,7 +425,7 @@ export default function ShowTransactions({
                   handleClick={() =>
                     userID &&
                     editedTransaction.id === "" &&
-                    dispatch(deleteAllTransactions())
+                    dispatch(deleteAllTransactions(budgetID))
                   }
                   additionalStyles={
                     editedTransaction.id === ""

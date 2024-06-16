@@ -46,7 +46,6 @@ export interface State {
 }
 
 export interface BudgetsSlice {
-  budgetID: string;
   budgetValue: number;
   budgetsArray: Budget[];
   currencyType: "PLN" | "EUR" | "USD";
@@ -112,6 +111,7 @@ export interface AddTransactionProps {
   setAdd: Dispatch<SetStateAction<boolean>>;
   categories: string[];
   type: "income" | "expense";
+  budgetID: string;
 }
 
 export interface AddNewBudgetProps {
@@ -229,7 +229,8 @@ export interface AddNewUserProps {
   setNewUser: Dispatch<SetStateAction<boolean>>;
 }
 
-export interface InviteFriend {
+export interface InviteUserArgs {
+  budgetID: string;
   email: string;
   allowManageCategories: boolean;
   allowManageAllTransactions: boolean;
@@ -265,4 +266,34 @@ export interface PaginationProps {
 
 export interface ShowErrorProps {
   message: string;
+}
+
+export interface DeleteUserArgs {
+  userID: string;
+  budgetID: string;
+}
+
+export interface FetchArgs {
+  budgetID: string;
+  sortOptions: SortOptions;
+}
+
+export interface CategoryArgs {
+  category: Category;
+  budgetID: string;
+}
+
+export interface DeleteTransactionArgs {
+  budgetID: string;
+  transactionToDelete: TransactionToDelete;
+}
+
+export interface EditedTransactionArgs {
+  budgetID: string;
+  editedTransaction: Transaction;
+}
+
+export interface AddTransactionArgs {
+  budgetID: string;
+  transaction: Transaction;
 }

@@ -12,9 +12,13 @@ import {
 import { ImCross, ImCheckmark } from "react-icons/im";
 import useSearch from "../hooks/useSearch";
 import usePagination from "../hooks/usePagination";
+import { useIDfromPathname } from "../hooks/useIDfromPathname";
 
 export default function JoinedUsers() {
   const dispatch = useAppDispatch();
+
+  const budgetID = useIDfromPathname();
+
   const usersWithAccess = useAppSelector(
     (state) => state.invitations.usersWithAccess
   );
@@ -34,10 +38,20 @@ export default function JoinedUsers() {
 
   useEffect(() => {
     if (sortDirection === "ascending")
-      dispatch(fetchJoinedUsers({ sortBy, descending: false }));
+      dispatch(
+        fetchJoinedUsers({
+          budgetID,
+          sortOptions: { sortBy, descending: false },
+        })
+      );
     else if (sortDirection === "descending")
-      dispatch(fetchJoinedUsers({ sortBy, descending: true }));
-  }, [dispatch, sortBy, sortDirection]);
+      dispatch(
+        fetchJoinedUsers({
+          budgetID,
+          sortOptions: { sortBy, descending: true },
+        })
+      );
+  }, [dispatch, sortBy, sortDirection, budgetID]);
 
   const handleStartEdit = (
     id: string,
@@ -203,7 +217,12 @@ export default function JoinedUsers() {
                 <td className="max-lg:block max-lg:mt-6 max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
                   <Button
                     handleClick={() => {
-                      dispatch(deleteUser(user.userID));
+                      dispatch(
+                        deleteUser({
+                          userID: user.userID,
+                          budgetID,
+                        })
+                      );
                     }}
                     additionalStyles={
                       editedUserPermissions.id === ""
@@ -237,7 +256,7 @@ export default function JoinedUsers() {
                     handleClick={() => {
                       dispatch(
                         editJoinedUserPermissions({
-                          budgetID: user.budgetID,
+                          budgetID,
                           userID: user.userID,
                           allowManageCategories:
                             editedUserPermissions.allowManageCategories,
@@ -268,7 +287,8 @@ export default function JoinedUsers() {
         {usersWithAccess?.length > 1 && (
           <Button
             handleClick={() => {
-              editedUserPermissions.id === "" && dispatch(deleteAllUsers());
+              editedUserPermissions.id === "" &&
+                dispatch(deleteAllUsers(budgetID));
             }}
             additionalStyles={` mt-8  ${
               editedUserPermissions.id === ""

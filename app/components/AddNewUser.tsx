@@ -3,9 +3,12 @@ import { useAppDispatch } from "../redux/hooks";
 import { AddNewUserProps } from "../types";
 import Button from "./Button";
 import { inviteUser } from "../redux/invitationsSlice";
+import { useIDfromPathname } from "../hooks/useIDfromPathname";
 
 export default function AddNewUser({ setNewUser }: AddNewUserProps) {
   const dispatch = useAppDispatch();
+
+  const budgetID = useIDfromPathname();
 
   const [userFromInput, setUserFromInput] = useState({
     email: "",
@@ -22,6 +25,7 @@ export default function AddNewUser({ setNewUser }: AddNewUserProps) {
 
       dispatch(
         inviteUser({
+          budgetID,
           email,
           allowManageAllTransactions,
           allowManageCategories,
@@ -40,6 +44,7 @@ export default function AddNewUser({ setNewUser }: AddNewUserProps) {
       dispatch,
       email,
       setNewUser,
+      budgetID,
     ]
   );
 

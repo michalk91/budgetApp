@@ -22,9 +22,12 @@ import type {
   NewBudget,
   BudgetsSlice,
   State,
-  Category,
+  CategoryArgs,
   Transaction,
-  TransactionToDelete,
+  DeleteTransactionArgs,
+  FetchArgs,
+  EditedTransactionArgs,
+  AddTransactionArgs,
 } from "../types";
 import useSort from "../hooks/useSort";
 
@@ -65,9 +68,7 @@ export const fetchBudgets = createAsyncThunk(
 
 export const fetchSelectedBudgetInfo = createAsyncThunk(
   "budgets/fetchSelectedBudgetInfo",
-  async (_, { getState }) => {
-    const state = getState() as State;
-    const budgetID = state.budgets.budgetID;
+  async (budgetID: string) => {
     const userID = auth.currentUser?.uid;
 
     if (!budgetID || budgetID === "") return;
@@ -79,7 +80,7 @@ export const fetchSelectedBudgetInfo = createAsyncThunk(
       const data = docSnap.data();
 
       if (data.ownerID !== userID && !data.usersWithAccess.includes(userID)) {
-        throw Error("You are not authorized to look at this budget.");
+        throw Error("You are not authorized to view this budget.");
       } else {
         return data;
       }
@@ -210,15 +211,12 @@ export const addNewBudget = createAsyncThunk(
 
 export const addCategory = createAsyncThunk(
   "users/addCategory",
-  async (category: Category, { getState }) => {
-    const state = getState() as State;
-    const selectedBudgetID = state.budgets.budgetID;
-
+  async ({ budgetID, category }: CategoryArgs) => {
     const currentUserID = auth.currentUser?.uid;
 
     const { categoryName, type } = category;
 
-    const budgetRef = doc(db, "budgets", selectedBudgetID);
+    const budgetRef = doc(db, "budgets", budgetID);
 
     const budgetSnap = await getDoc(budgetRef);
 
@@ -230,7 +228,7 @@ export const addCategory = createAsyncThunk(
         throw Error("Insufficient permissions to perform this action");
 
       await updateDoc(
-        doc(db, "budgets", selectedBudgetID),
+        doc(db, "budgets", budgetID),
         type === "expense"
           ? {
               expenseCategories: arrayUnion(categoryName),
@@ -246,14 +244,12 @@ export const addCategory = createAsyncThunk(
 
 export const deleteCategory = createAsyncThunk(
   "users/deleteCategory",
-  async (category: Category, { getState }) => {
-    const state = getState() as State;
-    const selectedBudgetID = state.budgets.budgetID;
+  async ({ category, budgetID }: CategoryArgs) => {
     const currentUserID = auth.currentUser?.uid;
 
     const { categoryName, type } = category;
 
-    const budgetRef = doc(db, "budgets", selectedBudgetID);
+    const budgetRef = doc(db, "budgets", budgetID);
 
     const budgetSnap = await getDoc(budgetRef);
 
@@ -265,7 +261,7 @@ export const deleteCategory = createAsyncThunk(
         throw Error("Insufficient permissions to perform this action");
 
       await updateDoc(
-        doc(db, "budgets", selectedBudgetID),
+        doc(db, "budgets", budgetID),
         type === "expense"
           ? {
               expenseCategories: arrayRemove(categoryName),
@@ -281,12 +277,9 @@ export const deleteCategory = createAsyncThunk(
 
 export const fetchTransactions = createAsyncThunk(
   "fetchTransactions",
-  async (sortOptions: SortOptions, { getState }) => {
+  async ({ budgetID, sortOptions }: FetchArgs) => {
     const { sortBy, descending } = sortOptions;
 
-    const state = getState() as State;
-
-    const budgetID = state.budgets.budgetID;
     if (!budgetID) return;
 
     const transactionsQuery = query(
@@ -309,10 +302,7 @@ export const fetchTransactions = createAsyncThunk(
 
 export const deleteTransaction = createAsyncThunk(
   "transactions/deleteTransaction",
-  async (transactionToDelete: TransactionToDelete, { getState }) => {
-    const state = getState() as State;
-
-    const budgetID = state.budgets.budgetID;
+  async ({ budgetID, transactionToDelete }: DeleteTransactionArgs) => {
     const currentUserID = auth.currentUser?.uid;
 
     if (!budgetID || !currentUserID) return;
@@ -374,12 +364,8 @@ export const deleteTransaction = createAsyncThunk(
 
 export const deleteAllTransactions = createAsyncThunk(
   "transactions/deleteAllTransactions",
-  async (_, { getState }) => {
-    const state = getState() as State;
-
+  async (budgetID: string) => {
     const currentUserID = auth.currentUser?.uid;
-
-    const budgetID = state.budgets.budgetID;
 
     if (!budgetID || !currentUserID) return;
 
@@ -430,12 +416,11 @@ export const deleteAllTransactions = createAsyncThunk(
 
 export const addTransaction = createAsyncThunk(
   "transactions/addTransaction",
-  async (transaction: Transaction, { getState }) => {
+  async ({ budgetID, transaction }: AddTransactionArgs, { getState }) => {
     const state = getState() as State;
 
     const userID = auth.currentUser?.uid;
 
-    const budgetID = state.budgets.budgetID;
     const username = state.user.username;
 
     if (!budgetID || !userID || !username) return;
@@ -480,12 +465,9 @@ export const addTransaction = createAsyncThunk(
 
 export const updateTransaction = createAsyncThunk(
   "transactions/updateTransaction",
-  async (editedTransaction: Transaction, { getState }) => {
-    const state = getState() as State;
-
+  async ({ budgetID, editedTransaction }: EditedTransactionArgs) => {
     const currentUserID = auth.currentUser?.uid;
 
-    const budgetID = state.budgets.budgetID;
     if (!budgetID || !currentUserID) return;
 
     let budgetDiff = 0;
@@ -632,9 +614,6 @@ const budgetsSlice = createSlice({
     ownerEmail: "",
   } as BudgetsSlice,
   reducers: {
-    setSelectedBudgetID: (state, action) => {
-      state.budgetID = action.payload.budgetID;
-    },
     setSelectedOption: (state, action) => {
       state.selectedOption = action.payload;
     },
@@ -828,7 +807,6 @@ const budgetsSlice = createSlice({
   },
 });
 
-export const { setSelectedBudgetID } = budgetsSlice.actions;
 export const { setSelectedOption } = budgetsSlice.actions;
 
 export default budgetsSlice.reducer;

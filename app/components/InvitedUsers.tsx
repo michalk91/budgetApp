@@ -11,9 +11,12 @@ import {
 } from "../redux/invitationsSlice";
 import useSearch from "../hooks/useSearch";
 import usePagination from "../hooks/usePagination";
+import { useIDfromPathname } from "../hooks/useIDfromPathname";
 
 export default function InvitedUsers() {
   const dispatch = useAppDispatch();
+
+  const budgetID = useIDfromPathname();
 
   const invitedUsers = useAppSelector(
     (state) => state.invitations.invitedUsers
@@ -30,10 +33,20 @@ export default function InvitedUsers() {
 
   useEffect(() => {
     if (sortDirection === "ascending")
-      dispatch(fetchInvitedUsers({ sortBy, descending: false }));
+      dispatch(
+        fetchInvitedUsers({
+          budgetID,
+          sortOptions: { sortBy, descending: false },
+        })
+      );
     else if (sortDirection === "descending")
-      dispatch(fetchInvitedUsers({ sortBy, descending: true }));
-  }, [dispatch, sortBy, sortDirection]);
+      dispatch(
+        fetchInvitedUsers({
+          budgetID,
+          sortOptions: { sortBy, descending: true },
+        })
+      );
+  }, [dispatch, sortBy, sortDirection, budgetID]);
 
   const findByKeys = ["invitedUserEmail", " invitedUsername"];
 

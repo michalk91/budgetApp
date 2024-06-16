@@ -8,6 +8,7 @@ export default function AddTransaction({
   setAdd,
   categories,
   type,
+  budgetID,
 }: AddTransactionProps) {
   const dispatch = useAppDispatch();
 
@@ -24,12 +25,17 @@ export default function AddTransaction({
 
     if (amountValue <= 0) return;
 
-    dispatch(addTransaction({ category, amount: amountValue, type, comment }));
+    dispatch(
+      addTransaction({
+        budgetID,
+        transaction: { category, amount: amountValue, type, comment },
+      })
+    );
 
     setValueFromInput((state) => ({ ...state, amount: "" }));
 
     setAdd(false);
-  }, [amount, category, dispatch, type, setAdd, comment]);
+  }, [amount, category, dispatch, type, setAdd, comment, budgetID]);
 
   return (
     <tr className="bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700 max-xl:text-center">

@@ -19,9 +19,10 @@ import type {
   Budget,
   DecideInvitation,
   UsersWithPermissions,
-  SortOptions,
-  InviteFriend,
+  FetchArgs,
+  InviteUserArgs,
   EditJoinedUserPermissions,
+  DeleteUserArgs,
 } from "../types";
 import useSort from "../hooks/useSort";
 
@@ -47,15 +48,12 @@ export const fetchInvitations = createAsyncThunk(
 
 export const fetchInvitedUsers = createAsyncThunk(
   "invitations/fetchInvitedUsers",
-  async (sortOptions: SortOptions, { getState }) => {
+  async ({ budgetID, sortOptions }: FetchArgs) => {
     const { sortBy, descending } = sortOptions;
-
-    const state = getState() as State;
-    const selectedBudgetID = state.budgets.budgetID;
 
     const invitedUsersQuery = query(
       collection(db, "invitations"),
-      where("budgetID", "==", selectedBudgetID)
+      where("budgetID", "==", budgetID)
     );
 
     const querySnapshot = await getDocs(invitedUsersQuery);
@@ -85,15 +83,9 @@ export const deleteInvitation = createAsyncThunk(
 
 export const deleteAllInvitations = createAsyncThunk(
   "invitations/deleteAllInvitations",
-  async (_, { getState }) => {
-    const state = getState() as State;
-    const selectedBudgetID = state.budgets.budgetID;
-
+  async (budgetID) => {
     const invitations = await getDocs(
-      query(
-        collection(db, `invitations`),
-        where("budgetID", "==", selectedBudgetID)
-      )
+      query(collection(db, `invitations`), where("budgetID", "==", budgetID))
     );
 
     for (const invitation of invitations.docs) {
@@ -106,10 +98,7 @@ export const deleteAllInvitations = createAsyncThunk(
 
 export const deleteUser = createAsyncThunk(
   "invitations/deleteUser",
-  async (userID: string, { getState }) => {
-    const state = getState() as State;
-    const budgetID = state.budgets.budgetID;
-
+  async ({ userID, budgetID }: DeleteUserArgs) => {
     await updateDoc(doc(db, "budgets", budgetID), {
       usersWithAccess: arrayRemove(userID),
       allowManageCategories: arrayRemove(userID),
@@ -122,10 +111,7 @@ export const deleteUser = createAsyncThunk(
 
 export const deleteAllUsers = createAsyncThunk(
   "invitations/deleteAllUsers",
-  async (_, { getState }) => {
-    const state = getState() as State;
-    const budgetID = state.budgets.budgetID;
-
+  async (budgetID: string) => {
     await updateDoc(doc(db, "budgets", budgetID), {
       usersWithAccess: [],
       allowManageCategories: [],
@@ -138,12 +124,8 @@ export const deleteAllUsers = createAsyncThunk(
 
 export const fetchJoinedUsers = createAsyncThunk(
   "invitations/fetchJoinedUsers",
-  async (sortOptions: SortOptions, { getState }) => {
-    const state = getState() as State;
-
+  async ({ budgetID, sortOptions }: FetchArgs) => {
     const { sortBy, descending } = sortOptions;
-
-    const budgetID = state.budgets.budgetID;
 
     const budgetRef = doc(db, "budgets", budgetID);
     const budgetSnap = await getDoc(budgetRef);
@@ -249,11 +231,15 @@ export const decideInvitation = createAsyncThunk(
 export const inviteUser = createAsyncThunk(
   "invitations/inviteUser",
   async (
-    { email, allowManageCategories, allowManageAllTransactions }: InviteFriend,
+    {
+      budgetID,
+      email,
+      allowManageCategories,
+      allowManageAllTransactions,
+    }: InviteUserArgs,
     { getState }
   ) => {
     const state = getState() as State;
-    const selectedBudgetID = state.budgets.budgetID;
     const loggedUserEmail = state.user.email;
 
     if (loggedUserEmail === email) throw Error("You can't invite yourself");
@@ -278,7 +264,7 @@ export const inviteUser = createAsyncThunk(
     const invitationsRef = collection(db, "invitations");
     const invitationsQuery = query(
       invitationsRef,
-      where("budgetID", "==", selectedBudgetID),
+      where("budgetID", "==", budgetID),
       where("invitedUserEmail", "==", email)
     );
 
@@ -286,11 +272,11 @@ export const inviteUser = createAsyncThunk(
 
     invitationsSnapshot.forEach((doc) => {
       const data = doc.data();
-      if (data.budgetID === selectedBudgetID)
+      if (data.budgetID === budgetID)
         throw Error("You cannot invite the same user twice");
     });
 
-    const budgetRef = doc(db, "budgets", selectedBudgetID);
+    const budgetRef = doc(db, "budgets", budgetID);
     const budgetSnap = await getDoc(budgetRef);
 
     if (budgetSnap.exists()) {
@@ -304,7 +290,7 @@ export const inviteUser = createAsyncThunk(
         throw Error("This user already has access to this budget");
 
       const invitationData = {
-        budgetID: selectedBudgetID,
+        budgetID,
         invitedUserID: userID,
         invitedUserEmail: email,
         invitedUsername: username,

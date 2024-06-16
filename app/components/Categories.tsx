@@ -5,9 +5,12 @@ import { useAppSelector } from "../redux/hooks";
 import { addCategory, deleteCategory } from "../redux/budgetsSlice";
 import type { CategoriesProps } from "../types";
 import Button from "./Button";
+import { useIDfromPathname } from "../hooks/useIDfromPathname";
 
 export default function Categories({ type }: CategoriesProps) {
   const dispatch = useAppDispatch();
+
+  const budgetID = useIDfromPathname();
 
   const categories = useAppSelector((state) =>
     type === "expense"
@@ -92,8 +95,11 @@ export default function Categories({ type }: CategoriesProps) {
 
                 dispatch(
                   addCategory({
-                    categoryName: newCategory[newCategory.length - 1],
-                    type,
+                    budgetID,
+                    category: {
+                      categoryName: newCategory[newCategory.length - 1],
+                      type,
+                    },
                   })
                 );
 
@@ -130,8 +136,8 @@ export default function Categories({ type }: CategoriesProps) {
 
                 dispatch(
                   deleteCategory({
-                    categoryName: categoryToDelete,
-                    type,
+                    budgetID,
+                    category: { categoryName: categoryToDelete, type },
                   })
                 );
 

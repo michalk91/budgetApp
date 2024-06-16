@@ -16,9 +16,11 @@ import { FaUser } from "react-icons/fa";
 import { RiAdminFill } from "react-icons/ri";
 import type { SortState } from "../types";
 import ShowError from "./ShowError";
+import { useIDfromPathname } from "../hooks/useIDfromPathname";
 
 export default function ShowSelectedBudget() {
   const dispatch = useAppDispatch();
+  const budgetID = useIDfromPathname();
 
   const usersWithAccess = useAppSelector(
     (state) => state.invitations.usersWithAccess
@@ -49,16 +51,31 @@ export default function ShowSelectedBudget() {
   const { sortBy, sortDirection } = expensesSort;
 
   useEffect(() => {
-    dispatch(fetchSelectedBudgetInfo());
-    dispatch(fetchJoinedUsers({ sortBy: "username", descending: false }));
-  }, [dispatch]);
+    dispatch(fetchSelectedBudgetInfo(budgetID));
+    dispatch(
+      fetchJoinedUsers({
+        budgetID,
+        sortOptions: { sortBy: "username", descending: false },
+      })
+    );
+  }, [dispatch, budgetID]);
 
   useEffect(() => {
     if (sortDirection === "ascending")
-      dispatch(fetchTransactions({ sortBy, descending: false }));
+      dispatch(
+        fetchTransactions({
+          budgetID,
+          sortOptions: { sortBy, descending: false },
+        })
+      );
     else if (sortDirection === "descending")
-      dispatch(fetchTransactions({ sortBy, descending: true }));
-  }, [dispatch, sortBy, sortDirection]);
+      dispatch(
+        fetchTransactions({
+          budgetID,
+          sortOptions: { sortBy, descending: true },
+        })
+      );
+  }, [dispatch, sortBy, sortDirection, budgetID]);
 
   return (
     <div className="flex flex-col items-center animate-fadeInUp w-full opacity-0">
