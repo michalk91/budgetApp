@@ -8,6 +8,8 @@ import {
   updateProfile,
   updateEmail,
   deleteUser,
+  setPersistence,
+  browserSessionPersistence,
 } from "firebase/auth";
 import { auth, db } from "../firebase/config";
 import {
@@ -129,6 +131,8 @@ export const registerUser = createAsyncThunk(
 export const loginUser = createAsyncThunk(
   "users/loginUser",
   async (user: User) => {
+    const auth = getAuth();
+    await setPersistence(auth, browserSessionPersistence);
     const userCredential = await signInWithEmailAndPassword(
       auth,
       user.email,
