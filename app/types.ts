@@ -41,6 +41,8 @@ export interface UsersSlice {
 export interface State {
   budgets: BudgetsSlice;
   user: UsersSlice;
+  transition: TransitionSlice;
+  invitations: InvitationsSlice;
 }
 
 export interface BudgetsSlice {
@@ -62,6 +64,7 @@ export interface BudgetsSlice {
   ownerID: string;
   ownerUsername: string;
   ownerEmail: string;
+  showSelectedBudgetError: string;
 }
 
 export interface InvitedUser {
@@ -80,6 +83,23 @@ export interface InvitationsSlice {
   allowManageCategories: string[];
   invitedUsers: InvitedUser[];
   inviteUserErrorMessage?: string;
+}
+
+export interface TransitionSlice {
+  firstElemPos: {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  };
+  secondElemPos: {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  };
+  activeElemIndex: number;
+  allowTransition: boolean;
 }
 
 export interface User {
@@ -241,4 +261,8 @@ export interface PaginationProps {
   currentPage: number;
   setCurrentPage: Dispatch<SetStateAction<number>>;
   scrollElementRef: React.RefObject<HTMLDivElement>;
+}
+
+export interface ShowErrorProps {
+  message: string;
 }
