@@ -191,6 +191,8 @@ export const addNewBudget = createAsyncThunk(
       ownerUsername: username,
       addDate: currentDate,
       usersWithAccess: [],
+      allowManageAllTransactions: [],
+      allowManageCategories: [],
       currencyType: newBudget.currencyType,
       expensesValue: 0,
       incomesValue: 0,
@@ -329,54 +331,48 @@ export const deleteTransaction = createAsyncThunk(
       collection(db, `budgets/${budgetID}/transactions`)
     );
 
-    let transactionAmount = 0;
-    let havePermissionToDelete = false;
-
     const budgetRef = doc(db, "budgets", budgetID);
 
     const budgetSnap = await getDoc(budgetRef);
 
     if (budgetSnap.exists()) {
-      havePermissionToDelete =
+      const havePermissionToDelete =
         budgetSnap.data().allowManageAllTransactions.includes(currentUserID) ||
-        budgetSnap.data().ownerID.includes(currentUserID);
-    }
+        budgetSnap.data().ownerID === currentUserID;
 
-    for (const transaction of transactions.docs) {
-      if (transaction.id === transactionToDelete.id) {
-        if (
-          transaction.data().ownerID !== currentUserID &&
-          !havePermissionToDelete
-        ) {
-          throw Error("Unauthorized action");
+      for (const transaction of transactions.docs) {
+        if (transaction.id === transactionToDelete.id) {
+          if (!havePermissionToDelete) {
+            throw Error("Unauthorized action");
+          }
+
+          await deleteDoc(
+            doc(db, `budgets/${budgetID}/transactions`, transaction.id)
+          );
+
+          const transactionAmount = transaction.data().amount;
+
+          await updateDoc(
+            doc(db, `budgets`, budgetID),
+            transactionToDelete.type === "expense"
+              ? {
+                  budgetValue: increment(transactionAmount),
+                  expensesValue: increment(-transactionAmount),
+                }
+              : {
+                  budgetValue: increment(-transactionAmount),
+                  incomesValue: increment(-transactionAmount),
+                }
+          );
+
+          return {
+            id: transactionToDelete.id,
+            transactionAmount,
+            type: transactionToDelete.type,
+          };
         }
-
-        await deleteDoc(
-          doc(db, `budgets/${budgetID}/transactions`, transaction.id)
-        );
-
-        transactionAmount = transaction.data().amount;
       }
     }
-
-    await updateDoc(
-      doc(db, `budgets`, budgetID),
-      transactionToDelete.type === "expense"
-        ? {
-            budgetValue: increment(transactionAmount),
-            expensesValue: increment(-transactionAmount),
-          }
-        : {
-            budgetValue: increment(-transactionAmount),
-            incomesValue: increment(-transactionAmount),
-          }
-    );
-
-    return {
-      id: transactionToDelete.id,
-      transactionAmount,
-      type: transactionToDelete.type,
-    };
   }
 );
 
@@ -393,44 +389,39 @@ export const deleteAllTransactions = createAsyncThunk(
       collection(db, `budgets/${budgetID}/transactions`)
     );
 
-    let allTransactionsAmount = 0;
-
-    let havePermissionToDelete = false;
-
     const budgetRef = doc(db, "budgets", budgetID);
 
     const budgetSnap = await getDoc(budgetRef);
 
     if (budgetSnap.exists()) {
-      havePermissionToDelete = budgetSnap
-        .data()
-        .allowManageAllTransactions.includes(currentUserID);
-    }
+      let allTransactionsAmount = 0;
 
-    for (const transaction of transactions.docs) {
-      if (
-        transaction.data().ownerID !== currentUserID &&
-        !havePermissionToDelete
-      ) {
-        throw Error("Unauthorized action");
+      const havePermissionToDelete =
+        budgetSnap.data().ownerID === currentUserID ||
+        budgetSnap.data().allowManageAllTransactions.includes(currentUserID);
+
+      for (const transaction of transactions.docs) {
+        if (!havePermissionToDelete) {
+          throw Error("Unauthorized action");
+        }
+
+        allTransactionsAmount =
+          transaction.data().type === "expense"
+            ? allTransactionsAmount + transaction.data().amount
+            : allTransactionsAmount - transaction.data().amount;
+
+        await deleteDoc(
+          doc(db, `budgets/${budgetID}/transactions`, transaction.id)
+        );
       }
+      await updateDoc(doc(db, "budgets", budgetID), {
+        budgetValue: increment(allTransactionsAmount),
+        expensesValue: 0,
+        incomesValue: 0,
+      });
 
-      allTransactionsAmount =
-        transaction.data().type === "expense"
-          ? allTransactionsAmount + transaction.data().amount
-          : allTransactionsAmount - transaction.data().amount;
-
-      await deleteDoc(
-        doc(db, `budgets/${budgetID}/transactions`, transaction.id)
-      );
+      return { transactions: [], allTransactionsAmount };
     }
-    await updateDoc(doc(db, "budgets", budgetID), {
-      budgetValue: increment(allTransactionsAmount),
-      expensesValue: 0,
-      incomesValue: 0,
-    });
-
-    return { transactions: [], allTransactionsAmount };
   }
 );
 
