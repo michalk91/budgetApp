@@ -45,7 +45,7 @@ export interface State {
   invitations: InvitationsSlice;
 }
 
-export interface BudgetsSlice {
+export interface BudgetsSlice extends SortState {
   budgetValue: number;
   budgetsArray: Budget[];
   currencyType: "PLN" | "EUR" | "USD";
@@ -199,12 +199,13 @@ export interface TableProps extends SortState {
   searchKeywords: string;
   responsiveBreakpoint?: string;
   notFound: boolean;
-  setSort: Dispatch<
+  setSort?: Dispatch<
     SetStateAction<{
       sortBy: string;
       sortDirection: "ascending" | "descending";
     }>
   >;
+  setSortGlobal?: ({ sortBy, sortDirection }: SortState) => void;
   currentPage: number;
   dataLength: number;
   rowsPerPage: number;

@@ -20,6 +20,7 @@ export default function Table({
   currentPage,
   dataLength,
   rowsPerPage,
+  setSortGlobal,
   setRowsPerPage,
   setCurrentPage,
   setGlobalRowsPerPage,
@@ -29,16 +30,18 @@ export default function Table({
 
   const handleSort = useCallback(
     (sortBy: string, sortDirection: "ascending" | "descending") => {
-      setSort(
-        (state) =>
-          ({
-            ...state,
-            sortBy,
-            sortDirection,
-          } as SortState)
-      );
+      setSort &&
+        setSort(
+          (state) =>
+            ({
+              ...state,
+              sortBy,
+              sortDirection,
+            } as SortState)
+        );
+      setSortGlobal && setSortGlobal({ sortBy, sortDirection });
     },
-    [setSort]
+    [setSort, setSortGlobal]
   );
 
   return (

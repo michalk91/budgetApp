@@ -6,6 +6,7 @@ import {
   leaveBudget,
   setRowsPerPage as setGloalRowsNumber,
   setCurrentPage as setGlobalCurrent,
+  setSortOptions,
 } from "../redux/budgetsSlice";
 import Table from "./Table";
 import type { SortState } from "../types";
@@ -48,24 +49,28 @@ export default function ShowBudgets() {
   const globalCurrentPage = useAppSelector(
     (state) => state.budgets.currentPage
   );
+  const globalBudgetSortBy = useAppSelector((state) => state.budgets.sortBy);
+  const globalBudgetSortDirection = useAppSelector(
+    (state) => state.budgets.sortDirection
+  );
 
   const [addNewBudget, setAddNewBudget] = useState(false);
 
-  const [budgetsSort, setBudgetsSort] = useState<SortState>({
-    sortBy: "timestamp",
-    sortDirection: "ascending",
-  });
-
-  const { sortBy, sortDirection } = budgetsSort;
+  const setGlobalSortOptions = useCallback(
+    ({ sortBy, sortDirection }: SortState) => {
+      dispatch(setSortOptions({ sortBy, sortDirection }));
+    },
+    [dispatch]
+  );
 
   const formatter = useFormatter();
 
   useEffect(() => {
-    if (sortDirection === "ascending")
-      dispatch(fetchBudgets({ sortBy, descending: false }));
-    else if (sortDirection === "descending")
-      dispatch(fetchBudgets({ sortBy, descending: true }));
-  }, [dispatch, sortBy, sortDirection, budgets.length]);
+    if (globalBudgetSortDirection === "ascending")
+      dispatch(fetchBudgets({ sortBy: globalBudgetSortBy, descending: false }));
+    else if (globalBudgetSortDirection === "descending")
+      dispatch(fetchBudgets({ sortBy: globalBudgetSortBy, descending: true }));
+  }, [dispatch, globalBudgetSortBy, globalBudgetSortDirection, budgets.length]);
 
   const handleDeleteBudget = (id: string) => {
     dispatch(deleteBudget(id));
@@ -157,9 +162,9 @@ export default function ShowBudgets() {
           addNewRow={
             addNewBudget && <AddNewBudget setNewBudget={setAddNewBudget} />
           }
-          setSort={setBudgetsSort}
-          sortDirection={sortDirection}
-          sortBy={sortBy}
+          setSortGlobal={setGlobalSortOptions}
+          sortDirection={globalBudgetSortDirection}
+          sortBy={globalBudgetSortBy}
           handleSearch={handleSearch}
           searchKeywords={searchKeywords}
           notFound={notFound}

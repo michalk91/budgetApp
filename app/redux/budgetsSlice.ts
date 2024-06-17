@@ -633,6 +633,8 @@ const budgetsSlice = createSlice({
     ownerEmail: "",
     rowsPerPage: Infinity,
     currentPage: 1,
+    sortBy: "timestamp",
+    sortDirection: "ascending",
   } as BudgetsSlice,
   reducers: {
     setSelectedOption: (state, action) => {
@@ -643,6 +645,10 @@ const budgetsSlice = createSlice({
     },
     setCurrentPage: (state, action) => {
       state.currentPage = action.payload;
+    },
+    setSortOptions: (state, action) => {
+      state.sortBy = action.payload.sortBy;
+      state.sortDirection = action.payload.sortDirection;
     },
   },
   extraReducers: (builder) => {
@@ -839,7 +845,11 @@ const budgetsSlice = createSlice({
   },
 });
 
-export const { setSelectedOption, setRowsPerPage, setCurrentPage } =
-  budgetsSlice.actions;
+export const {
+  setSelectedOption,
+  setRowsPerPage,
+  setCurrentPage,
+  setSortOptions,
+} = budgetsSlice.actions;
 
 export default budgetsSlice.reducer;
