@@ -7,6 +7,7 @@ import {
   setRowsPerPage as setGloalRowsNumber,
   setCurrentPage as setGlobalCurrent,
   setSortOptions,
+  setSearchKeywords,
 } from "../redux/budgetsSlice";
 import Table from "./Table";
 import type { SortState } from "../types";
@@ -54,6 +55,10 @@ export default function ShowBudgets() {
     (state) => state.budgets.sortDirection
   );
 
+  const globalSearchKeywords = useAppSelector(
+    (state) => state.budgets.searchKeywords
+  );
+
   const [addNewBudget, setAddNewBudget] = useState(false);
 
   const setGlobalSortOptions = useCallback(
@@ -88,16 +93,17 @@ export default function ShowBudgets() {
     "amount",
   ];
 
-  const { handleSearch, filteredArray, searchKeywords, notFound } = useSearch({
+  const { globalFilteredArray, notFoundGlobal } = useSearch({
     data: budgets,
     keys: findByKeys,
+    globalSearchKeywords,
     exception: userName
       ? { keyword: "you", as: userName, inKey: "ownerUsername" }
       : undefined,
   });
 
   const { paginatedData } = usePagination(
-    filteredArray,
+    globalFilteredArray,
     globalRowsPerPage,
     globalCurrentPage
   );
@@ -136,6 +142,13 @@ export default function ShowBudgets() {
     [dispatch]
   );
 
+  const setGlobalSearchKeywords = useCallback(
+    (keywords: string) => {
+      dispatch(setSearchKeywords(keywords));
+    },
+    [dispatch]
+  );
+
   return (
     <div className="flex flex-col items-center w-full mt-20">
       <>
@@ -149,7 +162,7 @@ export default function ShowBudgets() {
             { name: "action" },
           ]}
           setGlobalRowsPerPage={setGlobalRowsPerPage}
-          dataLength={filteredArray.length}
+          dataLength={globalFilteredArray.length}
           currentPage={globalCurrentPage}
           setGlobalCurrentPage={setGlobalCurrentPage}
           rowsPerPage={globalRowsPerPage}
@@ -165,9 +178,9 @@ export default function ShowBudgets() {
           setSortGlobal={setGlobalSortOptions}
           sortDirection={globalBudgetSortDirection}
           sortBy={globalBudgetSortBy}
-          handleSearch={handleSearch}
-          searchKeywords={searchKeywords}
-          notFound={notFound}
+          handleSearchGlobal={setGlobalSearchKeywords}
+          searchKeywords={globalSearchKeywords}
+          notFound={notFoundGlobal}
         >
           {paginatedData?.map(
             (budget, index) =>

@@ -1,57 +1,87 @@
 import { useDebounce } from "use-debounce";
 import { SyntheticEvent, useCallback, useState } from "react";
 
-const useSearch = <T extends Record<string, any>>({
+const findValuesBy = <T extends Record<string, any>>(
+  arr: T[],
+  key: string[],
+  value: string,
+  exception: { keyword: string; as: string; inKey: string } | undefined
+): T[] => {
+  const filteredKey = exception?.as
+    .toLocaleLowerCase()
+    .includes(value.toLocaleLowerCase())
+    ? key.filter((key) => key !== exception?.inKey)
+    : key;
+
+  const filteredValue = exception?.keyword
+    .toLocaleLowerCase()
+    .includes(value.toLocaleLowerCase())
+    ? exception?.as.toLocaleLowerCase()
+    : value;
+
+  return arr.filter((obj) =>
+    filteredKey.some((k) => {
+      if (typeof obj[k] === "string" && typeof filteredValue === "string") {
+        return obj[k].toLowerCase().includes(filteredValue.toLowerCase());
+      } else {
+        return obj[k] === value;
+      }
+    })
+  );
+};
+
+const useSearch = ({
   data,
   keys,
   exception,
+  globalSearchKeywords,
 }: {
-  data: T[];
+  data: Record<string, any>[];
   keys: string[];
   exception?: { keyword: string; as: string; inKey: string };
+  globalSearchKeywords?: string;
 }) => {
   const [searchKeywords, setSearchKeywords] = useState<string>("");
+
   const [debouncedKeywords] = useDebounce(searchKeywords, 600);
+  const [debouncedGlobalKeywords] = useDebounce(globalSearchKeywords, 600);
 
   const handleSearch = useCallback((e: SyntheticEvent) => {
     if (e.target instanceof HTMLInputElement) setSearchKeywords(e.target.value);
   }, []);
 
-  const findValuesBy = useCallback(
-    (arr: T[], key: string[], value: string | number): T[] => {
-      const filteredKey = exception?.as
-        .toLocaleLowerCase()
-        .includes(debouncedKeywords.toLocaleLowerCase())
-        ? key.filter((key) => key !== exception?.inKey)
-        : key;
-
-      const filteredValue = exception?.keyword
-        .toLocaleLowerCase()
-        .includes(debouncedKeywords.toLocaleLowerCase())
-        ? exception?.as.toLocaleLowerCase()
-        : value;
-
-      return arr.filter((obj) =>
-        filteredKey.some((k) => {
-          if (typeof obj[k] === "string" && typeof filteredValue === "string") {
-            return obj[k].toLowerCase().includes(filteredValue.toLowerCase());
-          } else {
-            return obj[k] === value;
-          }
-        })
-      );
-    },
-    [debouncedKeywords, exception]
-  );
-
   const filteredArray =
-    debouncedKeywords !== ""
-      ? findValuesBy(data, keys, debouncedKeywords)
+    globalSearchKeywords === undefined && debouncedKeywords !== ""
+      ? findValuesBy(data, keys, debouncedKeywords, exception)
       : data;
 
-  const notFound = debouncedKeywords !== "" && filteredArray.length === 0;
+  const globalFilteredArray =
+    globalSearchKeywords !== undefined &&
+    debouncedGlobalKeywords &&
+    debouncedGlobalKeywords !== ""
+      ? findValuesBy(data, keys, debouncedGlobalKeywords, exception)
+      : data;
 
-  return { handleSearch, filteredArray, searchKeywords, notFound };
+  const notFound =
+    globalSearchKeywords === undefined &&
+    debouncedKeywords !== "" &&
+    filteredArray.length === 0;
+
+  const notFoundGlobal =
+    globalSearchKeywords !== undefined &&
+    debouncedGlobalKeywords &&
+    debouncedGlobalKeywords !== ""
+      ? globalFilteredArray.length === 0
+      : false;
+
+  return {
+    handleSearch,
+    filteredArray,
+    searchKeywords,
+    notFound,
+    globalFilteredArray,
+    notFoundGlobal,
+  };
 };
 
 export default useSearch;

@@ -10,7 +10,10 @@ const Pagination = ({
   setGlobalCurrentPage,
 }: PaginationProps) => {
   const paginationNumber = [];
+
   for (let i = 1; i <= Math.ceil(dataLength / rowsPerPage); i++) {
+    if (!rowsPerPage) return;
+
     paginationNumber.push(i);
   }
 

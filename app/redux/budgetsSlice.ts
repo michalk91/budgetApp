@@ -635,6 +635,7 @@ const budgetsSlice = createSlice({
     currentPage: 1,
     sortBy: "timestamp",
     sortDirection: "ascending",
+    searchKeywords: "",
   } as BudgetsSlice,
   reducers: {
     setSelectedOption: (state, action) => {
@@ -649,6 +650,9 @@ const budgetsSlice = createSlice({
     setSortOptions: (state, action) => {
       state.sortBy = action.payload.sortBy;
       state.sortDirection = action.payload.sortDirection;
+    },
+    setSearchKeywords: (state, action) => {
+      state.searchKeywords = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -850,6 +854,7 @@ export const {
   setRowsPerPage,
   setCurrentPage,
   setSortOptions,
+  setSearchKeywords,
 } = budgetsSlice.actions;
 
 export default budgetsSlice.reducer;

@@ -25,6 +25,7 @@ export default function Table({
   setCurrentPage,
   setGlobalRowsPerPage,
   setGlobalCurrentPage,
+  handleSearchGlobal,
 }: TableProps) {
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -88,7 +89,10 @@ export default function Table({
               <p>Search: </p>
               <input
                 value={searchKeywords}
-                onChange={handleSearch}
+                onChange={(e) => {
+                  handleSearch && handleSearch(e);
+                  handleSearchGlobal && handleSearchGlobal(e.target.value);
+                }}
                 className="px-2 py-1 rounded-full max-lg: ml-1 max-lg:max-w-32 bg-white border-gray-300 border-2 "
               ></input>
             </div>
@@ -113,7 +117,7 @@ export default function Table({
                   setCurrentPage && setCurrentPage(1);
                   setGlobalCurrentPage && setGlobalCurrentPage(1);
                 }}
-                value={rowsPerPage}
+                value={rowsPerPage ? rowsPerPage : "all"}
                 name="choice"
               >
                 <option value="all">all</option>

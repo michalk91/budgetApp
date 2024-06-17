@@ -67,6 +67,7 @@ export interface BudgetsSlice extends SortState {
   showSelectedBudgetError: string;
   rowsPerPage: number;
   currentPage: number;
+  searchKeywords: string;
 }
 
 export interface InvitedUser {
@@ -195,7 +196,8 @@ export interface TableProps extends SortState {
   emptyTableTitle: string;
   addNewRow?: React.ReactNode | undefined;
   children: React.ReactNode;
-  handleSearch: (e: SyntheticEvent<Element, Event>) => void;
+  handleSearch?: (e: SyntheticEvent<Element, Event>) => void;
+  handleSearchGlobal?: (keywords: string) => void;
   searchKeywords: string;
   responsiveBreakpoint?: string;
   notFound: boolean;
