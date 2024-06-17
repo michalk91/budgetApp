@@ -22,6 +22,8 @@ export default function Table({
   rowsPerPage,
   setRowsPerPage,
   setCurrentPage,
+  setGlobalRowsPerPage,
+  setGlobalCurrentPage,
 }: TableProps) {
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -91,11 +93,23 @@ export default function Table({
               <p>Show per page: </p>
               <select
                 className="px-2 py-1 rounded-full max-lg: ml-1 max-lg:max-w-32 bg-white border-gray-300 border-2  "
-                onChange={(e) =>
-                  setRowsPerPage(
-                    e.target.value === "all" ? Infinity : Number(e.target.value)
-                  )
-                }
+                onChange={(e) => {
+                  setRowsPerPage &&
+                    setRowsPerPage(
+                      e.target.value === "all"
+                        ? Infinity
+                        : Number(e.target.value)
+                    );
+                  setGlobalRowsPerPage &&
+                    setGlobalRowsPerPage(
+                      e.target.value === "all"
+                        ? Infinity
+                        : Number(e.target.value)
+                    );
+
+                  setCurrentPage && setCurrentPage(1);
+                  setGlobalCurrentPage && setGlobalCurrentPage(1);
+                }}
                 value={rowsPerPage}
                 name="choice"
               >
@@ -184,7 +198,8 @@ export default function Table({
             rowsPerPage={rowsPerPage}
             dataLength={dataLength}
             currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
+            setCurrentPage={setCurrentPage && setCurrentPage}
+            setGlobalCurrentPage={setGlobalCurrentPage && setGlobalCurrentPage}
             scrollElementRef={tableRef}
           />
         )}

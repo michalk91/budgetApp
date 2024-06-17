@@ -7,6 +7,7 @@ const Pagination = ({
   currentPage,
   setCurrentPage,
   scrollElementRef,
+  setGlobalCurrentPage,
 }: PaginationProps) => {
   const paginationNumber = [];
   for (let i = 1; i <= Math.ceil(dataLength / rowsPerPage); i++) {
@@ -23,18 +24,25 @@ const Pagination = ({
   };
 
   const handlePagination = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
+    setCurrentPage && setCurrentPage(pageNumber);
+    setGlobalCurrentPage && setGlobalCurrentPage(pageNumber);
+
     scrollToElement();
   };
 
   const nextPage = () => {
-    currentPage < paginationNumber.length &&
-      setCurrentPage((page: number) => page + 1);
+    if (currentPage < paginationNumber.length) {
+      setCurrentPage && setCurrentPage((page: number) => page + 1);
+      setGlobalCurrentPage && setGlobalCurrentPage(currentPage + 1);
+    }
     scrollToElement();
   };
 
   const prevPage = () => {
-    currentPage > 1 && setCurrentPage((page: number) => page - 1);
+    if (currentPage > 1) {
+      setCurrentPage && setCurrentPage((page: number) => page - 1);
+      setGlobalCurrentPage && setGlobalCurrentPage(currentPage - 1);
+    }
     scrollToElement();
   };
   return (

@@ -640,10 +640,18 @@ const budgetsSlice = createSlice({
     ownerID: "",
     ownerUsername: "",
     ownerEmail: "",
+    rowsPerPage: Infinity,
+    currentPage: 1,
   } as BudgetsSlice,
   reducers: {
     setSelectedOption: (state, action) => {
       state.selectedOption = action.payload;
+    },
+    setRowsPerPage: (state, action) => {
+      state.rowsPerPage = action.payload;
+    },
+    setCurrentPage: (state, action) => {
+      state.currentPage = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -840,6 +848,7 @@ const budgetsSlice = createSlice({
   },
 });
 
-export const { setSelectedOption } = budgetsSlice.actions;
+export const { setSelectedOption, setRowsPerPage, setCurrentPage } =
+  budgetsSlice.actions;
 
 export default budgetsSlice.reducer;

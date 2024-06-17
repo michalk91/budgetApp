@@ -4,6 +4,8 @@ import {
   deleteBudget,
   deleteAllBudgets,
   leaveBudget,
+  setRowsPerPage as setGloalRowsNumber,
+  setCurrentPage as setGlobalCurrent,
 } from "../redux/budgetsSlice";
 import Table from "./Table";
 import type { SortState } from "../types";
@@ -39,6 +41,12 @@ export default function ShowBudgets() {
   );
   const fetchBudgetsStatus = useAppSelector(
     (state) => state.budgets.fetchBudgetsStatus
+  );
+  const globalRowsPerPage = useAppSelector(
+    (state) => state.budgets.rowsPerPage
+  );
+  const globalCurrentPage = useAppSelector(
+    (state) => state.budgets.currentPage
   );
 
   const [addNewBudget, setAddNewBudget] = useState(false);
@@ -83,13 +91,11 @@ export default function ShowBudgets() {
       : undefined,
   });
 
-  const {
-    paginatedData,
-    setRowsPerPage,
-    currentPage,
-    rowsPerPage,
-    setCurrentPage,
-  } = usePagination(filteredArray);
+  const { paginatedData } = usePagination(
+    filteredArray,
+    globalRowsPerPage,
+    globalCurrentPage
+  );
 
   const animateElemCallback = useTransition({
     animateToElemPos: secondElemPos,
@@ -111,6 +117,20 @@ export default function ShowBudgets() {
     [animateElemCallback, getElemPosition, dispatch]
   );
 
+  const setGlobalRowsPerPage = useCallback(
+    (numberOfRows: number) => {
+      dispatch(setGloalRowsNumber(numberOfRows));
+    },
+    [dispatch]
+  );
+
+  const setGlobalCurrentPage = useCallback(
+    (currentPage: number) => {
+      dispatch(setGlobalCurrent(currentPage));
+    },
+    [dispatch]
+  );
+
   return (
     <div className="flex flex-col items-center w-full mt-20">
       <>
@@ -123,11 +143,11 @@ export default function ShowBudgets() {
             { name: "owner", sortBy: "ownerUsername" },
             { name: "action" },
           ]}
-          setRowsPerPage={setRowsPerPage}
+          setGlobalRowsPerPage={setGlobalRowsPerPage}
           dataLength={filteredArray.length}
-          currentPage={currentPage}
-          rowsPerPage={rowsPerPage}
-          setCurrentPage={setCurrentPage}
+          currentPage={globalCurrentPage}
+          setGlobalCurrentPage={setGlobalCurrentPage}
+          rowsPerPage={globalRowsPerPage}
           emptyTableCondition={
             fetchBudgetsStatus === "succeeded" &&
             budgets?.length === 0 &&

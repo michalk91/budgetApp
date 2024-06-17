@@ -65,6 +65,8 @@ export interface BudgetsSlice {
   ownerUsername: string;
   ownerEmail: string;
   showSelectedBudgetError: string;
+  rowsPerPage: number;
+  currentPage: number;
 }
 
 export interface InvitedUser {
@@ -206,8 +208,10 @@ export interface TableProps extends SortState {
   currentPage: number;
   dataLength: number;
   rowsPerPage: number;
-  setRowsPerPage: Dispatch<SetStateAction<number>>;
-  setCurrentPage: Dispatch<SetStateAction<number>>;
+  setRowsPerPage?: Dispatch<SetStateAction<number>>;
+  setGlobalRowsPerPage?: (number: number) => void;
+  setGlobalCurrentPage?: (number: number) => void;
+  setCurrentPage?: Dispatch<SetStateAction<number>>;
 }
 
 export interface ButtonProps {
@@ -261,7 +265,8 @@ export interface PaginationProps {
   rowsPerPage: number;
   dataLength: number;
   currentPage: number;
-  setCurrentPage: Dispatch<SetStateAction<number>>;
+  setCurrentPage?: Dispatch<SetStateAction<number>>;
+  setGlobalCurrentPage?: (pageNumber: number) => void;
   scrollElementRef: React.RefObject<HTMLDivElement>;
 }
 
