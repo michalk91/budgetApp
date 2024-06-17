@@ -33,7 +33,7 @@ const storage =
 
 const persistConfig = {
   key: "root",
-  whitelist: ["user"],
+  whitelist: ["user", "budgets"],
   storage,
 };
 
