@@ -52,10 +52,6 @@ export default function SubNavigation({ activeOption }: SubNavigationProps) {
     budgetOwnerID !== userID && dispatch(setSelectedOption("Expenses"));
   }, [budgetOwnerID, dispatch, selectedOption, userID]);
 
-  useEffect(() => {
-    window.addEventListener("scrollend", () => {});
-  }, []);
-
   return (
     <div className="flex justify-center flex-wrap text-xl mt-10">
       {menuItems.map((item) =>
