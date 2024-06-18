@@ -9,7 +9,7 @@ import {
   updateEmail,
   deleteUser,
   setPersistence,
-  browserSessionPersistence,
+  browserLocalPersistence,
 } from "firebase/auth";
 import { auth, db } from "../firebase/config";
 import {
@@ -132,7 +132,7 @@ export const loginUser = createAsyncThunk(
   "users/loginUser",
   async (user: User) => {
     const auth = getAuth();
-    await setPersistence(auth, browserSessionPersistence);
+    await setPersistence(auth, browserLocalPersistence);
     const userCredential = await signInWithEmailAndPassword(
       auth,
       user.email,
