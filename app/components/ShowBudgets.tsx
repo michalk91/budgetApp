@@ -11,7 +11,7 @@ import {
 } from "../redux/budgetsSlice";
 import Table from "./Table";
 import type { SortState } from "../types";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import useFormatter from "../hooks/useFormatter";
 import AddNewBudget from "./AddNewBudget";
 import Button from "./Button";
@@ -26,6 +26,7 @@ import {
   setAllowTransition,
 } from "../redux/transitionSlice";
 import ArrowsLoader from "./ArrowsLoader";
+import { useAnimateMountUnMount } from "../hooks/useAnimateMountUnMount";
 
 export default function ShowBudgets() {
   const dispatch = useAppDispatch();
@@ -75,7 +76,7 @@ export default function ShowBudgets() {
       dispatch(fetchBudgets({ sortBy: globalBudgetSortBy, descending: false }));
     else if (globalBudgetSortDirection === "descending")
       dispatch(fetchBudgets({ sortBy: globalBudgetSortBy, descending: true }));
-  }, [dispatch, globalBudgetSortBy, globalBudgetSortDirection, budgets.length]);
+  }, [dispatch, globalBudgetSortBy, globalBudgetSortDirection]);
 
   const handleDeleteBudget = (id: string) => {
     dispatch(deleteBudget(id));
@@ -114,18 +115,32 @@ export default function ShowBudgets() {
     onTransitionEnd,
   });
 
+  useEffect(() => {
+    rowRefs.current = [];
+  }, []);
+
+  const rowRefs = useRef<HTMLElement[]>([]);
+
   const getElemPosition = usePosition();
 
+  const { startMountAnim, startUnMountAnim } = useAnimateMountUnMount();
+
   const handleCallbackRefs = useCallback(
-    (node: null | HTMLElement) => {
+    (node: null | HTMLElement, index: number) => {
       if (!node) return;
 
-      const position = getElemPosition(node);
-      dispatch(setFirstElemPos(position));
+      if (!rowRefs.current.includes(node)) {
+        rowRefs.current.push(node);
+      }
 
-      animateElemCallback(node);
+      !addNewBudget &&
+        index === paginatedData.length &&
+        startMountAnim({ elementsArray: rowRefs.current });
+
+      animateElemCallback(rowRefs.current[activeIndex]);
     },
-    [animateElemCallback, getElemPosition, dispatch]
+    /* eslint-disable */
+    [animateElemCallback, activeIndex, startMountAnim, addNewBudget]
   );
 
   const setGlobalRowsPerPage = useCallback(
@@ -186,10 +201,12 @@ export default function ShowBudgets() {
             (budget, index) =>
               fetchBudgetsStatus === "succeeded" && (
                 <tr
-                  id={`${index}`}
                   key={budget.budgetID}
+                  data-id={budget.budgetID}
                   className={`hover:bg-gray-100 bg-white border-b `}
-                  ref={activeIndex === index ? handleCallbackRefs : null}
+                  ref={(node) => {
+                    handleCallbackRefs(node, index);
+                  }}
                 >
                   <td
                     data-cell="date"
@@ -233,8 +250,13 @@ export default function ShowBudgets() {
                   <td className="max-lg:block max-lg:before:content-[attr(data-cell)]  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
                     <Link href={`/budgets/${budget.budgetID}`}>
                       <Button
-                        handleClick={(e) => {
+                        handleClick={() => {
                           dispatch(setActiveElemIndex(index));
+
+                          const position = getElemPosition(
+                            rowRefs.current[index]
+                          );
+                          dispatch(setFirstElemPos(position));
                         }}
                         additionalStyles={
                           !addNewBudget
@@ -251,7 +273,12 @@ export default function ShowBudgets() {
                           !addNewBudget &&
                             budget.budgetID &&
                             budget.ownerID === userID &&
-                            handleDeleteBudget(budget.budgetID);
+                            startUnMountAnim({
+                              elementsArray: rowRefs.current,
+                              handleUnmountElem: handleDeleteBudget,
+                              id: budget.budgetID,
+                              dataId: "[data-id]",
+                            });
                         }}
                         additionalStyles={
                           !addNewBudget

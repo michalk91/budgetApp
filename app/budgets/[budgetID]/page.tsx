@@ -10,7 +10,7 @@ import Link from "next/link";
 import { usePosition } from "@/app/hooks/usePosition";
 
 import useTransition from "@/app/hooks/useTransition";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function SelectedBudget() {
   const dispatch = useAppDispatch();
@@ -34,6 +34,10 @@ export default function SelectedBudget() {
   });
 
   const getElemPosition = usePosition();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="flex flex-col items-center w-full mt-20 relative">
