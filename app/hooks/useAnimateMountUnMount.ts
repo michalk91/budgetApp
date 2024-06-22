@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const Animate = (
   elem: HTMLElement,
@@ -7,23 +7,33 @@ const Animate = (
   handleUnmountElem?: (elemID: string) => void,
   id?: string
 ) => {
+  if (!elem) return;
+
   const animation = elem.animate(keyFrames, {
     easing: "ease-in",
     duration,
     fill: "forwards",
   });
 
-  animation.pause();
-  elem && animation.play();
-
   animation.onfinish = () => {
     handleUnmountElem && id && handleUnmountElem(id);
   };
 };
 
-export const useAnimateMountUnMount = () => {
+export const useAnimateMountUnMount = (elementsArray: HTMLElement[]) => {
+  const [arrLength, setArrLength] = useState(0);
+  const [firstRender, setFirstRender] = useState(true);
+
+  useEffect(() => {
+    arrLength === 0 && setArrLength(elementsArray.length);
+  }, [elementsArray.length, arrLength]);
+
+  useEffect(() => {
+    setFirstRender(false);
+  }, []);
+
   const startMountAnim = useCallback(
-    ({ elementsArray }: { elementsArray: HTMLElement[] }) => {
+    ({ elements }: { elements: HTMLElement[] }) => {
       const keyFrames = [
         { opacity: 0, transform: `translateX(-100px)` },
         {
@@ -37,12 +47,15 @@ export const useAnimateMountUnMount = () => {
         },
       ];
 
-      elementsArray.forEach(
-        (elem, index) =>
-          elementsArray.length - 1 === index && Animate(elem, keyFrames, 400)
-      );
+      if (
+        (!firstRender && elements.length === 0) ||
+        (!firstRender && arrLength < elements.length)
+      ) {
+        Animate(elements[elements.length - 1], keyFrames, 300);
+        setArrLength(0);
+      }
     },
-    []
+    [arrLength, firstRender]
   );
 
   const startUnMountAnim = useCallback(
@@ -78,7 +91,9 @@ export const useAnimateMountUnMount = () => {
         const element = elem.closest(dataId) as HTMLElement;
         const elemID = element.dataset.id;
 
-        elemID === id && Animate(elem, keyFrames, 300, handleUnmountElem, id);
+        if (elemID === id) {
+          Animate(elem, keyFrames, 300, handleUnmountElem, id);
+        }
       });
     },
     []

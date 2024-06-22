@@ -123,10 +123,12 @@ export default function ShowBudgets() {
 
   const getElemPosition = usePosition();
 
-  const { startMountAnim, startUnMountAnim } = useAnimateMountUnMount();
+  const { startMountAnim, startUnMountAnim } = useAnimateMountUnMount(
+    rowRefs.current
+  );
 
   const handleCallbackRefs = useCallback(
-    (node: null | HTMLElement, index: number) => {
+    (node: null | HTMLElement) => {
       if (!node) return;
 
       if (!rowRefs.current.includes(node)) {
@@ -134,12 +136,12 @@ export default function ShowBudgets() {
       }
 
       !addNewBudget &&
-        index === paginatedData.length &&
-        startMountAnim({ elementsArray: rowRefs.current });
+        startMountAnim({
+          elements: rowRefs.current,
+        });
 
       animateElemCallback(rowRefs.current[activeIndex]);
     },
-    /* eslint-disable */
     [animateElemCallback, activeIndex, startMountAnim, addNewBudget]
   );
 
@@ -204,9 +206,7 @@ export default function ShowBudgets() {
                   key={budget.budgetID}
                   data-id={budget.budgetID}
                   className={`hover:bg-gray-100 bg-white border-b `}
-                  ref={(node) => {
-                    handleCallbackRefs(node, index);
-                  }}
+                  ref={handleCallbackRefs}
                 >
                   <td
                     data-cell="date"
@@ -254,7 +254,7 @@ export default function ShowBudgets() {
                           dispatch(setActiveElemIndex(index));
 
                           const position = getElemPosition(
-                            rowRefs.current[index]
+                            rowRefs.current[activeIndex]
                           );
                           dispatch(setFirstElemPos(position));
                         }}
