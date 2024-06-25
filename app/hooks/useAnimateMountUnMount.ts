@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 
 const Animate = (
   elem: HTMLElement,
@@ -21,14 +21,14 @@ const Animate = (
 };
 
 export const useAnimateMountUnMount = () => {
-  const allowAnimateOnMount = useRef(false);
+  const [allowAnimateOnMount, setAllowAnimateOnMount] = useState(false);
 
   const enableOnMountAnimation = useCallback(() => {
-    allowAnimateOnMount.current = true;
+    setAllowAnimateOnMount(true);
   }, []);
 
   const disableOnMountAnimation = useCallback(() => {
-    allowAnimateOnMount.current = false;
+    setAllowAnimateOnMount(false);
   }, []);
 
   const startMountAnim = useCallback(
@@ -46,9 +46,9 @@ export const useAnimateMountUnMount = () => {
         },
       ];
 
-      allowAnimateOnMount.current && Animate(element, keyFrames, 300);
+      allowAnimateOnMount && Animate(element, keyFrames, 300);
     },
-    []
+    [allowAnimateOnMount]
   );
 
   const startUnMountAnim = useCallback(
@@ -77,6 +77,7 @@ export const useAnimateMountUnMount = () => {
         },
         { opacity: 0, transform: `translateX(100px)` },
       ];
+
       elementsArray.forEach((elem) => {
         if (!elem) return;
 

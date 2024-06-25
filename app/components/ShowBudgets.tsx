@@ -61,6 +61,14 @@ export default function ShowBudgets() {
   );
 
   const [addNewBudget, setAddNewBudget] = useState(false);
+  const [disablePageChange, setDisablePageChange] = useState(true);
+
+  const {
+    startMountAnim,
+    startUnMountAnim,
+    enableOnMountAnimation,
+    disableOnMountAnimation,
+  } = useAnimateMountUnMount();
 
   const setGlobalSortOptions = useCallback(
     ({ sortBy, sortDirection }: SortState) => {
@@ -80,6 +88,7 @@ export default function ShowBudgets() {
 
   const handleDeleteBudget = (id: string) => {
     dispatch(deleteBudget(id));
+    disableOnMountAnimation();
   };
 
   const onTransitionEnd = useCallback(() => {
@@ -124,13 +133,6 @@ export default function ShowBudgets() {
 
   const getElemPosition = usePosition();
 
-  const {
-    startMountAnim,
-    startUnMountAnim,
-    enableOnMountAnimation,
-    disableOnMountAnimation,
-  } = useAnimateMountUnMount();
-
   const handleAnimateRows = useCallback(
     (node: null | HTMLElement, index: number) => {
       if (!node) return;
@@ -140,19 +142,21 @@ export default function ShowBudgets() {
       }
 
       !addNewBudget &&
+        globalSearchKeywords === "" &&
         index === paginatedData.length &&
         startMountAnim({
           element: node,
         });
     },
-    [addNewBudget, startMountAnim]
+    [addNewBudget, startMountAnim, globalSearchKeywords, globalCurrentPage]
   );
 
   const setGlobalRowsPerPage = useCallback(
     (numberOfRows: number) => {
+      disableOnMountAnimation();
       dispatch(setGloalRowsNumber(numberOfRows));
     },
-    [dispatch]
+    [dispatch, disableOnMountAnimation]
   );
 
   const setGlobalCurrentPage = useCallback(
@@ -201,6 +205,7 @@ export default function ShowBudgets() {
           handleSearchGlobal={setGlobalSearchKeywords}
           searchKeywords={globalSearchKeywords}
           notFound={notFoundGlobal}
+          disablePageChange={disablePageChange}
         >
           {paginatedData?.map(
             (budget, index) =>
@@ -257,14 +262,13 @@ export default function ShowBudgets() {
                     <Link href={`/budgets/${budget.budgetID}`}>
                       <Button
                         handleClick={(e) => {
-                          disableOnMountAnimation();
-
                           dispatch(setActiveElemIndex(index));
 
                           const position = getElemPosition(
                             e.target as HTMLElement
                           );
                           dispatch(setFirstElemPos(position));
+                          setDisablePageChange(true);
                         }}
                         additionalStyles={
                           !addNewBudget
@@ -335,10 +339,17 @@ export default function ShowBudgets() {
             <>
               <Button
                 handleClick={() => {
+                  if (globalSearchKeywords !== "") return;
+
                   enableOnMountAnimation();
                   setAddNewBudget(true);
+                  setDisablePageChange(false);
                 }}
-                additionalStyles="bg-blue-700 hover:bg-blue-900"
+                additionalStyles={
+                  globalSearchKeywords !== ""
+                    ? "bg-blue-200 hover:hover:cursor-not-allowed"
+                    : "bg-blue-700 hover:bg-blue-900"
+                }
               >
                 Add new budget
               </Button>
@@ -346,9 +357,15 @@ export default function ShowBudgets() {
               {budgets?.length > 1 && (
                 <Button
                   handleClick={() => {
+                    if (globalSearchKeywords !== "") return;
+
                     dispatch(deleteAllBudgets());
                   }}
-                  additionalStyles="bg-red-700 hover:bg-red-900"
+                  additionalStyles={
+                    globalSearchKeywords !== ""
+                      ? "bg-red-200 hover:hover:cursor-not-allowed"
+                      : "bg-red-700 hover:bg-red-900"
+                  }
                 >
                   Delete All
                 </Button>

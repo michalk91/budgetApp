@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { SortState, TableProps } from "../types";
 import { TbArrowsSort } from "react-icons/tb";
 import Pagination from "./Pagination";
@@ -26,6 +26,7 @@ export default function Table({
   setGlobalRowsPerPage,
   setGlobalCurrentPage,
   handleSearchGlobal,
+  disablePageChange,
 }: TableProps) {
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -44,6 +45,13 @@ export default function Table({
     },
     [setSort, setSortGlobal]
   );
+
+  useEffect(() => {
+    if (dataLength <= rowsPerPage) {
+      setCurrentPage && setCurrentPage(1);
+      setGlobalCurrentPage && setGlobalCurrentPage(1);
+    }
+  }, [dataLength, rowsPerPage, setCurrentPage, setGlobalCurrentPage]);
 
   return (
     <div ref={tableRef}>
@@ -208,6 +216,8 @@ export default function Table({
             setCurrentPage={setCurrentPage && setCurrentPage}
             setGlobalCurrentPage={setGlobalCurrentPage && setGlobalCurrentPage}
             scrollElementRef={tableRef}
+            addNewRow={addNewRow}
+            disablePageChange={disablePageChange}
           />
         )}
       </div>

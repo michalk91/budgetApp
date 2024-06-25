@@ -215,6 +215,7 @@ export interface TableProps extends SortState {
   setGlobalRowsPerPage?: (number: number) => void;
   setGlobalCurrentPage?: (number: number) => void;
   setCurrentPage?: Dispatch<SetStateAction<number>>;
+  disablePageChange?: boolean;
 }
 
 export interface ButtonProps {
@@ -271,6 +272,8 @@ export interface PaginationProps {
   setCurrentPage?: Dispatch<SetStateAction<number>>;
   setGlobalCurrentPage?: (pageNumber: number) => void;
   scrollElementRef: React.RefObject<HTMLDivElement>;
+  addNewRow?: React.ReactNode | undefined;
+  disablePageChange?: boolean;
 }
 
 export interface ShowErrorProps {

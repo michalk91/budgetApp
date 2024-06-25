@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import type { PaginationProps } from "../types";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
@@ -8,12 +9,29 @@ const Pagination = ({
   setCurrentPage,
   scrollElementRef,
   setGlobalCurrentPage,
+  addNewRow,
+  disablePageChange,
 }: PaginationProps) => {
   const paginationNumber = [];
 
-  for (let i = 1; i <= Math.ceil(dataLength / rowsPerPage); i++) {
-    if (!rowsPerPage) return;
+  useEffect(() => {
+    if (disablePageChange) return;
 
+    if (dataLength >= rowsPerPage) {
+      setCurrentPage && setCurrentPage(paginationNumber.length);
+      setGlobalCurrentPage && setGlobalCurrentPage(paginationNumber.length);
+    }
+  }, [
+    addNewRow,
+    dataLength,
+    rowsPerPage,
+    paginationNumber.length,
+    setCurrentPage,
+    setGlobalCurrentPage,
+    disablePageChange,
+  ]);
+
+  for (let i = 1; i <= Math.ceil(dataLength / rowsPerPage); i++) {
     paginationNumber.push(i);
   }
 
@@ -48,6 +66,7 @@ const Pagination = ({
     }
     scrollToElement();
   };
+
   return (
     <div className="flex items-center justify-center flex-wrap w-full text-center px-2">
       <button onClick={prevPage}>
