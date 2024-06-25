@@ -13,6 +13,7 @@ interface Props {
   readonly duration?: number;
   readonly easing?: string;
   readonly allowTransition?: boolean;
+  readonly onlyYAxis?: boolean;
 }
 
 interface Delta {
@@ -30,6 +31,7 @@ const invertAndPlay = (
   elem: HTMLElement,
   easing: string,
   duration: number,
+  onlyYAxis: boolean,
   onTransitionStart?: (elem: HTMLElement) => void,
   onTransitionEnd?: (elem: HTMLElement) => void
 ) => {
@@ -38,7 +40,9 @@ const invertAndPlay = (
   const animation = elem.animate(
     [
       {
-        transform: ` translate(${translateX}px, ${translateY}px) scale(1, 1)`,
+        transform: onlyYAxis
+          ? ` translateY(${translateY}px) scale(1, 1)`
+          : ` translate(${translateX}px, ${translateY}px) scale(1, 1)`,
       },
 
       {
@@ -58,12 +62,13 @@ const invertAndPlay = (
     onTransitionEnd && onTransitionEnd(elem);
   };
 };
-const openAnimation = (
+const handleAnimation = (
   firstDim: DOMRect,
   secondDim: DOMRect,
   secondElem: HTMLElement,
   easing: string,
   duration: number,
+  onlyYAxis: boolean,
   onTransitionStart?: (elem: HTMLElement) => void,
   onTransitionEnd?: (elem: HTMLElement) => void
 ) => {
@@ -71,13 +76,12 @@ const openAnimation = (
 
   const delta = getDelta(firstDim as DOMRect, secondDim);
 
-  if (delta.translateX === 0 && delta.translateY === 0) return;
-
   invertAndPlay(
     delta,
     secondElem,
     easing,
     duration,
+    onlyYAxis,
     onTransitionStart,
     onTransitionEnd
   );
@@ -89,6 +93,7 @@ const useTransition = ({
   animateToElemPos,
   duration = 300,
   easing = "ease-in",
+  onlyYAxis = false,
   allowTransition = true,
 }: Props) => {
   const [elemToAnimate, setElemToAnimate] = useState<null | HTMLElement>(null);
@@ -106,12 +111,13 @@ const useTransition = ({
     const secondDim = elemToAnimate && getElemPosition(elemToAnimate);
 
     if (allowTransition && elemToAnimate) {
-      openAnimation(
+      handleAnimation(
         firstDim as DOMRect,
         secondDim as DOMRect,
         elemToAnimate,
         easing,
         duration,
+        onlyYAxis,
         onTransitionStart,
         onTransitionEnd
       );
@@ -125,6 +131,7 @@ const useTransition = ({
     elemToAnimate,
     allowTransition,
     getElemPosition,
+    onlyYAxis,
   ]);
 
   return animateElemCallback;

@@ -29,6 +29,7 @@ export default function SelectedBudget() {
 
   const animateElemCallback = useTransition({
     animateToElemPos: firstElemPos,
+    onlyYAxis: true,
     onTransitionStart,
     onTransitionEnd,
   });
