@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const Animate = (
   elem: HTMLElement,
@@ -20,20 +20,19 @@ const Animate = (
   };
 };
 
-export const useAnimateMountUnMount = (elementsArray: HTMLElement[]) => {
-  const [arrLength, setArrLength] = useState(0);
-  const [firstRender, setFirstRender] = useState(true);
+export const useAnimateMountUnMount = () => {
+  const allowAnimateOnMount = useRef(false);
 
-  useEffect(() => {
-    arrLength === 0 && setArrLength(elementsArray.length);
-  }, [elementsArray.length, arrLength]);
+  const enableOnMountAnimation = useCallback(() => {
+    allowAnimateOnMount.current = true;
+  }, []);
 
-  useEffect(() => {
-    setFirstRender(false);
+  const disableOnMountAnimation = useCallback(() => {
+    allowAnimateOnMount.current = false;
   }, []);
 
   const startMountAnim = useCallback(
-    ({ elements }: { elements: HTMLElement[] }) => {
+    ({ element }: { element: HTMLElement }) => {
       const keyFrames = [
         { opacity: 0, transform: `translateX(-100px)` },
         {
@@ -47,15 +46,9 @@ export const useAnimateMountUnMount = (elementsArray: HTMLElement[]) => {
         },
       ];
 
-      if (
-        (!firstRender && elements.length === 0) ||
-        (!firstRender && arrLength < elements.length)
-      ) {
-        Animate(elements[elements.length - 1], keyFrames, 300);
-        setArrLength(0);
-      }
+      allowAnimateOnMount.current && Animate(element, keyFrames, 300);
     },
-    [arrLength, firstRender]
+    []
   );
 
   const startUnMountAnim = useCallback(
@@ -84,7 +77,6 @@ export const useAnimateMountUnMount = (elementsArray: HTMLElement[]) => {
         },
         { opacity: 0, transform: `translateX(100px)` },
       ];
-
       elementsArray.forEach((elem) => {
         if (!elem) return;
 
@@ -99,5 +91,10 @@ export const useAnimateMountUnMount = (elementsArray: HTMLElement[]) => {
     []
   );
 
-  return { startMountAnim, startUnMountAnim };
+  return {
+    startMountAnim,
+    startUnMountAnim,
+    enableOnMountAnimation,
+    disableOnMountAnimation,
+  };
 };
