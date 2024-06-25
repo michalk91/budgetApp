@@ -113,6 +113,7 @@ export default function ShowBudgets() {
     animateToElemPos: secondElemPos,
     allowTransition,
     onTransitionEnd,
+    onlyYAxis: true,
   });
 
   useEffect(() => {
@@ -123,12 +124,15 @@ export default function ShowBudgets() {
 
   const getElemPosition = usePosition();
 
-  const { startMountAnim, startUnMountAnim } = useAnimateMountUnMount(
-    rowRefs.current
-  );
+  const {
+    startMountAnim,
+    startUnMountAnim,
+    enableOnMountAnimation,
+    disableOnMountAnimation,
+  } = useAnimateMountUnMount();
 
-  const handleCallbackRefs = useCallback(
-    (node: null | HTMLElement) => {
+  const handleAnimateRows = useCallback(
+    (node: null | HTMLElement, index: number) => {
       if (!node) return;
 
       if (!rowRefs.current.includes(node)) {
@@ -136,13 +140,12 @@ export default function ShowBudgets() {
       }
 
       !addNewBudget &&
+        index === paginatedData.length &&
         startMountAnim({
-          elements: rowRefs.current,
+          element: node,
         });
-
-      animateElemCallback(rowRefs.current[activeIndex]);
     },
-    [animateElemCallback, activeIndex, startMountAnim, addNewBudget]
+    [addNewBudget, startMountAnim]
   );
 
   const setGlobalRowsPerPage = useCallback(
@@ -206,7 +209,10 @@ export default function ShowBudgets() {
                   key={budget.budgetID}
                   data-id={budget.budgetID}
                   className={`hover:bg-gray-100 bg-white border-b `}
-                  ref={handleCallbackRefs}
+                  ref={(node) => {
+                    index === activeIndex ? animateElemCallback(node) : null;
+                    handleAnimateRows(node, index);
+                  }}
                 >
                   <td
                     data-cell="date"
@@ -250,11 +256,13 @@ export default function ShowBudgets() {
                   <td className="max-lg:block max-lg:before:content-[attr(data-cell)]  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
                     <Link href={`/budgets/${budget.budgetID}`}>
                       <Button
-                        handleClick={() => {
+                        handleClick={(e) => {
+                          disableOnMountAnimation();
+
                           dispatch(setActiveElemIndex(index));
 
                           const position = getElemPosition(
-                            rowRefs.current[activeIndex]
+                            e.target as HTMLElement
                           );
                           dispatch(setFirstElemPos(position));
                         }}
@@ -270,15 +278,19 @@ export default function ShowBudgets() {
                     {budget.ownerID === userID ? (
                       <Button
                         handleClick={() => {
-                          !addNewBudget &&
+                          if (
+                            !addNewBudget &&
                             budget.budgetID &&
-                            budget.ownerID === userID &&
+                            budget.ownerID === userID
+                          ) {
+                            enableOnMountAnimation();
                             startUnMountAnim({
                               elementsArray: rowRefs.current,
                               handleUnmountElem: handleDeleteBudget,
                               id: budget.budgetID,
                               dataId: "[data-id]",
                             });
+                          }
                         }}
                         additionalStyles={
                           !addNewBudget
@@ -322,7 +334,10 @@ export default function ShowBudgets() {
           {!addNewBudget && (
             <>
               <Button
-                handleClick={() => setAddNewBudget(true)}
+                handleClick={() => {
+                  enableOnMountAnimation();
+                  setAddNewBudget(true);
+                }}
                 additionalStyles="bg-blue-700 hover:bg-blue-900"
               >
                 Add new budget
