@@ -4,7 +4,7 @@ import {
   updateTransaction,
   deleteAllTransactions,
 } from "../redux/budgetsSlice";
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import useFormatter from "../hooks/useFormatter";
 import AddTransaction from "./AddTransaction";
 import Table from "./Table";
@@ -13,6 +13,7 @@ import type { ShowTransactionsProps } from "../types";
 import useSearch from "../hooks/useSearch";
 import usePagination from "../hooks/usePagination";
 import { useIDfromPathname } from "../hooks/useIDfromPathname";
+import { useAnimateMountUnMount } from "../hooks/useAnimateMountUnMount";
 
 export default function ShowTransactions({
   expensesSort,
@@ -47,6 +48,8 @@ export default function ShowTransactions({
     type: "",
     comment: "",
   });
+
+  const rowRefs = useRef<HTMLElement[]>([]);
 
   const { sortBy, sortDirection } = expensesSort;
 
@@ -116,6 +119,32 @@ export default function ShowTransactions({
     setCurrentPage,
   } = usePagination(filteredArray);
 
+  const { startMountAnim, startUnMountAnim, enableOnMountAnimation } =
+    useAnimateMountUnMount();
+
+  useEffect(() => {
+    rowRefs.current = [];
+  }, []);
+
+  const handleAnimateRows = useCallback(
+    (node: null | HTMLElement, index: number) => {
+      if (!node) return;
+
+      enableOnMountAnimation();
+
+      if (!rowRefs.current.includes(node)) {
+        rowRefs.current.push(node);
+      }
+
+      if ((!addNewExpense || !addNewIncome) && index === paginatedData.length) {
+        startMountAnim({
+          element: node,
+        });
+      }
+    },
+    [addNewExpense, addNewIncome, startMountAnim, enableOnMountAnimation] //paginatedData.length is not added because the onMount animation is supposed to run only once after adding a new row
+  );
+
   return (
     <div className="w-full mt-10">
       <Table
@@ -168,9 +197,11 @@ export default function ShowTransactions({
         notFound={notFound}
       >
         {paginatedData.length > 0 &&
-          paginatedData?.map((transaction) => (
+          paginatedData?.map((transaction, index) => (
             <tr
               key={transaction.id}
+              data-id={transaction.id}
+              ref={(node) => handleAnimateRows(node, index)}
               className={
                 editedTransaction.id === transaction.id
                   ? `bg-gray-100 border-b   ${
@@ -312,10 +343,13 @@ export default function ShowTransactions({
                         (allowToManageAllTransactions?.includes(userID) ||
                           transaction.ownerID === userID ||
                           userID === budgetOwnerID) &&
-                        handleDeleteTransaction(
-                          transaction.id,
-                          transaction.type
-                        );
+                        startUnMountAnim({
+                          elementsArray: rowRefs.current,
+                          handleUnmountElemWithType: handleDeleteTransaction,
+                          id: transaction.id,
+                          type: transaction.type,
+                          dataId: "[data-id]",
+                        });
                     }}
                     additionalStyles={
                       userID &&

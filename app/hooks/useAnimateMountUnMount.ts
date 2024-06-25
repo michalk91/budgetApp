@@ -4,8 +4,10 @@ const Animate = (
   elem: HTMLElement,
   keyFrames: any[],
   duration: number,
-  handleUnmountElem?: (elemID: string) => void,
-  id?: string
+  handleUnmountElem?: (id: string) => void,
+  handleUnmountElemWithType?: (id: string, type: "expense" | "income") => void,
+  id?: string,
+  type?: "expense" | "income"
 ) => {
   if (!elem) return;
 
@@ -17,6 +19,10 @@ const Animate = (
 
   animation.onfinish = () => {
     handleUnmountElem && id && handleUnmountElem(id);
+    handleUnmountElemWithType &&
+      id &&
+      type &&
+      handleUnmountElemWithType(id, type);
   };
 };
 
@@ -55,15 +61,22 @@ export const useAnimateMountUnMount = () => {
     ({
       elementsArray,
       handleUnmountElem,
+      handleUnmountElemWithType,
       id,
       dataId,
+      type,
     }: {
       id: string;
       elementsArray: HTMLElement[] | null;
       dataId: string;
-      handleUnmountElem: ((id: string) => void) | undefined;
+      handleUnmountElem?: ((id: string) => void) | undefined;
+      handleUnmountElemWithType?: (
+        id: string,
+        type: "expense" | "income"
+      ) => void;
+      type?: "expense" | "income";
     }) => {
-      if (!elementsArray || !handleUnmountElem || !id) return;
+      if (!elementsArray || !id) return;
 
       const keyFrames = [
         {
@@ -85,7 +98,19 @@ export const useAnimateMountUnMount = () => {
         const elemID = element.dataset.id;
 
         if (elemID === id) {
-          Animate(elem, keyFrames, 300, handleUnmountElem, id);
+          if (handleUnmountElem) {
+            Animate(elem, keyFrames, 300, handleUnmountElem, undefined, id);
+          } else if (handleUnmountElemWithType && type) {
+            Animate(
+              elem,
+              keyFrames,
+              300,
+              undefined,
+              handleUnmountElemWithType,
+              id,
+              type
+            );
+          }
         }
       });
     },

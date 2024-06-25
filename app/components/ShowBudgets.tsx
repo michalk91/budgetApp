@@ -158,7 +158,7 @@ export default function ShowBudgets() {
       globalSearchKeywords,
       globalCurrentPage,
       disableOnMountAnimation,
-    ]
+    ] //paginatedData.length is not added because the onMount animation is supposed to run only once after adding a new row
   );
 
   const setGlobalRowsPerPage = useCallback(
