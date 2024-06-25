@@ -141,14 +141,24 @@ export default function ShowBudgets() {
         rowRefs.current.push(node);
       }
 
-      !addNewBudget &&
+      if (
+        !addNewBudget &&
         globalSearchKeywords === "" &&
-        index === paginatedData.length &&
+        index === paginatedData.length
+      ) {
+        disableOnMountAnimation();
         startMountAnim({
           element: node,
         });
+      }
     },
-    [addNewBudget, startMountAnim, globalSearchKeywords, globalCurrentPage]
+    [
+      addNewBudget,
+      startMountAnim,
+      globalSearchKeywords,
+      globalCurrentPage,
+      disableOnMountAnimation,
+    ]
   );
 
   const setGlobalRowsPerPage = useCallback(
@@ -287,7 +297,7 @@ export default function ShowBudgets() {
                             budget.budgetID &&
                             budget.ownerID === userID
                           ) {
-                            enableOnMountAnimation();
+                            setDisablePageChange(false);
                             startUnMountAnim({
                               elementsArray: rowRefs.current,
                               handleUnmountElem: handleDeleteBudget,
@@ -341,9 +351,9 @@ export default function ShowBudgets() {
                 handleClick={() => {
                   if (globalSearchKeywords !== "") return;
 
-                  enableOnMountAnimation();
                   setAddNewBudget(true);
                   setDisablePageChange(false);
+                  enableOnMountAnimation();
                 }}
                 additionalStyles={
                   globalSearchKeywords !== ""
