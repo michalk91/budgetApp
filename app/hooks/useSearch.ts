@@ -24,7 +24,7 @@ const findValuesBy = <T extends Record<string, any>>(
       if (typeof obj[k] === "string" && typeof filteredValue === "string") {
         return obj[k].toLowerCase().includes(filteredValue.toLowerCase());
       } else {
-        return obj[k] === value;
+        return obj[k]?.toString().replace(/,|-/g, "") === value;
       }
     })
   );
