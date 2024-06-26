@@ -119,8 +119,12 @@ export default function ShowTransactions({
     setCurrentPage,
   } = usePagination(filteredArray);
 
-  const { startMountAnim, startUnMountAnim, enableOnMountAnimation } =
-    useAnimateMountUnMount();
+  const {
+    startMountAnim,
+    startUnMountAnim,
+    enableOnMountAnimation,
+    disableOnMountAnimation,
+  } = useAnimateMountUnMount();
 
   useEffect(() => {
     rowRefs.current = [];
@@ -130,8 +134,6 @@ export default function ShowTransactions({
     (node: null | HTMLElement, index: number) => {
       if (!node) return;
 
-      enableOnMountAnimation();
-
       if (!rowRefs.current.includes(node)) {
         rowRefs.current.push(node);
       }
@@ -140,10 +142,15 @@ export default function ShowTransactions({
         startMountAnim({
           element: node,
         });
+        disableOnMountAnimation();
       }
     },
-    [addNewExpense, addNewIncome, startMountAnim, enableOnMountAnimation] //paginatedData.length is not added because the onMount animation is supposed to run only once after adding a new row
+    [addNewExpense, addNewIncome, startMountAnim, disableOnMountAnimation] //paginatedData.length is not added because the onMount animation is supposed to run only once after adding a new row
   );
+
+  useEffect(() => {
+    disableOnMountAnimation();
+  }, [rowsPerPage, currentPage, disableOnMountAnimation]);
 
   return (
     <div className="w-full mt-10">
@@ -428,9 +435,12 @@ export default function ShowTransactions({
         {!addNewExpense && !addNewIncome && (
           <>
             <Button
-              handleClick={() =>
-                editedTransaction.id === "" && setAddNewExpense(true)
-              }
+              handleClick={() => {
+                if (editedTransaction.id === "") {
+                  setAddNewExpense(true);
+                  enableOnMountAnimation();
+                }
+              }}
               additionalStyles={
                 editedTransaction.id === ""
                   ? "bg-blue-600 hover:bg-blue-900"
@@ -440,9 +450,12 @@ export default function ShowTransactions({
               Add expense
             </Button>
             <Button
-              handleClick={() =>
-                editedTransaction.id === "" && setAddNewIncome(true)
-              }
+              handleClick={() => {
+                if (editedTransaction.id === "") {
+                  setAddNewIncome(true);
+                  enableOnMountAnimation();
+                }
+              }}
               additionalStyles={
                 editedTransaction.id === ""
                   ? "bg-green-700 hover:bg-green-800"

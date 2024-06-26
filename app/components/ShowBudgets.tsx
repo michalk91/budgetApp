@@ -146,10 +146,10 @@ export default function ShowBudgets() {
         globalSearchKeywords === "" &&
         index === paginatedData.length
       ) {
-        disableOnMountAnimation();
         startMountAnim({
           element: node,
         });
+        disableOnMountAnimation();
       }
     },
     [
@@ -163,10 +163,10 @@ export default function ShowBudgets() {
 
   const setGlobalRowsPerPage = useCallback(
     (numberOfRows: number) => {
-      disableOnMountAnimation();
+      // disableOnMountAnimation();
       dispatch(setGloalRowsNumber(numberOfRows));
     },
-    [dispatch, disableOnMountAnimation]
+    [dispatch]
   );
 
   const setGlobalCurrentPage = useCallback(

@@ -1,14 +1,22 @@
 import { useCallback, useState } from "react";
 
-const Animate = (
-  elem: HTMLElement,
-  keyFrames: any[],
-  duration: number,
-  handleUnmountElem?: (id: string) => void,
-  handleUnmountElemWithType?: (id: string, type: "expense" | "income") => void,
-  id?: string,
-  type?: "expense" | "income"
-) => {
+const Animate = ({
+  elem,
+  keyFrames,
+  duration,
+  handleUnmountElem,
+  handleUnmountElemWithType,
+  id,
+  type,
+}: {
+  elem: HTMLElement;
+  keyFrames: Record<string, string | number | undefined>[];
+  duration: number;
+  handleUnmountElem?: (id: string) => void;
+  handleUnmountElemWithType?: (id: string, type: "expense" | "income") => void;
+  id?: string;
+  type?: "expense" | "income";
+}) => {
   if (!elem) return;
 
   const animation = elem.animate(keyFrames, {
@@ -27,7 +35,7 @@ const Animate = (
 };
 
 export const useAnimateMountUnMount = () => {
-  const [allowAnimateOnMount, setAllowAnimateOnMount] = useState(false);
+  const [allowAnimateOnMount, setAllowAnimateOnMount] = useState(true);
 
   const enableOnMountAnimation = useCallback(() => {
     setAllowAnimateOnMount(true);
@@ -52,7 +60,8 @@ export const useAnimateMountUnMount = () => {
         },
       ];
 
-      allowAnimateOnMount && Animate(element, keyFrames, 300);
+      allowAnimateOnMount &&
+        Animate({ elem: element, keyFrames, duration: 300 });
     },
     [allowAnimateOnMount]
   );
@@ -99,17 +108,16 @@ export const useAnimateMountUnMount = () => {
 
         if (elemID === id) {
           if (handleUnmountElem) {
-            Animate(elem, keyFrames, 300, handleUnmountElem, undefined, id);
+            Animate({ elem, keyFrames, duration: 300, handleUnmountElem, id });
           } else if (handleUnmountElemWithType && type) {
-            Animate(
+            Animate({
               elem,
               keyFrames,
-              300,
-              undefined,
+              duration: 300,
               handleUnmountElemWithType,
               id,
-              type
-            );
+              type,
+            });
           }
         }
       });

@@ -272,7 +272,6 @@ export interface PaginationProps {
   setCurrentPage?: Dispatch<SetStateAction<number>>;
   setGlobalCurrentPage?: (pageNumber: number) => void;
   scrollElementRef: React.RefObject<HTMLDivElement>;
-  addNewRow?: React.ReactNode | undefined;
   disablePageChange?: boolean;
 }
 

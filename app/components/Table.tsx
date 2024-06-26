@@ -26,7 +26,7 @@ export default function Table({
   setGlobalRowsPerPage,
   setGlobalCurrentPage,
   handleSearchGlobal,
-  disablePageChange,
+  disablePageChange = false,
 }: TableProps) {
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -216,7 +216,6 @@ export default function Table({
             setCurrentPage={setCurrentPage && setCurrentPage}
             setGlobalCurrentPage={setGlobalCurrentPage && setGlobalCurrentPage}
             scrollElementRef={tableRef}
-            addNewRow={addNewRow}
             disablePageChange={disablePageChange}
           />
         )}

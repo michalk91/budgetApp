@@ -9,7 +9,6 @@ const Pagination = ({
   setCurrentPage,
   scrollElementRef,
   setGlobalCurrentPage,
-  addNewRow,
   disablePageChange,
 }: PaginationProps) => {
   const paginationNumber = [];
@@ -22,7 +21,6 @@ const Pagination = ({
       setGlobalCurrentPage && setGlobalCurrentPage(paginationNumber.length);
     }
   }, [
-    addNewRow,
     dataLength,
     rowsPerPage,
     paginationNumber.length,
