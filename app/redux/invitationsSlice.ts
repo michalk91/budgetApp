@@ -334,7 +334,12 @@ const invitationsSlice = createSlice({
     invitedUsers: [],
     inviteUserErrorMessage: "",
   } as InvitationsSlice,
-  reducers: {},
+  reducers: {
+    resetinviteUserStatus: (state) => {
+      state.inviteUserStatus = "idle";
+      state.inviteUserErrorMessage = "";
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(inviteUser.pending, (state) => {
@@ -431,4 +436,5 @@ const invitationsSlice = createSlice({
   },
 });
 
+export const { resetinviteUserStatus } = invitationsSlice.actions;
 export default invitationsSlice.reducer;

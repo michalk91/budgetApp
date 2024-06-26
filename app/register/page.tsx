@@ -1,14 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SyntheticEvent } from "react";
 import { registerUser } from "../redux/usersSlice";
 import { useAppDispatch } from "../redux/hooks";
 import { useAppSelector } from "../redux/hooks";
 import Link from "next/link";
 import Loader from "../components/Loader";
+import { useRouter } from "next/navigation";
+import { resetCreateAccountStatus } from "../redux/usersSlice";
+import { toast } from "react-toastify";
 
 const Register = () => {
+  const router = useRouter();
+
   const dispatch = useAppDispatch();
   const registerStatus = useAppSelector((state) => state.user.registeredStatus);
 
@@ -16,7 +21,19 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
 
-  const onSubmit = async (e: SyntheticEvent) => {
+  const notifyRegistered = useCallback(
+    () => toast.success("You have successfully created your account"),
+    []
+  );
+  const notifyFailedRegister = useCallback(
+    () =>
+      toast.error(
+        "Username and email are probably taken. Use a different email and username"
+      ),
+    []
+  );
+
+  const onSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
     const user = {
       email: email,
@@ -27,8 +44,21 @@ const Register = () => {
   };
 
   useEffect(() => {
-    if (registerStatus === "succeeded") location.replace("/login");
-  }, [registerStatus]);
+    if (registerStatus === "succeeded") {
+      router.push("/login");
+      notifyRegistered();
+      dispatch(resetCreateAccountStatus());
+    } else if (registerStatus === "failed") {
+      notifyFailedRegister();
+      dispatch(resetCreateAccountStatus());
+    }
+  }, [
+    registerStatus,
+    router,
+    dispatch,
+    notifyRegistered,
+    notifyFailedRegister,
+  ]);
 
   return (
     <section className="flex flex-col w-full justify-center items-center grow max-md:pt-8">

@@ -12,6 +12,9 @@ import {
 import useSearch from "../hooks/useSearch";
 import usePagination from "../hooks/usePagination";
 import { useIDfromPathname } from "../hooks/useIDfromPathname";
+import { toast } from "react-toastify";
+import { useCallback } from "react";
+import { resetinviteUserStatus } from "../redux/invitationsSlice";
 
 export default function InvitedUsers() {
   const dispatch = useAppDispatch();
@@ -20,6 +23,12 @@ export default function InvitedUsers() {
 
   const invitedUsers = useAppSelector(
     (state) => state.invitations.invitedUsers
+  );
+  const inviteUserErrorMessage = useAppSelector(
+    (state) => state.invitations.inviteUserErrorMessage
+  );
+  const inviteUserStatus = useAppSelector(
+    (state) => state.invitations.inviteUserStatus
   );
 
   const [addNewUser, setAddNewUser] = useState(false);
@@ -30,6 +39,25 @@ export default function InvitedUsers() {
   });
 
   const { sortBy, sortDirection } = usersSort;
+
+  const notifyInvited = useCallback(
+    () => toast.success("The user has been successfully invited"),
+    []
+  );
+  const notifyFailedInvite = useCallback(
+    () => toast.error(inviteUserErrorMessage),
+    [inviteUserErrorMessage]
+  );
+
+  useEffect(() => {
+    if (inviteUserStatus === "succeeded") {
+      notifyInvited();
+      dispatch(resetinviteUserStatus());
+    } else if (inviteUserStatus === "failed") {
+      notifyFailedInvite();
+      dispatch(resetinviteUserStatus());
+    }
+  }, [inviteUserStatus, notifyFailedInvite, dispatch, notifyInvited]);
 
   useEffect(() => {
     if (sortDirection === "ascending")

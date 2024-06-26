@@ -1,24 +1,34 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SyntheticEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAppSelector } from "../redux/hooks";
 import { useAppDispatch } from "../redux/hooks";
-import { loginUser, loginGuest } from "../redux/usersSlice";
+import { loginUser, loginGuest, resetLoginStatus } from "../redux/usersSlice";
 import Loader from "../components/Loader";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const dispatch = useAppDispatch();
   const loginStatus = useAppSelector((state) => state.user.loginStatus);
+
+  const notifyLoggedIn = useCallback(
+    () => toast.success("You have successfully logged in"),
+    []
+  );
+  const notifyFailedLogin = useCallback(
+    () => toast.error("Wrong email or password"),
+    []
+  );
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const router = useRouter();
 
-  const onLogin = async (e: SyntheticEvent) => {
+  const onLogin = (e: SyntheticEvent) => {
     e.preventDefault();
     dispatch(loginUser({ email: email, password: password }));
   };
@@ -30,8 +40,14 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (loginStatus === "succeeded") router.push("/", { scroll: false });
-  }, [loginStatus, router]);
+    if (loginStatus === "succeeded") {
+      router.push("/", { scroll: false });
+      notifyLoggedIn();
+    } else if (loginStatus === "failed") {
+      dispatch(resetLoginStatus());
+      notifyFailedLogin();
+    }
+  }, [loginStatus, router, dispatch, notifyFailedLogin, notifyLoggedIn]);
 
   return (
     <section className="flex flex-col w-full justify-center items-center grow">

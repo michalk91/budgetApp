@@ -175,7 +175,14 @@ const userSlice = createSlice({
     removeUserStatus: "idle",
     error: undefined,
   } as UsersSlice,
-  reducers: {},
+  reducers: {
+    resetCreateAccountStatus: (state) => {
+      state.registeredStatus = "idle";
+    },
+    resetLoginStatus: (state) => {
+      state.loginStatus = "idle";
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending, (state) => {
@@ -294,3 +301,4 @@ const userSlice = createSlice({
 });
 
 export default userSlice.reducer;
+export const { resetCreateAccountStatus, resetLoginStatus } = userSlice.actions;
