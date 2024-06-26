@@ -1,5 +1,5 @@
 ## Description
-This is a budget management app.
+This is a budget management application. Budgets can be managed independently or in collaboration with other users by granting them the necessary permission.
 
 ## Features:
 - Users are able to register an account and log in to the application.
@@ -15,6 +15,9 @@ This is a budget management app.
 - NextJS 14,
 - Tailwindcss
 - Redux-Toolkit,
+- Redux-persist,
 - Firebase,
 - React-toastify,
-- React-google-charts
+- React-google-charts,
+- use-debounce,
+- react-icons
