@@ -127,7 +127,8 @@ export default function ShowBudgets() {
 
   useEffect(() => {
     rowRefs.current = [];
-  }, []);
+    disableOnMountAnimation();
+  }, [disableOnMountAnimation]);
 
   const rowRefs = useRef<HTMLElement[]>([]);
 
