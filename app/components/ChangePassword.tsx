@@ -1,8 +1,9 @@
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useCallback, useState } from "react";
 import { changePassword } from "../redux/usersSlice";
 import { useAppDispatch } from "../redux/hooks";
 import { toast } from "react-toastify";
 import type { ChangeComponentsProps } from "../types";
+import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 
 export default function ChangePassword({ setActive }: ChangeComponentsProps) {
   const dispatch = useAppDispatch();
@@ -11,26 +12,47 @@ export default function ChangePassword({ setActive }: ChangeComponentsProps) {
     repeat: "",
   });
 
+  const [showPassword, setShowPassword] = useState({
+    showEnteredPassword: false,
+    showRepeatedPassword: false,
+  });
+
+  const { showEnteredPassword, showRepeatedPassword } = showPassword;
   const { password, repeat } = newPassword;
 
-  const handleChangePassword = (e: SyntheticEvent) => {
-    e.preventDefault();
+  const notifyPasswordChanged = useCallback(
+    () => toast.success("The password has been successfully changed"),
+    []
+  );
 
-    if (password === repeat) {
-      dispatch(changePassword(password));
-      notifyPasswordChanged();
-      setNewPassword({ ...newPassword, password: "", repeat: "" });
-      setActive("");
-    } else {
-      repeatIncorrectlyChanged();
-    }
-  };
+  const repeatIncorrectlyChanged = useCallback(
+    () => toast.error("You repeated the password incorrectly"),
+    []
+  );
 
-  const notifyPasswordChanged = () =>
-    toast.success("The password has been successfully changed");
+  const handleChangePassword = useCallback(
+    (e: SyntheticEvent) => {
+      e.preventDefault();
 
-  const repeatIncorrectlyChanged = () =>
-    toast.error("You repeated the password incorrectly");
+      if (password === repeat) {
+        dispatch(changePassword(password));
+        notifyPasswordChanged();
+        setNewPassword({ ...newPassword, password: "", repeat: "" });
+        setActive("");
+      } else {
+        repeatIncorrectlyChanged();
+      }
+    },
+    [
+      dispatch,
+      newPassword,
+      password,
+      repeat,
+      notifyPasswordChanged,
+      repeatIncorrectlyChanged,
+      setActive,
+    ]
+  );
 
   return (
     <>
@@ -47,7 +69,7 @@ export default function ChangePassword({ setActive }: ChangeComponentsProps) {
             <div className="relative flex items-center">
               <input
                 className="peer h-10 w-full rounded-md  px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
-                type="password"
+                type={showEnteredPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) =>
                   setNewPassword((state) => ({
@@ -58,6 +80,23 @@ export default function ChangePassword({ setActive }: ChangeComponentsProps) {
                 required
                 placeholder="Password"
               />
+              {password !== "" && (
+                <div
+                  onClick={() =>
+                    setShowPassword((state) => ({
+                      ...state,
+                      showEnteredPassword: !showEnteredPassword,
+                    }))
+                  }
+                  className="absolute right-0 px-4 cursor-pointer"
+                >
+                  {showEnteredPassword ? (
+                    <BiSolidShow size={20} />
+                  ) : (
+                    <BiSolidHide size={20} />
+                  )}
+                </div>
+              )}
             </div>
           </div>
           <div className="p-2">
@@ -70,7 +109,7 @@ export default function ChangePassword({ setActive }: ChangeComponentsProps) {
             <div className="relative flex items-center">
               <input
                 className="peer h-10 w-full rounded-md px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
-                type="password"
+                type={showRepeatedPassword ? "text" : "password"}
                 value={repeat}
                 onChange={(e) =>
                   setNewPassword((state) => ({
@@ -81,6 +120,23 @@ export default function ChangePassword({ setActive }: ChangeComponentsProps) {
                 required
                 placeholder="Password"
               />
+              {repeat !== "" && (
+                <div
+                  onClick={() =>
+                    setShowPassword((state) => ({
+                      ...state,
+                      showRepeatedPassword: !showRepeatedPassword,
+                    }))
+                  }
+                  className="absolute right-0 px-4 cursor-pointer"
+                >
+                  {showRepeatedPassword ? (
+                    <BiSolidShow size={20} />
+                  ) : (
+                    <BiSolidHide size={20} />
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

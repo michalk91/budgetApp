@@ -9,10 +9,13 @@ import { useAppDispatch } from "../redux/hooks";
 import { loginUser, loginGuest, resetLoginStatus } from "../redux/usersSlice";
 import Loader from "../components/Loader";
 import { toast } from "react-toastify";
+import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 
 const Login = () => {
   const dispatch = useAppDispatch();
   const loginStatus = useAppSelector((state) => state.user.loginStatus);
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const notifyLoggedIn = useCallback(
     () => toast.success("You have successfully logged in"),
@@ -23,13 +26,18 @@ const Login = () => {
     []
   );
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const { email, password } = loginData;
 
   const router = useRouter();
 
-  const onLogin = (e: SyntheticEvent) => {
+  const handleLogin = (e: SyntheticEvent) => {
     e.preventDefault();
+
     dispatch(loginUser({ email: email, password: password }));
   };
 
@@ -52,7 +60,10 @@ const Login = () => {
   return (
     <section className="flex flex-col w-full justify-center items-center grow">
       <span className="font-bold text-xl mx-auto">Sing in</span>
-      <form className="rounded-md p-10 text-center border-solid border-2 border-blue-400 shadow-xl max-md:p-4">
+      <form
+        onSubmit={handleLogin}
+        className="rounded-md p-10 text-center border-solid border-2 border-blue-400 shadow-xl max-md:p-4"
+      >
         <div className="p-2">
           <label
             htmlFor="email-address"
@@ -67,7 +78,9 @@ const Login = () => {
               type="email"
               required
               placeholder="Email address"
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) =>
+                setLoginData((state) => ({ ...state, email: e.target.value }))
+              }
               className="peer h-10 w-full rounded-md bg-gray-50 px-4  outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
             />
           </div>
@@ -84,29 +97,43 @@ const Login = () => {
             <input
               id="password"
               name="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               required
               placeholder="Password"
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) =>
+                setLoginData((state) => ({
+                  ...state,
+                  password: e.target.value,
+                }))
+              }
               className="peer h-10 w-full rounded-md bg-gray-50 px-4  outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
             />
+            {password !== "" && (
+              <div
+                onClick={() => setShowPassword((state) => !state)}
+                className="absolute right-0 px-4 cursor-pointer"
+              >
+                {showPassword ? (
+                  <BiSolidShow size={20} />
+                ) : (
+                  <BiSolidHide size={20} />
+                )}
+              </div>
+            )}
           </div>
         </div>
 
         {loginStatus !== "loading" ? (
           <>
             <button
+              type="submit"
               className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full "
-              onClick={onLogin}
             >
               Login
             </button>
           </>
         ) : (
-          <button
-            className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full "
-            onClick={onLogin}
-          >
+          <button className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full ">
             <Loader />
           </button>
         )}
@@ -124,7 +151,7 @@ const Login = () => {
           <button
             type="button"
             className="bg-green-600 w-3/4 hover:bg-green-800 text-white font-bold py-2 mt-6 px-6 rounded-full -mb-4 max-md:mb-4"
-            onClick={handleGuestLogin}
+            onClick={(e) => handleGuestLogin(e)}
           >
             Login as guest
           </button>
@@ -132,7 +159,6 @@ const Login = () => {
           <button
             type="button"
             className="bg-green-600 w-3/4 hover:bg-green-800 text-white font-bold py-2 mt-6 px-6 rounded-full -mb-4 max-md:mb-4"
-            onClick={handleGuestLogin}
           >
             <Loader />
           </button>
