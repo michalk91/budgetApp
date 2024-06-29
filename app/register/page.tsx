@@ -88,7 +88,7 @@ const Register = () => {
   ]);
 
   return (
-    <section className="flex flex-col w-full justify-center items-center grow max-md:pt-8">
+    <section className="flex flex-col w-full my-16 justify-center items-center grow max-md:pt-8">
       <span className="font-bold text-xl mx-auto">Sing up</span>
       <form
         onSubmit={handleSubmit}
@@ -228,17 +228,17 @@ const Register = () => {
         {registerStatus !== "loading" ? (
           <button
             type="submit"
-            className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full "
+            className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 mx-3 my-5 px-6 rounded-full "
           >
             Sign up
           </button>
         ) : (
-          <button className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full ">
+          <button className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 my-5 mx-3 px-6 rounded-full ">
             <Loader />
           </button>
         )}
 
-        <p className="text-m text-center mt-4">
+        <p className="text-m text-center">
           Already have an account?
           <Link
             className="text-blue-500 text-xl hover:text-blue-800 m-2"

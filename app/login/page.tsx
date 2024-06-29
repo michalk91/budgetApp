@@ -58,7 +58,7 @@ const Login = () => {
   }, [loginStatus, router, dispatch, notifyFailedLogin, notifyLoggedIn]);
 
   return (
-    <section className="flex flex-col w-full justify-center items-center grow">
+    <section className="flex flex-col my-16 w-full justify-center items-center grow">
       <span className="font-bold text-xl mx-auto">Sing in</span>
       <form
         onSubmit={handleLogin}
@@ -127,17 +127,17 @@ const Login = () => {
           <>
             <button
               type="submit"
-              className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full "
+              className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 my-5 mx-3 px-6 rounded-full "
             >
               Login
             </button>
           </>
         ) : (
-          <button className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 m-3 px-6 rounded-full ">
+          <button className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 my-5 mx-3 px-6 rounded-full ">
             <Loader />
           </button>
         )}
-        <p className="text-m text-center mt-4">
+        <p className="text-m text-center">
           No account yet?
           <Link
             className="text-blue-500 text-xl hover:text-blue-800 m-2"

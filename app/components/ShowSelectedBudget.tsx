@@ -128,7 +128,7 @@ export default function ShowSelectedBudget() {
                     {` (${ownerEmail})`}
                   </p>
                 ) : (
-                  <p className="pl-2 mb-4 mt-2">
+                  <p className="pl-2 mt-2">
                     OWNER: <b>{`You`}</b>
                   </p>
                 )}
