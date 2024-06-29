@@ -55,7 +55,7 @@ export default function ShowSelectedBudget() {
     dispatch(
       fetchJoinedUsers({
         budgetID,
-        sortOptions: { sortBy: "username", sortDirection },
+        sortOptions: { sortBy: "username", sortDirection: "ascending" },
       })
     );
   }, [dispatch, budgetID, sortDirection]);
