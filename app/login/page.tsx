@@ -58,7 +58,7 @@ const Login = () => {
   }, [loginStatus, router, dispatch, notifyFailedLogin, notifyLoggedIn]);
 
   return (
-    <section className="flex flex-col my-16 w-full justify-center items-center grow">
+    <section className="flex flex-col py-16 w-full justify-center items-center grow">
       <span className="font-bold text-xl mx-auto">Sing in</span>
       <form
         onSubmit={handleLogin}

@@ -146,11 +146,7 @@ export default function Table({
         </div>
 
         <table className="table-fixed w-full text-sm text-left text-gray-500  ">
-          <thead
-            className={`text-xs text-gray-700 uppercase bg-gray-200 ${
-              dataLength > 1 ? "border-gray-300 border-t-2" : ""
-            }`}
-          >
+          <thead className="text-xs text-gray-700 uppercase bg-gray-200 border-gray-300 border-t-2">
             <tr>
               {headerCells.map((cell) => (
                 <th
