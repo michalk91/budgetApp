@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { fetchInvitedUsers } from "../redux/invitationsSlice";
 import AddNewUser from "./AddNewUser";
 import Button from "./Button";
-import type { SortState } from "../types";
+import type { SortOptions } from "../types";
 import {
   deleteInvitation,
   deleteAllInvitations,
@@ -33,9 +33,9 @@ export default function InvitedUsers() {
 
   const [addNewUser, setAddNewUser] = useState(false);
 
-  const [usersSort, setUsersSort] = useState<SortState>({
+  const [usersSort, setUsersSort] = useState<SortOptions>({
     sortBy: "timestamp",
-    sortDirection: "ascending",
+    sortDirection: "without",
   });
 
   const { sortBy, sortDirection } = usersSort;
@@ -60,20 +60,12 @@ export default function InvitedUsers() {
   }, [inviteUserStatus, notifyFailedInvite, dispatch, notifyInvited]);
 
   useEffect(() => {
-    if (sortDirection === "ascending")
-      dispatch(
-        fetchInvitedUsers({
-          budgetID,
-          sortOptions: { sortBy, descending: false },
-        })
-      );
-    else if (sortDirection === "descending")
-      dispatch(
-        fetchInvitedUsers({
-          budgetID,
-          sortOptions: { sortBy, descending: true },
-        })
-      );
+    dispatch(
+      fetchInvitedUsers({
+        budgetID,
+        sortOptions: { sortBy, sortDirection },
+      })
+    );
   }, [dispatch, sortBy, sortDirection, budgetID]);
 
   const findByKeys = ["invitedUserEmail", " invitedUsername"];

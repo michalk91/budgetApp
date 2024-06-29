@@ -45,7 +45,7 @@ export interface State {
   invitations: InvitationsSlice;
 }
 
-export interface BudgetsSlice extends SortState {
+export interface BudgetsSlice extends SortOptions {
   budgetValue: number;
   budgetsArray: Budget[];
   currencyType: "PLN" | "EUR" | "USD";
@@ -126,11 +126,6 @@ export interface BudgetAddDateProps {
   budgetDate: string;
 }
 
-export interface SortOptions {
-  sortBy: string;
-  descending: boolean;
-}
-
 export interface DisplayAmountProps {
   fontSize?: string;
   valueFromStore: number;
@@ -179,8 +174,8 @@ export interface DecideInvitation {
   decision: "decline" | "accept";
 }
 
-export interface SortState {
-  sortDirection: "ascending" | "descending";
+export interface SortOptions {
+  sortDirection: "ascending" | "descending" | "without";
   sortBy: string;
 }
 
@@ -189,7 +184,7 @@ export interface HeaderCell {
   sortBy?: string;
 }
 
-export interface TableProps extends SortState {
+export interface TableProps extends SortOptions {
   title: string;
   headerCells: HeaderCell[];
   emptyTableCondition: boolean;
@@ -204,10 +199,10 @@ export interface TableProps extends SortState {
   setSort?: Dispatch<
     SetStateAction<{
       sortBy: string;
-      sortDirection: "ascending" | "descending";
+      sortDirection: "ascending" | "descending" | "without";
     }>
   >;
-  setSortGlobal?: ({ sortBy, sortDirection }: SortState) => void;
+  setSortGlobal?: ({ sortBy, sortDirection }: SortOptions) => void;
   currentPage: number;
   dataLength: number;
   rowsPerPage: number;
@@ -261,8 +256,8 @@ export interface CategoriesProps {
 }
 
 export interface ShowTransactionsProps {
-  setExpensesSort: Dispatch<SetStateAction<SortState>>;
-  expensesSort: SortState;
+  setExpensesSort: Dispatch<SetStateAction<SortOptions>>;
+  expensesSort: SortOptions;
 }
 
 export interface PaginationProps {

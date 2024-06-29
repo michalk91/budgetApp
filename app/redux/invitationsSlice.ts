@@ -51,7 +51,7 @@ export const fetchInvitations = createAsyncThunk(
 export const fetchInvitedUsers = createAsyncThunk(
   "invitations/fetchInvitedUsers",
   async ({ budgetID, sortOptions }: FetchArgs) => {
-    const { sortBy, descending } = sortOptions;
+    const { sortBy, sortDirection } = sortOptions;
 
     const invitedUsersQuery = query(
       collection(db, "invitations"),
@@ -68,9 +68,14 @@ export const fetchInvitedUsers = createAsyncThunk(
       return { invitedUserEmail, invitedUsername, invitedUserID, invitationID };
     });
 
-    const sortedUsers = useSort(invitedUsers, `${sortBy}`);
-
-    return !descending ? sortedUsers : sortedUsers.reverse();
+    if (sortDirection === "without") {
+      return invitedUsers;
+    } else {
+      const sortedUsers = useSort(invitedUsers, `${sortBy}`);
+      return sortDirection === "ascending"
+        ? sortedUsers
+        : sortedUsers.reverse();
+    }
   }
 );
 
@@ -127,7 +132,7 @@ export const deleteAllUsers = createAsyncThunk(
 export const fetchJoinedUsers = createAsyncThunk(
   "invitations/fetchJoinedUsers",
   async ({ budgetID, sortOptions }: FetchArgs) => {
-    const { sortBy, descending } = sortOptions;
+    const { sortBy, sortDirection } = sortOptions;
 
     const budgetRef = doc(db, "budgets", budgetID);
     const budgetSnap = await getDoc(budgetRef);
@@ -161,10 +166,14 @@ export const fetchJoinedUsers = createAsyncThunk(
         })
       );
     }
-
-    const sortedUsers = useSort(usersWithPermissions, `${sortBy}`);
-
-    return !descending ? sortedUsers : sortedUsers.reverse();
+    if (sortDirection === "without") {
+      return usersWithPermissions;
+    } else {
+      const sortedUsers = useSort(usersWithPermissions, `${sortBy}`);
+      return sortDirection === "ascending"
+        ? sortedUsers
+        : sortedUsers.reverse();
+    }
   }
 );
 

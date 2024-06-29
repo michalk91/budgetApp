@@ -10,7 +10,7 @@ import {
   setSearchKeywords,
 } from "../redux/budgetsSlice";
 import Table from "./Table";
-import type { SortState } from "../types";
+import type { SortOptions } from "../types";
 import { useCallback, useEffect, useState, useRef } from "react";
 import useFormatter from "../hooks/useFormatter";
 import AddNewBudget from "./AddNewBudget";
@@ -71,7 +71,7 @@ export default function ShowBudgets() {
   } = useAnimateMountUnMount();
 
   const setGlobalSortOptions = useCallback(
-    ({ sortBy, sortDirection }: SortState) => {
+    ({ sortBy, sortDirection }: SortOptions) => {
       dispatch(setSortOptions({ sortBy, sortDirection }));
     },
     [dispatch]
@@ -80,10 +80,12 @@ export default function ShowBudgets() {
   const formatter = useFormatter();
 
   useEffect(() => {
-    if (globalBudgetSortDirection === "ascending")
-      dispatch(fetchBudgets({ sortBy: globalBudgetSortBy, descending: false }));
-    else if (globalBudgetSortDirection === "descending")
-      dispatch(fetchBudgets({ sortBy: globalBudgetSortBy, descending: true }));
+    dispatch(
+      fetchBudgets({
+        sortBy: globalBudgetSortBy,
+        sortDirection: globalBudgetSortDirection,
+      })
+    );
   }, [dispatch, globalBudgetSortBy, globalBudgetSortDirection]);
 
   const handleDeleteBudget = (id: string) => {

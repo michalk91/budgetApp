@@ -14,7 +14,7 @@ import ShareBudget from "./ShareBudget";
 import { fetchJoinedUsers } from "../redux/invitationsSlice";
 import { FaUser } from "react-icons/fa";
 import { RiAdminFill } from "react-icons/ri";
-import type { SortState } from "../types";
+import type { SortOptions } from "../types";
 import ShowError from "./ShowError";
 import { useIDfromPathname } from "../hooks/useIDfromPathname";
 
@@ -43,9 +43,9 @@ export default function ShowSelectedBudget() {
     (state) => state.budgets.showSelectedBudgetError
   );
 
-  const [expensesSort, setExpensesSort] = useState<SortState>({
+  const [expensesSort, setExpensesSort] = useState<SortOptions>({
     sortBy: "timestamp",
-    sortDirection: "ascending",
+    sortDirection: "without",
   });
 
   const { sortBy, sortDirection } = expensesSort;
@@ -55,26 +55,18 @@ export default function ShowSelectedBudget() {
     dispatch(
       fetchJoinedUsers({
         budgetID,
-        sortOptions: { sortBy: "username", descending: false },
+        sortOptions: { sortBy: "username", sortDirection },
       })
     );
-  }, [dispatch, budgetID]);
+  }, [dispatch, budgetID, sortDirection]);
 
   useEffect(() => {
-    if (sortDirection === "ascending")
-      dispatch(
-        fetchTransactions({
-          budgetID,
-          sortOptions: { sortBy, descending: false },
-        })
-      );
-    else if (sortDirection === "descending")
-      dispatch(
-        fetchTransactions({
-          budgetID,
-          sortOptions: { sortBy, descending: true },
-        })
-      );
+    dispatch(
+      fetchTransactions({
+        budgetID,
+        sortOptions: { sortBy, sortDirection },
+      })
+    );
   }, [dispatch, sortBy, sortDirection, budgetID]);
 
   return (

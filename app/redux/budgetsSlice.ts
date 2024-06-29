@@ -36,7 +36,7 @@ export const fetchBudgets = createAsyncThunk(
   async (sortOptions: SortOptions, { getState }) => {
     const state = getState() as State;
 
-    const { sortBy, descending } = sortOptions;
+    const { sortBy, sortDirection } = sortOptions;
 
     const currentUserID = state.user.userID;
 
@@ -62,9 +62,14 @@ export const fetchBudgets = createAsyncThunk(
     );
     const combinedBudgets = [...yourBudgets, ...sharedBudgets];
 
-    const sortedBudget = useSort(combinedBudgets, `${sortBy}`);
-
-    return !descending ? sortedBudget : sortedBudget.reverse();
+    if (sortDirection === "without") {
+      return combinedBudgets;
+    } else {
+      const sortedBudget = useSort(combinedBudgets, `${sortBy}`);
+      return sortDirection === "ascending"
+        ? sortedBudget
+        : sortedBudget.reverse();
+    }
   }
 );
 
@@ -293,14 +298,19 @@ export const deleteCategory = createAsyncThunk(
 export const fetchTransactions = createAsyncThunk(
   "fetchTransactions",
   async ({ budgetID, sortOptions }: FetchArgs) => {
-    const { sortBy, descending } = sortOptions;
+    const { sortBy, sortDirection } = sortOptions;
 
     if (!budgetID) return;
 
-    const transactionsQuery = query(
-      collection(db, `budgets/${budgetID}/transactions`),
-      descending ? orderBy(`${sortBy}`, `desc`) : orderBy(`${sortBy}`)
-    );
+    const transactionsQuery =
+      sortDirection === "without"
+        ? query(collection(db, `budgets/${budgetID}/transactions`))
+        : query(
+            collection(db, `budgets/${budgetID}/transactions`),
+            sortDirection === "descending"
+              ? orderBy(`${sortBy}`, `desc`)
+              : orderBy(`${sortBy}`)
+          );
 
     const querySnapshot = await getDocs(transactionsQuery);
 
@@ -634,7 +644,7 @@ const budgetsSlice = createSlice({
     rowsPerPage: Infinity,
     currentPage: 1,
     sortBy: "timestamp",
-    sortDirection: "ascending",
+    sortDirection: "without",
     searchKeywords: "",
   } as BudgetsSlice,
   reducers: {

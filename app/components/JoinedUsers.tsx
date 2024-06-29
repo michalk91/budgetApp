@@ -2,7 +2,7 @@ import Table from "./Table";
 import Button from "./Button";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { useState, useEffect } from "react";
-import type { SortState } from "../types";
+import type { SortOptions } from "../types";
 import {
   fetchJoinedUsers,
   editJoinedUserPermissions,
@@ -23,7 +23,7 @@ export default function JoinedUsers() {
     (state) => state.invitations.usersWithAccess
   );
 
-  const [usersSort, setUsersSort] = useState<SortState>({
+  const [usersSort, setUsersSort] = useState<SortOptions>({
     sortBy: "timestamp",
     sortDirection: "ascending",
   });
@@ -37,20 +37,12 @@ export default function JoinedUsers() {
   });
 
   useEffect(() => {
-    if (sortDirection === "ascending")
-      dispatch(
-        fetchJoinedUsers({
-          budgetID,
-          sortOptions: { sortBy, descending: false },
-        })
-      );
-    else if (sortDirection === "descending")
-      dispatch(
-        fetchJoinedUsers({
-          budgetID,
-          sortOptions: { sortBy, descending: true },
-        })
-      );
+    dispatch(
+      fetchJoinedUsers({
+        budgetID,
+        sortOptions: { sortBy, sortDirection },
+      })
+    );
   }, [dispatch, sortBy, sortDirection, budgetID]);
 
   const handleStartEdit = (

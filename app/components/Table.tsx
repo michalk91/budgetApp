@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef } from "react";
-import type { SortState, TableProps } from "../types";
-import { TbArrowsSort } from "react-icons/tb";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { SortOptions, TableProps } from "../types";
+import { TbArrowsSort, TbArrowsUp, TbArrowsDown } from "react-icons/tb";
 import Pagination from "./Pagination";
 
 export default function Table({
@@ -30,8 +30,10 @@ export default function Table({
 }: TableProps) {
   const tableRef = useRef<HTMLDivElement>(null);
 
+  const [clickedCell, setClickedCell] = useState("");
+
   const handleSort = useCallback(
-    (sortBy: string, sortDirection: "ascending" | "descending") => {
+    (sortBy: string, sortDirection: "ascending" | "descending" | "without") => {
       setSort &&
         setSort(
           (state) =>
@@ -39,7 +41,7 @@ export default function Table({
               ...state,
               sortBy,
               sortDirection,
-            } as SortState)
+            } as SortOptions)
         );
       setSortGlobal && setSortGlobal({ sortBy, sortDirection });
     },
@@ -63,29 +65,35 @@ export default function Table({
           className={`mt-4 hidden ${responsiveBreakpoint}:p-4 ${responsiveBreakpoint}:flex flex-wrap justify-center items-center`}
         >
           <p>Sort by: </p>
+          {sortDirection !== "without" && (
+            <select
+              className="px-1 m-2 rounded-full bg-white "
+              onChange={(e) => handleSort(e.target.value, sortDirection)}
+              value={sortBy}
+              name="choice"
+            >
+              {headerCells.map(
+                (cell) =>
+                  cell.sortBy && (
+                    <option value={cell.sortBy} key={cell.name}>
+                      {cell.name}
+                    </option>
+                  )
+              )}
+            </select>
+          )}
           <select
-            className="px-1 m-2 rounded-full bg-white "
-            onChange={(e) => handleSort(e.target.value, sortDirection)}
-            value={sortBy}
-            name="choice"
-          >
-            {headerCells.map(
-              (cell) =>
-                cell.sortBy && (
-                  <option value={cell.sortBy} key={cell.name}>
-                    {cell.name}
-                  </option>
-                )
-            )}
-          </select>
-          <select
-            className="px-1 rounded-full max-w-full bg-white "
+            className="px-1 ml-1 self-center rounded-full max-w-full bg-white "
             onChange={(e) =>
-              handleSort(sortBy, e.target.value as "ascending" | "descending")
+              handleSort(
+                sortBy,
+                e.target.value as "ascending" | "descending" | "without"
+              )
             }
             value={sortDirection}
             name="choice"
           >
+            <option value="without">without sort</option>
             <option value="ascending">ascending</option>
             <option value="descending">descending</option>
           </select>
@@ -154,18 +162,32 @@ export default function Table({
                     <div>{cell.name}</div>
                     {cell.sortBy !== undefined && (
                       <div
-                        onClick={() =>
+                        onClick={() => {
+                          setClickedCell(cell.name);
+
                           cell.sortBy &&
-                          handleSort(
-                            cell.sortBy,
-                            sortDirection === "ascending"
-                              ? "descending"
-                              : "ascending"
-                          )
-                        }
+                            handleSort(
+                              cell.sortBy,
+                              sortDirection === "without"
+                                ? "ascending"
+                                : sortDirection === "ascending"
+                                ? "descending"
+                                : "without"
+                            );
+                        }}
                         className="pl-2 text-2xl hover:cursor-pointer"
                       >
-                        <TbArrowsSort />
+                        {sortDirection === "without" ? (
+                          <TbArrowsSort />
+                        ) : cell.name === clickedCell &&
+                          sortDirection === "ascending" ? (
+                          <TbArrowsDown />
+                        ) : cell.name === clickedCell &&
+                          sortDirection === "descending" ? (
+                          <TbArrowsUp />
+                        ) : (
+                          <TbArrowsSort />
+                        )}
                       </div>
                     )}
                   </div>
