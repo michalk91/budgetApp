@@ -8,7 +8,7 @@ export default function Notifications() {
   const invitations = useAppSelector((state) => state.invitations.budgets);
 
   return (
-    <div className="flex flex-col items-center justify-stretch mt-14">
+    <div className="flex flex-col items-center justify-stretch mt-14 max-md:mt-1">
       {invitations.length > 0 ? (
         invitations.map((item) => (
           <div

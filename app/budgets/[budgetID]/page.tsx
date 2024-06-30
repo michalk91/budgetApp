@@ -41,7 +41,7 @@ export default function SelectedBudget() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center w-full mt-20 relative">
+    <div className="flex flex-col items-center w-full mt-6 relative max-md:mt-2">
       <div
         ref={animateElemCallback}
         className={`bg-white min-w-full ${
