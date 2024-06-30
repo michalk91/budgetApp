@@ -187,7 +187,7 @@ export default function ShowBudgets() {
   );
 
   return (
-    <div className="flex flex-col items-center w-full mt-20">
+    <div className="flex flex-col items-center w-full mt-10 max-md:mt-4">
       <>
         <Table
           title="Budgets"

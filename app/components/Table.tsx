@@ -152,7 +152,7 @@ export default function Table({
                 <th
                   key={cell.name}
                   scope="col"
-                  className={`px-6 py-3 ${responsiveBreakpoint}:hidden`}
+                  className={`select-none px-6 py-3 ${responsiveBreakpoint}:hidden`}
                 >
                   <div className="flex items-center text-xs">
                     <div>{cell.name}</div>

@@ -27,7 +27,7 @@ export default function Dashboard() {
       {loginStatus === "succeeded" && path !== "/register" ? (
         <ShowBudgets />
       ) : (
-        <p>You are not logged in </p>
+        <p className="text-center text-xl pt-5">You are not logged in. </p>
       )}
     </>
   );

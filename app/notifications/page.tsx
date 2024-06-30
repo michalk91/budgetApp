@@ -8,7 +8,7 @@ export default function Notifications() {
   const invitations = useAppSelector((state) => state.invitations.budgets);
 
   return (
-    <div className="flex flex-col items-center justify-stretch mt-14">
+    <div className="flex flex-col items-center justify-stretch mt-14 max-md:mt-1">
       {invitations.length > 0 ? (
         invitations.map((item) => (
           <div
@@ -57,7 +57,7 @@ export default function Notifications() {
           </div>
         ))
       ) : (
-        <div className="p-10 w-full text-center bg-white mt-10 rounded-lg shadow-xl">
+        <div className="p-10 w-full text-center bg-white mt-4 rounded-lg shadow-xl">
           <span className="text-2xl">
             {`You don't have any notifications.`}
           </span>

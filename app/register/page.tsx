@@ -88,7 +88,7 @@ const Register = () => {
   ]);
 
   return (
-    <section className="flex flex-col w-full py-16 justify-center items-center grow max-md:pt-8">
+    <section className="flex flex-col w-full justify-center items-center grow max-md:pt-8">
       <span className="font-bold text-xl mx-auto">Sing up</span>
       <form
         onSubmit={handleSubmit}
