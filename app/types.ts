@@ -258,6 +258,7 @@ export interface CategoriesProps {
 export interface ShowTransactionsProps {
   setExpensesSort: Dispatch<SetStateAction<SortOptions>>;
   expensesSort: SortOptions;
+  activeOption: string;
 }
 
 export interface PaginationProps {

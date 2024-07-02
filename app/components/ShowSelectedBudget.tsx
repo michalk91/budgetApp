@@ -161,6 +161,7 @@ export default function ShowSelectedBudget() {
               <ShowTransactions
                 expensesSort={expensesSort}
                 setExpensesSort={setExpensesSort}
+                activeOption={activeOption}
               />
             )}
             {activeOption === "Data visualization" && <ExpensesCharts />}

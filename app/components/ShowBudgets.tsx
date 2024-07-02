@@ -62,6 +62,7 @@ export default function ShowBudgets() {
 
   const [addNewBudget, setAddNewBudget] = useState(false);
   const [disablePageChange, setDisablePageChange] = useState(true);
+  const [pageChanged, setPageChanged] = useState(false);
 
   const {
     startMountAnim,
@@ -132,6 +133,10 @@ export default function ShowBudgets() {
     disableOnMountAnimation();
   }, [disableOnMountAnimation]);
 
+  useEffect(() => {
+    setPageChanged(true);
+  }, [globalCurrentPage]);
+
   const rowRefs = useRef<HTMLElement[]>([]);
 
   const getElemPosition = usePosition();
@@ -147,11 +152,12 @@ export default function ShowBudgets() {
       if (
         !addNewBudget &&
         globalSearchKeywords === "" &&
-        index === paginatedData.length
+        (index === paginatedData.length || pageChanged)
       ) {
         startMountAnim({
           element: node,
         });
+        setPageChanged(false);
         disableOnMountAnimation();
       }
     },
@@ -161,6 +167,7 @@ export default function ShowBudgets() {
       globalSearchKeywords,
       globalCurrentPage,
       disableOnMountAnimation,
+      pageChanged,
     ] //paginatedData.length is not added because the onMount animation is supposed to run only once after adding a new row
   );
 

@@ -18,6 +18,7 @@ import { useAnimateMountUnMount } from "../hooks/useAnimateMountUnMount";
 export default function ShowTransactions({
   expensesSort,
   setExpensesSort,
+  activeOption,
 }: ShowTransactionsProps) {
   const dispatch = useAppDispatch();
 
@@ -40,6 +41,8 @@ export default function ShowTransactions({
 
   const [addNewExpense, setAddNewExpense] = useState(false);
   const [addNewIncome, setAddNewIncome] = useState(false);
+
+  const [pageChanged, setPageChanged] = useState(false);
 
   const [editedTransaction, setEditedTransaction] = useState({
     id: "",
@@ -130,6 +133,15 @@ export default function ShowTransactions({
     rowRefs.current = [];
   }, []);
 
+  useEffect(() => {
+    setPageChanged(true);
+  }, [currentPage]);
+
+  useEffect(() => {
+    disableOnMountAnimation();
+    setPageChanged(false);
+  }, [activeOption, rowsPerPage, disableOnMountAnimation]);
+
   const handleAnimateRows = useCallback(
     (node: null | HTMLElement, index: number) => {
       if (!node) return;
@@ -138,19 +150,26 @@ export default function ShowTransactions({
         rowRefs.current.push(node);
       }
 
-      if ((!addNewExpense || !addNewIncome) && index === paginatedData.length) {
+      if (
+        !addNewExpense &&
+        !addNewIncome &&
+        (index === paginatedData.length || pageChanged)
+      ) {
         startMountAnim({
           element: node,
         });
         disableOnMountAnimation();
+        setPageChanged(false);
       }
     },
-    [addNewExpense, addNewIncome, startMountAnim, disableOnMountAnimation] //paginatedData.length is not added because the onMount animation is supposed to run only once after adding a new row
+    [
+      addNewExpense,
+      addNewIncome,
+      startMountAnim,
+      disableOnMountAnimation,
+      pageChanged,
+    ] //paginatedData.length is not added because the onMount animation is supposed to run only once after adding a new row
   );
-
-  useEffect(() => {
-    disableOnMountAnimation();
-  }, [rowsPerPage, currentPage, disableOnMountAnimation]);
 
   return (
     <div className="w-full mt-10">
