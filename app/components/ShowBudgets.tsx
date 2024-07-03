@@ -302,12 +302,15 @@ export default function ShowBudgets() {
                     {budget.ownerID === userID ? (
                       <Button
                         handleClick={() => {
+                          index === 0
+                            ? setDisablePageChange(false)
+                            : setDisablePageChange(true);
+
                           if (
                             !addNewBudget &&
                             budget.budgetID &&
                             budget.ownerID === userID
                           ) {
-                            setDisablePageChange(false);
                             startUnMountAnim({
                               elementsArray: rowRefs.current,
                               handleUnmountElem: handleDeleteBudget,

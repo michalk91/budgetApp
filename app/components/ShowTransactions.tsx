@@ -41,8 +41,8 @@ export default function ShowTransactions({
 
   const [addNewExpense, setAddNewExpense] = useState(false);
   const [addNewIncome, setAddNewIncome] = useState(false);
-
   const [pageChanged, setPageChanged] = useState(false);
+  const [disablePageChange, setDisablePageChange] = useState(true);
 
   const [editedTransaction, setEditedTransaction] = useState({
     id: "",
@@ -194,6 +194,7 @@ export default function ShowTransactions({
           transactions?.length === 0 && !addNewExpense && !addNewIncome
         }
         emptyTableTitle="You don't have any expenses yet"
+        disablePageChange={disablePageChange}
         addNewRow={
           <>
             {editedTransaction.id === "" && addNewExpense && (
@@ -360,7 +361,8 @@ export default function ShowTransactions({
                 <td className="max-xl:block max-xl:mt-4  max-xl:before:content-[attr(data-cell)]  max-xl:before:font-bold max-xl:before:uppercase max-xl:text-center max-xl:pb-4">
                   <Button
                     handleClick={() => {
-                      userID &&
+                      if (
+                        userID &&
                         !addNewExpense &&
                         !addNewIncome &&
                         transaction.id &&
@@ -368,7 +370,12 @@ export default function ShowTransactions({
                         editedTransaction.id === "" &&
                         (allowToManageAllTransactions?.includes(userID) ||
                           transaction.ownerID === userID ||
-                          userID === budgetOwnerID) &&
+                          userID === budgetOwnerID)
+                      ) {
+                        index === 0
+                          ? setDisablePageChange(false)
+                          : setDisablePageChange(true);
+
                         startUnMountAnim({
                           elementsArray: rowRefs.current,
                           handleUnmountElemWithType: handleDeleteTransaction,
@@ -376,6 +383,7 @@ export default function ShowTransactions({
                           type: transaction.type,
                           dataId: "[data-id]",
                         });
+                      }
                     }}
                     additionalStyles={
                       userID &&

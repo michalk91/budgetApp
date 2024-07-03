@@ -49,7 +49,7 @@ export default function Table({
   );
 
   useEffect(() => {
-    if (dataLength <= rowsPerPage) {
+    if (dataLength === rowsPerPage) {
       setCurrentPage && setCurrentPage(1);
       setGlobalCurrentPage && setGlobalCurrentPage(1);
     }
