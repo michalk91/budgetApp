@@ -228,7 +228,9 @@ export default function ShowTransactions({
             <tr
               key={transaction.id}
               data-id={transaction.id}
-              ref={(node) => handleAnimateRows(node, index)}
+              ref={(node) => {
+                handleAnimateRows(node, index);
+              }}
               className={
                 editedTransaction.id === transaction.id
                   ? `bg-gray-100 border-b   ${

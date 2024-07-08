@@ -114,6 +114,7 @@ export default function InvitedUsers() {
             <>
               <tr
                 key={user.invitationID}
+                data-id={user.invitationID}
                 className={"hover:bg-gray-100 bg-white border-b  "}
               >
                 <td

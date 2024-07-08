@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { SortOptions, TableProps } from "../types";
 import { TbArrowsSort, TbArrowsUp, TbArrowsDown } from "react-icons/tb";
 import Pagination from "./Pagination";
+import useGroupTransition from "../hooks/useGroupTransition";
 
 export default function Table({
   title,
@@ -28,7 +29,7 @@ export default function Table({
   handleSearchGlobal,
   disablePageChange = false,
 }: TableProps) {
-  const tableRef = useRef<HTMLDivElement>(null);
+  const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
   const [clickedCell, setClickedCell] = useState("");
 
@@ -55,8 +56,19 @@ export default function Table({
     }
   }, [dataLength, rowsPerPage, setCurrentPage, setGlobalCurrentPage]);
 
+  const {
+    updateTransitionDimensions,
+    groupTransitionEnd,
+    enableTransition,
+    disableTransition,
+  } = useGroupTransition(tableBodyRef.current, children);
+
+  useEffect(() => {
+    if (groupTransitionEnd) disableTransition();
+  }, [groupTransitionEnd, disableTransition]);
+
   return (
-    <div ref={tableRef}>
+    <div>
       <span className="ml-2 font-bold text-xl mx-auto max-md:text-lg">
         {title}
       </span>
@@ -160,6 +172,8 @@ export default function Table({
                       <div
                         onClick={() => {
                           setClickedCell(cell.name);
+                          enableTransition();
+                          updateTransitionDimensions();
 
                           cell.sortBy &&
                             handleSort(
@@ -192,7 +206,7 @@ export default function Table({
             </tr>
           </thead>
 
-          <tbody>
+          <tbody ref={tableBodyRef}>
             {emptyTableCondition && (
               <tr className={"bg-gray-100 border-b "}>
                 <td
@@ -233,7 +247,7 @@ export default function Table({
             currentPage={currentPage}
             setCurrentPage={setCurrentPage && setCurrentPage}
             setGlobalCurrentPage={setGlobalCurrentPage && setGlobalCurrentPage}
-            scrollElementRef={tableRef}
+            scrollElementRef={tableBodyRef}
             disablePageChange={disablePageChange}
           />
         )}

@@ -21,20 +21,28 @@ interface Delta {
   translateY: number;
 }
 
-const getDelta = (first: DOMRect, second: DOMRect): Delta => ({
+export const getDelta = (first: DOMRect, second: DOMRect): Delta => ({
   translateY: first.top + first.height / 2 - (second.top + second.height / 2),
   translateX: first.left + first.width / 2 - (second.left + second.width / 2),
 });
 
-const invertAndPlay = (
-  delta: Delta,
-  elem: HTMLElement,
-  easing: string,
-  duration: number,
-  onlyYAxis: boolean,
-  onTransitionStart?: (elem: HTMLElement) => void,
-  onTransitionEnd?: (elem: HTMLElement) => void
-) => {
+export const invertAndPlay = ({
+  delta,
+  elem,
+  easing,
+  duration,
+  onlyYAxis,
+  onTransitionStart,
+  onTransitionEnd,
+}: {
+  delta: Delta;
+  elem: HTMLElement;
+  easing: string;
+  duration: number;
+  onlyYAxis: boolean;
+  onTransitionStart?: (elem: HTMLElement) => void;
+  onTransitionEnd?: (elem: HTMLElement) => void;
+}) => {
   const { translateX, translateY } = delta;
 
   const animation = elem.animate(
@@ -76,15 +84,15 @@ const handleAnimation = (
 
   const delta = getDelta(firstDim as DOMRect, secondDim);
 
-  invertAndPlay(
+  invertAndPlay({
     delta,
-    secondElem,
+    elem: secondElem,
     easing,
     duration,
     onlyYAxis,
     onTransitionStart,
-    onTransitionEnd
-  );
+    onTransitionEnd,
+  });
 };
 
 const useTransition = ({
