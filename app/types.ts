@@ -211,6 +211,7 @@ export interface TableProps extends SortOptions {
   setGlobalCurrentPage?: (number: number) => void;
   setCurrentPage?: Dispatch<SetStateAction<number>>;
   disablePageChange?: boolean;
+  startSortAnimation?: Record<string, any>[];
 }
 
 export interface ButtonProps {

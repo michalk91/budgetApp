@@ -1,18 +1,12 @@
-import {
-  useRef,
-  useLayoutEffect,
-  useCallback,
-  useState,
-  ReactNode,
-} from "react";
+import { useRef, useLayoutEffect, useCallback, useState } from "react";
 import { getDelta, invertAndPlay } from "./useTransition";
 import { usePosition } from "./usePosition";
 
 const useGroupTransition = (
   elemsArray: HTMLDivElement | null,
-  startAnim?: ReactNode
+  startAnim?: Record<string, any>[]
 ) => {
-  const initialPosArray = useRef<{ [key: string]: DOMRect }>({});
+  const initialPositions = useRef<{ [key: string]: DOMRect }>({});
   const firstRun = useRef(true);
   const disableTransitionRef = useRef(false);
 
@@ -48,7 +42,7 @@ const useGroupTransition = (
     for (const child of children) {
       const id = child.dataset.id!;
       const next = getElemPosition(child);
-      initialPosArray.current[id] = next as DOMRect;
+      initialPositions.current[id] = next as DOMRect;
     }
   }, [elemsArray, getElemPosition]);
 
@@ -63,12 +57,11 @@ const useGroupTransition = (
 
     for (const child of children) {
       const id = child.dataset.id!;
-
       const next = getElemPosition(child);
 
       if (!firstRun.current) {
-        if (id in initialPosArray.current) {
-          const previous = initialPosArray.current[id];
+        if (id in initialPositions.current) {
+          const previous = initialPositions.current[id];
 
           const delta = getDelta(previous, next as DOMRect);
 

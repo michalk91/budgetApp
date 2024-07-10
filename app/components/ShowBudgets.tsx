@@ -210,6 +210,7 @@ export default function ShowBudgets() {
           currentPage={globalCurrentPage}
           setGlobalCurrentPage={setGlobalCurrentPage}
           rowsPerPage={globalRowsPerPage}
+          startSortAnimation={globalFilteredArray}
           emptyTableCondition={
             fetchBudgetsStatus === "succeeded" &&
             budgets?.length === 0 &&

@@ -185,6 +185,7 @@ export default function ShowTransactions({
           { name: "" },
           { name: "action" },
         ]}
+        startSortAnimation={filteredArray}
         setRowsPerPage={setRowsPerPage}
         dataLength={filteredArray.length}
         currentPage={currentPage}

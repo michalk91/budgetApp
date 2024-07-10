@@ -28,6 +28,7 @@ export default function Table({
   setGlobalCurrentPage,
   handleSearchGlobal,
   disablePageChange = false,
+  startSortAnimation,
 }: TableProps) {
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
@@ -61,7 +62,7 @@ export default function Table({
     groupTransitionEnd,
     enableTransition,
     disableTransition,
-  } = useGroupTransition(tableBodyRef.current, children);
+  } = useGroupTransition(tableBodyRef.current, startSortAnimation);
 
   useEffect(() => {
     if (groupTransitionEnd) disableTransition();
