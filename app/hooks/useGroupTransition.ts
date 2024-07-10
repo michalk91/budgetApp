@@ -3,7 +3,7 @@ import { getDelta, invertAndPlay } from "./useTransition";
 import { usePosition } from "./usePosition";
 
 const useGroupTransition = (
-  elemsArray: HTMLDivElement | null,
+  elemsArray: HTMLElement | null,
   startAnim?: Record<string, any>[]
 ) => {
   const initialPositions = useRef<{ [key: string]: DOMRect }>({});
