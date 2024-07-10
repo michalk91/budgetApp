@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react";
+import { useLayoutEffect, useCallback } from "react";
+import useOnMountAnimation from "./useOnMountAnimation";
 
 const Animate = ({
   elem,
@@ -34,50 +35,19 @@ const Animate = ({
   };
 };
 
-export const useAnimateMountUnMount = () => {
-  const [allowAnimateOnMount, setAllowAnimateOnMount] = useState(true);
-
-  const enableOnMountAnimation = useCallback(() => {
-    setAllowAnimateOnMount(true);
-  }, []);
-
-  const disableOnMountAnimation = useCallback(() => {
-    setAllowAnimateOnMount(false);
-  }, []);
-
-  const startMountAnim = useCallback(
-    ({ element }: { element: HTMLElement }) => {
-      const keyFrames = [
-        { opacity: 0, transform: `translateX(-100px)` },
-        {
-          transform: `translateX(-50px)`,
-          offset: 0.3,
-        },
-
-        {
-          transform: `translateX(0)`,
-          opacity: 1,
-        },
-      ];
-
-      allowAnimateOnMount &&
-        Animate({ elem: element, keyFrames, duration: 300 });
-    },
-    [allowAnimateOnMount]
-  );
-
+const useOnUnMountAnimation = ({
+  containerElem,
+}: {
+  containerElem: HTMLElement | null;
+}) => {
   const startUnMountAnim = useCallback(
     ({
-      elementsArray,
       handleUnmountElem,
       handleUnmountElemWithType,
       id,
-      dataId,
       type,
     }: {
       id: string;
-      elementsArray: HTMLElement[] | null;
-      dataId: string;
       handleUnmountElem?: ((id: string) => void) | undefined;
       handleUnmountElemWithType?: (
         id: string,
@@ -85,7 +55,13 @@ export const useAnimateMountUnMount = () => {
       ) => void;
       type?: "expense" | "income";
     }) => {
-      if (!elementsArray || !id) return;
+      if (containerElem === null) return;
+
+      const list = containerElem;
+
+      if (list === undefined) return;
+
+      const children: HTMLElement[] = Array.prototype.slice.call(list.children);
 
       const keyFrames = [
         {
@@ -100,11 +76,10 @@ export const useAnimateMountUnMount = () => {
         { opacity: 0, transform: `translateX(100px)` },
       ];
 
-      elementsArray.forEach((elem) => {
+      children.forEach((elem) => {
         if (!elem) return;
 
-        const element = elem.closest(dataId) as HTMLElement;
-        const elemID = element.dataset.id;
+        const elemID = elem.dataset.id!;
 
         if (elemID === id) {
           if (handleUnmountElem) {
@@ -122,13 +97,10 @@ export const useAnimateMountUnMount = () => {
         }
       });
     },
-    []
+    [containerElem]
   );
 
-  return {
-    startMountAnim,
-    startUnMountAnim,
-    enableOnMountAnimation,
-    disableOnMountAnimation,
-  };
+  return { startUnMountAnim };
 };
+
+export default useOnUnMountAnimation;
