@@ -8,6 +8,7 @@ const transitionSlice = createSlice({
     secondElemPos: { top: 0, left: 0, width: 0, height: 0 },
     activeElemIndex: 0,
     allowTransition: false,
+    allowOnMountAnimation: false,
   } as TransitionSlice,
   reducers: {
     setFirstElemPos: (state, action) => {
@@ -22,6 +23,9 @@ const transitionSlice = createSlice({
     setAllowTransition: (state, action) => {
       state.allowTransition = action.payload;
     },
+    setAllowAnimationOnMount: (state, action) => {
+      state.allowOnMountAnimation = action.payload;
+    },
   },
 });
 
@@ -30,6 +34,7 @@ export const {
   setSecondElemPos,
   setActiveElemIndex,
   setAllowTransition,
+  setAllowAnimationOnMount,
 } = transitionSlice.actions;
 
 export default transitionSlice.reducer;

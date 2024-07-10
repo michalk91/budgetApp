@@ -103,6 +103,7 @@ export interface TransitionSlice {
   };
   activeElemIndex: number;
   allowTransition: boolean;
+  allowOnMountAnimation: boolean;
 }
 
 export interface User {
@@ -212,6 +213,11 @@ export interface TableProps extends SortOptions {
   setCurrentPage?: Dispatch<SetStateAction<number>>;
   disablePageChange?: boolean;
   startSortAnimation?: Record<string, any>[];
+  paginatedDataLength?: number;
+  handleDeleteRowWithType?: (id: string, type: "expense" | "income") => void;
+  handleDeleteRowType?: "expense" | "income";
+  handleDeleteRowID?: string;
+  handleDeleteRow?: ((id: string) => void) | undefined;
 }
 
 export interface ButtonProps {
@@ -259,7 +265,6 @@ export interface CategoriesProps {
 export interface ShowTransactionsProps {
   setExpensesSort: Dispatch<SetStateAction<SortOptions>>;
   expensesSort: SortOptions;
-  activeOption: string;
 }
 
 export interface PaginationProps {
@@ -304,4 +309,9 @@ export interface EditedTransactionArgs {
 export interface AddTransactionArgs {
   budgetID: string;
   transaction: Transaction;
+}
+
+export interface DeleteRowData {
+  deleteRowID: string;
+  deleteRowType?: "expense" | "income";
 }

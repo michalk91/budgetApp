@@ -10,8 +10,8 @@ import {
   setSearchKeywords,
 } from "../redux/budgetsSlice";
 import Table from "./Table";
-import type { SortOptions } from "../types";
-import { useCallback, useEffect, useState, useRef } from "react";
+import type { SortOptions, DeleteRowData } from "../types";
+import { useCallback, useEffect, useState } from "react";
 import useFormatter from "../hooks/useFormatter";
 import AddNewBudget from "./AddNewBudget";
 import Button from "./Button";
@@ -26,7 +26,6 @@ import {
   setAllowTransition,
 } from "../redux/transitionSlice";
 import ArrowsLoader from "./ArrowsLoader";
-import { useAnimateMountUnMount } from "../hooks/useAnimateMountUnMount";
 
 export default function ShowBudgets() {
   const dispatch = useAppDispatch();
@@ -62,14 +61,10 @@ export default function ShowBudgets() {
 
   const [addNewBudget, setAddNewBudget] = useState(false);
   const [disablePageChange, setDisablePageChange] = useState(true);
-  const [pageChanged, setPageChanged] = useState(false);
 
-  const {
-    startMountAnim,
-    startUnMountAnim,
-    enableOnMountAnimation,
-    disableOnMountAnimation,
-  } = useAnimateMountUnMount();
+  const [deleteRowData, setDeleteRowData] = useState<DeleteRowData>({
+    deleteRowID: "",
+  });
 
   const setGlobalSortOptions = useCallback(
     ({ sortBy, sortDirection }: SortOptions) => {
@@ -91,7 +86,6 @@ export default function ShowBudgets() {
 
   const handleDeleteBudget = (id: string) => {
     dispatch(deleteBudget(id));
-    disableOnMountAnimation();
   };
 
   const onTransitionEnd = useCallback(() => {
@@ -128,52 +122,10 @@ export default function ShowBudgets() {
     onlyYAxis: true,
   });
 
-  useEffect(() => {
-    rowRefs.current = [];
-    disableOnMountAnimation();
-  }, [disableOnMountAnimation]);
-
-  useEffect(() => {
-    setPageChanged(true);
-  }, [globalCurrentPage]);
-
-  const rowRefs = useRef<HTMLElement[]>([]);
-
   const getElemPosition = usePosition();
-
-  const handleAnimateRows = useCallback(
-    (node: null | HTMLElement, index: number) => {
-      if (!node) return;
-
-      if (!rowRefs.current.includes(node)) {
-        rowRefs.current.push(node);
-      }
-
-      if (
-        !addNewBudget &&
-        globalSearchKeywords === "" &&
-        (index === paginatedData.length || pageChanged)
-      ) {
-        startMountAnim({
-          element: node,
-        });
-        setPageChanged(false);
-        disableOnMountAnimation();
-      }
-    },
-    [
-      addNewBudget,
-      startMountAnim,
-      globalSearchKeywords,
-      globalCurrentPage,
-      disableOnMountAnimation,
-      pageChanged,
-    ] //paginatedData.length is not added because the onMount animation is supposed to run only once after adding a new row
-  );
 
   const setGlobalRowsPerPage = useCallback(
     (numberOfRows: number) => {
-      // disableOnMountAnimation();
       dispatch(setGloalRowsNumber(numberOfRows));
     },
     [dispatch]
@@ -207,9 +159,12 @@ export default function ShowBudgets() {
           ]}
           setGlobalRowsPerPage={setGlobalRowsPerPage}
           dataLength={globalFilteredArray.length}
+          paginatedDataLength={paginatedData.length}
           currentPage={globalCurrentPage}
           setGlobalCurrentPage={setGlobalCurrentPage}
           rowsPerPage={globalRowsPerPage}
+          handleDeleteRow={handleDeleteBudget}
+          handleDeleteRowID={deleteRowData.deleteRowID}
           startSortAnimation={globalFilteredArray}
           emptyTableCondition={
             fetchBudgetsStatus === "succeeded" &&
@@ -237,7 +192,6 @@ export default function ShowBudgets() {
                   className={`hover:bg-gray-100 bg-white border-b `}
                   ref={(node) => {
                     index === activeIndex ? animateElemCallback(node) : null;
-                    handleAnimateRows(node, index);
                   }}
                 >
                   <td
@@ -312,12 +266,10 @@ export default function ShowBudgets() {
                             budget.budgetID &&
                             budget.ownerID === userID
                           ) {
-                            startUnMountAnim({
-                              elementsArray: rowRefs.current,
-                              handleUnmountElem: handleDeleteBudget,
-                              id: budget.budgetID,
-                              dataId: "[data-id]",
-                            });
+                            setDeleteRowData((state) => ({
+                              ...state,
+                              deleteRowID: budget.budgetID,
+                            }));
                           }
                         }}
                         additionalStyles={
@@ -367,7 +319,6 @@ export default function ShowBudgets() {
 
                   setAddNewBudget(true);
                   setDisablePageChange(false);
-                  enableOnMountAnimation();
                 }}
                 additionalStyles={
                   globalSearchKeywords !== ""

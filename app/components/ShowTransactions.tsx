@@ -4,21 +4,19 @@ import {
   updateTransaction,
   deleteAllTransactions,
 } from "../redux/budgetsSlice";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState } from "react";
 import useFormatter from "../hooks/useFormatter";
 import AddTransaction from "./AddTransaction";
 import Table from "./Table";
 import Button from "./Button";
-import type { ShowTransactionsProps } from "../types";
+import type { ShowTransactionsProps, DeleteRowData } from "../types";
 import useSearch from "../hooks/useSearch";
 import usePagination from "../hooks/usePagination";
 import { useIDfromPathname } from "../hooks/useIDfromPathname";
-import { useAnimateMountUnMount } from "../hooks/useAnimateMountUnMount";
 
 export default function ShowTransactions({
   expensesSort,
   setExpensesSort,
-  activeOption,
 }: ShowTransactionsProps) {
   const dispatch = useAppDispatch();
 
@@ -41,7 +39,6 @@ export default function ShowTransactions({
 
   const [addNewExpense, setAddNewExpense] = useState(false);
   const [addNewIncome, setAddNewIncome] = useState(false);
-  const [pageChanged, setPageChanged] = useState(false);
   const [disablePageChange, setDisablePageChange] = useState(true);
 
   const [editedTransaction, setEditedTransaction] = useState({
@@ -52,9 +49,14 @@ export default function ShowTransactions({
     comment: "",
   });
 
-  const rowRefs = useRef<HTMLElement[]>([]);
+  const [deleteRowData, setDeleteRowData] = useState<DeleteRowData>({
+    deleteRowID: "",
+    deleteRowType: "expense",
+  });
 
   const { sortBy, sortDirection } = expensesSort;
+
+  const { deleteRowID, deleteRowType } = deleteRowData;
 
   const formatter = useFormatter();
 
@@ -122,55 +124,6 @@ export default function ShowTransactions({
     setCurrentPage,
   } = usePagination(filteredArray);
 
-  const {
-    startMountAnim,
-    startUnMountAnim,
-    enableOnMountAnimation,
-    disableOnMountAnimation,
-  } = useAnimateMountUnMount();
-
-  useEffect(() => {
-    rowRefs.current = [];
-  }, []);
-
-  useEffect(() => {
-    setPageChanged(true);
-  }, [currentPage]);
-
-  useEffect(() => {
-    disableOnMountAnimation();
-    setPageChanged(false);
-  }, [activeOption, rowsPerPage, disableOnMountAnimation]);
-
-  const handleAnimateRows = useCallback(
-    (node: null | HTMLElement, index: number) => {
-      if (!node) return;
-
-      if (!rowRefs.current.includes(node)) {
-        rowRefs.current.push(node);
-      }
-
-      if (
-        !addNewExpense &&
-        !addNewIncome &&
-        (index === paginatedData.length || pageChanged)
-      ) {
-        startMountAnim({
-          element: node,
-        });
-        disableOnMountAnimation();
-        setPageChanged(false);
-      }
-    },
-    [
-      addNewExpense,
-      addNewIncome,
-      startMountAnim,
-      disableOnMountAnimation,
-      pageChanged,
-    ] //paginatedData.length is not added because the onMount animation is supposed to run only once after adding a new row
-  );
-
   return (
     <div className="w-full mt-10">
       <Table
@@ -188,9 +141,15 @@ export default function ShowTransactions({
         startSortAnimation={filteredArray}
         setRowsPerPage={setRowsPerPage}
         dataLength={filteredArray.length}
+        paginatedDataLength={paginatedData.length}
         currentPage={currentPage}
         rowsPerPage={rowsPerPage}
         setCurrentPage={setCurrentPage}
+        //-------------------------------------------------------------
+        handleDeleteRowWithType={handleDeleteTransaction}
+        handleDeleteRowType={deleteRowType}
+        handleDeleteRowID={deleteRowID}
+        //-------------------------------------------------------
         emptyTableCondition={
           transactions?.length === 0 && !addNewExpense && !addNewIncome
         }
@@ -229,9 +188,6 @@ export default function ShowTransactions({
             <tr
               key={transaction.id}
               data-id={transaction.id}
-              ref={(node) => {
-                handleAnimateRows(node, index);
-              }}
               className={
                 editedTransaction.id === transaction.id
                   ? `bg-gray-100 border-b   ${
@@ -379,13 +335,11 @@ export default function ShowTransactions({
                           ? setDisablePageChange(false)
                           : setDisablePageChange(true);
 
-                        startUnMountAnim({
-                          elementsArray: rowRefs.current,
-                          handleUnmountElemWithType: handleDeleteTransaction,
-                          id: transaction.id,
-                          type: transaction.type,
-                          dataId: "[data-id]",
-                        });
+                        setDeleteRowData((state) => ({
+                          ...state,
+                          deleteRowID: transaction.id,
+                          deleteRowType: transaction.type,
+                        }));
                       }
                     }}
                     additionalStyles={
@@ -468,7 +422,6 @@ export default function ShowTransactions({
               handleClick={() => {
                 if (editedTransaction.id === "") {
                   setAddNewExpense(true);
-                  enableOnMountAnimation();
                 }
               }}
               additionalStyles={
@@ -483,7 +436,6 @@ export default function ShowTransactions({
               handleClick={() => {
                 if (editedTransaction.id === "") {
                   setAddNewIncome(true);
-                  enableOnMountAnimation();
                 }
               }}
               additionalStyles={

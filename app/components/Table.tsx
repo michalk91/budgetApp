@@ -3,6 +3,10 @@ import type { SortOptions, TableProps } from "../types";
 import { TbArrowsSort, TbArrowsUp, TbArrowsDown } from "react-icons/tb";
 import Pagination from "./Pagination";
 import useGroupTransition from "../hooks/useGroupTransition";
+import useOnMountAnimation from "../hooks/useOnMountAnimation";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { setAllowAnimationOnMount } from "../redux/transitionSlice";
+import useOnUnMountAnimation from "../hooks/useOnUnMountAnimation";
 
 export default function Table({
   title,
@@ -29,7 +33,18 @@ export default function Table({
   handleSearchGlobal,
   disablePageChange = false,
   startSortAnimation,
+  paginatedDataLength,
+  handleDeleteRowID,
+  handleDeleteRowType,
+  handleDeleteRow,
+  handleDeleteRowWithType,
 }: TableProps) {
+  const dispatch = useAppDispatch();
+
+  const allowOnMountAnimation = useAppSelector(
+    (state) => state.transition.allowOnMountAnimation
+  );
+
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
   const [clickedCell, setClickedCell] = useState("");
@@ -67,6 +82,46 @@ export default function Table({
   useEffect(() => {
     if (groupTransitionEnd) disableTransition();
   }, [groupTransitionEnd, disableTransition]);
+
+  const onMountAnimationEnd = useCallback(() => {
+    dispatch(setAllowAnimationOnMount(false));
+  }, [dispatch]);
+
+  useOnMountAnimation({
+    containerElem: tableBodyRef.current,
+    animateElemIndex:
+      rowsPerPage === Infinity ? dataLength : paginatedDataLength,
+    allowOnMountAnimation,
+    onOnMountAnimEnd: onMountAnimationEnd,
+  });
+
+  const { startUnMountAnim } = useOnUnMountAnimation({
+    containerElem: tableBodyRef.current,
+  });
+
+  useEffect(() => {
+    if (!handleDeleteRowID) return;
+
+    if (handleDeleteRowWithType) {
+      handleDeleteRowType &&
+        startUnMountAnim({
+          id: handleDeleteRowID,
+          type: handleDeleteRowType,
+          handleUnmountElemWithType: handleDeleteRowWithType,
+        });
+    } else if (handleDeleteRow) {
+      startUnMountAnim({
+        id: handleDeleteRowID,
+        handleUnmountElem: handleDeleteRow,
+      });
+    }
+  }, [
+    handleDeleteRowID,
+    handleDeleteRowType,
+    startUnMountAnim,
+    handleDeleteRowWithType,
+    handleDeleteRow,
+  ]);
 
   return (
     <div>

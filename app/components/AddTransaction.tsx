@@ -3,6 +3,7 @@ import { addTransaction } from "../redux/budgetsSlice";
 import { useAppDispatch } from "../redux/hooks";
 import type { AddTransactionProps } from "../types";
 import Button from "./Button";
+import { setAllowAnimationOnMount } from "../redux/transitionSlice";
 
 export default function AddTransaction({
   setAdd,
@@ -35,6 +36,8 @@ export default function AddTransaction({
     setValueFromInput((state) => ({ ...state, amount: "" }));
 
     setAdd(false);
+
+    dispatch(setAllowAnimationOnMount(true));
   }, [amount, category, dispatch, type, setAdd, comment, budgetID]);
 
   return (
