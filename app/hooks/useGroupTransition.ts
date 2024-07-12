@@ -4,6 +4,7 @@ import {
   useCallback,
   useState,
   useEffect,
+  ReactNode,
 } from "react";
 import { getDelta, invertAndPlay } from "./useTransition";
 import { usePosition } from "./usePosition";

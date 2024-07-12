@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Children, useCallback, useEffect, useRef, useState } from "react";
 import type { SortOptions, TableProps } from "../types";
 import { TbArrowsSort, TbArrowsUp, TbArrowsDown } from "react-icons/tb";
 import Pagination from "./Pagination";
@@ -83,12 +83,16 @@ export default function Table({
     pageChanged: currentPage,
   });
 
-  const { startUnMountAnim } = useOnUnMountAnimation({
-    containerElem: tableBodyRef.current,
-  });
+  const { startUnMountAnim, updateDeleteRowDimensions } = useOnUnMountAnimation(
+    {
+      containerElem: tableBodyRef.current,
+      startGroupAnim: startSortAnimation,
+    }
+  );
 
   useEffect(() => {
     if (!handleDeleteRowID) return;
+    updateDeleteRowDimensions();
 
     if (handleDeleteRowWithType) {
       handleDeleteRowType &&
@@ -109,6 +113,7 @@ export default function Table({
     startUnMountAnim,
     handleDeleteRowWithType,
     handleDeleteRow,
+    updateDeleteRowDimensions,
   ]);
 
   return (

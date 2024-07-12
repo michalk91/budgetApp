@@ -1,5 +1,5 @@
-import { useLayoutEffect, useCallback } from "react";
-import useOnMountAnimation from "./useOnMountAnimation";
+import { useCallback } from "react";
+import useGroupTransition from "./useGroupTransition";
 
 const Animate = ({
   elem,
@@ -37,9 +37,16 @@ const Animate = ({
 
 const useOnUnMountAnimation = ({
   containerElem,
+  startGroupAnim,
 }: {
   containerElem: HTMLElement | null;
+  startGroupAnim?: Record<string, any>[];
 }) => {
+  const { updateTransitionDimensions } = useGroupTransition({
+    elemsArray: containerElem,
+    startAnim: startGroupAnim ? startGroupAnim : undefined,
+  });
+
   const startUnMountAnim = useCallback(
     ({
       handleUnmountElem,
@@ -100,7 +107,10 @@ const useOnUnMountAnimation = ({
     [containerElem]
   );
 
-  return { startUnMountAnim };
+  return {
+    startUnMountAnim,
+    updateDeleteRowDimensions: updateTransitionDimensions,
+  };
 };
 
 export default useOnUnMountAnimation;
