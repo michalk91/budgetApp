@@ -313,4 +313,5 @@ export interface AddTransactionArgs {
 export interface DeleteRowData {
   deleteRowID: string;
   deleteRowType?: "expense" | "income";
+  deleteRowInteractionType?: "delete" | "leave";
 }

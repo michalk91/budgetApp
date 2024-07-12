@@ -66,6 +66,7 @@ export default function ShowBudgets() {
 
   const [deleteRowData, setDeleteRowData] = useState<DeleteRowData>({
     deleteRowID: "",
+    deleteRowInteractionType: "delete",
   });
 
   const setGlobalSortOptions = useCallback(
@@ -88,6 +89,10 @@ export default function ShowBudgets() {
 
   const handleDeleteBudget = (id: string) => {
     dispatch(deleteBudget(id));
+  };
+
+  const handleLeaveBudget = (id: string) => {
+    dispatch(leaveBudget(id));
   };
 
   const onTransitionEnd = useCallback(() => {
@@ -172,7 +177,11 @@ export default function ShowBudgets() {
           currentPage={globalCurrentPage}
           setGlobalCurrentPage={setGlobalCurrentPage}
           rowsPerPage={globalRowsPerPage}
-          handleDeleteRow={handleDeleteBudget}
+          handleDeleteRow={
+            deleteRowData.deleteRowInteractionType === "delete"
+              ? handleDeleteBudget
+              : handleLeaveBudget
+          }
           handleDeleteRowID={deleteRowData.deleteRowID}
           startSortAnimation={globalFilteredArray}
           addedElemID={addedElemID}
@@ -273,6 +282,7 @@ export default function ShowBudgets() {
                             setDeleteRowData((state) => ({
                               ...state,
                               deleteRowID: budget.budgetID,
+                              deleteRowIteractionType: "delete",
                             }));
                           }
                         }}
@@ -287,10 +297,17 @@ export default function ShowBudgets() {
                     ) : (
                       <Button
                         handleClick={() => {
-                          !addNewBudget &&
+                          if (
+                            !addNewBudget &&
                             budget.budgetID &&
-                            budget.ownerID !== userID &&
-                            dispatch(leaveBudget(budget.budgetID));
+                            budget.ownerID !== userID
+                          ) {
+                            setDeleteRowData((state) => ({
+                              ...state,
+                              deleteRowID: budget.budgetID,
+                              deleteRowIteractionType: "leave",
+                            }));
+                          }
                         }}
                         additionalStyles={
                           !addNewBudget
