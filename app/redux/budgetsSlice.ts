@@ -346,19 +346,30 @@ export const deleteTransaction = createAsyncThunk(
     const budgetSnap = await getDoc(budgetRef);
 
     if (budgetSnap.exists()) {
-      const havePermissionToDelete =
-        budgetSnap.data().allowManageAllTransactions.includes(currentUserID) ||
-        budgetSnap.data().ownerID === currentUserID;
-
       for (const transaction of transactions.docs) {
         if (transaction.id === transactionToDelete.id) {
+          const selectedTransactionRef = doc(
+            db,
+            `budgets/${budgetID}/transactions`,
+            transaction.id
+          );
+
+          const selectedTransactionSnap = await getDoc(selectedTransactionRef);
+
+          if (!selectedTransactionSnap.exists()) return;
+
+          const havePermissionToDelete =
+            budgetSnap
+              .data()
+              .allowManageAllTransactions.includes(currentUserID) ||
+            budgetSnap.data().ownerID === currentUserID ||
+            selectedTransactionSnap.data().ownerID === currentUserID;
+
           if (!havePermissionToDelete) {
             throw Error("Unauthorized action");
           }
 
-          await deleteDoc(
-            doc(db, `budgets/${budgetID}/transactions`, transaction.id)
-          );
+          await deleteDoc(selectedTransactionRef);
 
           const transactionAmount = transaction.data().amount;
 
