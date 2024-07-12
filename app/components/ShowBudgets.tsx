@@ -27,6 +27,7 @@ import {
   setAllowTransition,
 } from "../redux/transitionSlice";
 import ArrowsLoader from "./ArrowsLoader";
+import { usePathname } from "next/navigation";
 
 export default function ShowBudgets() {
   const dispatch = useAppDispatch();
@@ -63,6 +64,7 @@ export default function ShowBudgets() {
   const addedElemID = useAppSelector((state) => state.budgets.addedElemID);
 
   const [addNewBudget, setAddNewBudget] = useState(false);
+  const [budgetLoaded, setBudgetLoaded] = useState(false);
 
   const [deleteRowData, setDeleteRowData] = useState<DeleteRowData>({
     deleteRowID: "",
@@ -77,6 +79,8 @@ export default function ShowBudgets() {
   );
 
   const formatter = useFormatter();
+
+  const pathname = usePathname();
 
   useEffect(() => {
     dispatch(
@@ -160,6 +164,15 @@ export default function ShowBudgets() {
     globalBudgetSortDirection,
     globalCurrentPage,
   ]);
+
+  useEffect(() => {
+    fetchBudgetsStatus === "succeeded" && setBudgetLoaded(true);
+  }, [fetchBudgetsStatus]);
+
+  useEffect(() => {
+    setBudgetLoaded(false);
+  }, [pathname]);
+
   return (
     <div className="flex flex-col items-center w-full mt-10 max-md:mt-4">
       <>
@@ -203,7 +216,7 @@ export default function ShowBudgets() {
         >
           {paginatedData?.map(
             (budget, index) =>
-              fetchBudgetsStatus === "succeeded" && (
+              (fetchBudgetsStatus === "succeeded" || budgetLoaded) && (
                 <tr
                   key={budget.budgetID}
                   data-id={budget.budgetID}
@@ -322,7 +335,7 @@ export default function ShowBudgets() {
                 </tr>
               )
           )}
-          {fetchBudgetsStatus === "loading" && (
+          {!budgetLoaded && fetchBudgetsStatus === "loading" && (
             <tr>
               <td colSpan={5} className="h-full w-full p-10 bg-white">
                 <ArrowsLoader />
