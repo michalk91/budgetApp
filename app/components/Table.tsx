@@ -116,6 +116,10 @@ export default function Table({
     updateDeleteRowDimensions,
   ]);
 
+  useEffect(() => {
+    updateTransitionDimensions();
+  }, [updateTransitionDimensions]);
+
   return (
     <div>
       <span className="ml-2 font-bold text-xl mx-auto max-md:text-lg">

@@ -1,11 +1,4 @@
-import {
-  useRef,
-  useLayoutEffect,
-  useCallback,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
+import { useRef, useLayoutEffect, useCallback, useState } from "react";
 import { getDelta, invertAndPlay } from "./useTransition";
 import { usePosition } from "./usePosition";
 
@@ -54,10 +47,6 @@ const useGroupTransition = ({
       initialPositions.current[id] = next as DOMRect;
     }
   }, [elemsArray, getElemPosition]);
-
-  useEffect(() => {
-    updateTransitionDimensions();
-  }, [updateTransitionDimensions]);
 
   useLayoutEffect(() => {
     if (elemsArray === null || disableTransitionRef.current) return;
