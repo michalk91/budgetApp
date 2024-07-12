@@ -9,12 +9,12 @@ const Pagination = ({
   setCurrentPage,
   scrollElementRef,
   setGlobalCurrentPage,
-  disablePageChange,
+  addedElemID,
 }: PaginationProps) => {
   const paginationNumber = [];
 
   useEffect(() => {
-    if (disablePageChange) return;
+    if (addedElemID === "") return;
 
     if (dataLength >= rowsPerPage) {
       setCurrentPage && setCurrentPage(paginationNumber.length);
@@ -26,7 +26,7 @@ const Pagination = ({
     paginationNumber.length,
     setCurrentPage,
     setGlobalCurrentPage,
-    disablePageChange,
+    addedElemID,
   ]);
 
   for (let i = 1; i <= Math.ceil(dataLength / rowsPerPage); i++) {

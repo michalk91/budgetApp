@@ -1,13 +1,21 @@
-import { useRef, useLayoutEffect, useCallback, useState } from "react";
+import {
+  useRef,
+  useLayoutEffect,
+  useCallback,
+  useState,
+  useEffect,
+} from "react";
 import { getDelta, invertAndPlay } from "./useTransition";
 import { usePosition } from "./usePosition";
 
-const useGroupTransition = (
-  elemsArray: HTMLElement | null,
-  startAnim?: Record<string, any>[]
-) => {
+const useGroupTransition = ({
+  elemsArray,
+  startAnim,
+}: {
+  elemsArray?: HTMLElement | null;
+  startAnim?: Record<string, any>[];
+}) => {
   const initialPositions = useRef<{ [key: string]: DOMRect }>({});
-  const firstRun = useRef(true);
   const disableTransitionRef = useRef(false);
 
   const [groupTransitionEnd, setGroupTransitionEnd] = useState(false);
@@ -46,6 +54,10 @@ const useGroupTransition = (
     }
   }, [elemsArray, getElemPosition]);
 
+  useEffect(() => {
+    updateTransitionDimensions();
+  }, [updateTransitionDimensions]);
+
   useLayoutEffect(() => {
     if (elemsArray === null || disableTransitionRef.current) return;
 
@@ -59,27 +71,23 @@ const useGroupTransition = (
       const id = child.dataset.id!;
       const next = getElemPosition(child);
 
-      if (!firstRun.current) {
-        if (id in initialPositions.current) {
-          const previous = initialPositions.current[id];
+      if (id in initialPositions.current) {
+        const previous = initialPositions.current[id];
 
-          const delta = getDelta(previous, next as DOMRect);
+        const delta = getDelta(previous, next as DOMRect);
 
-          delta.translateY !== 0 &&
-            invertAndPlay({
-              delta,
-              elem: child,
-              easing: "cubic-bezier(.25,.75,.5,1.25)",
-              duration: 700,
-              onlyYAxis: true,
-              onTransitionStart: onGroupTransitionStart,
-              onTransitionEnd: onGroupTransitionEnd,
-            });
-        }
+        delta.translateY !== 0 &&
+          invertAndPlay({
+            delta,
+            elem: child,
+            easing: "cubic-bezier(.25,.75,.5,1.25)",
+            duration: 700,
+            onlyYAxis: true,
+            onTransitionStart: onGroupTransitionStart,
+            onTransitionEnd: onGroupTransitionEnd,
+          });
       }
     }
-
-    firstRun.current = false;
   }, [
     elemsArray,
     getElemPosition,

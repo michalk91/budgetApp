@@ -646,6 +646,7 @@ const budgetsSlice = createSlice({
     sortBy: "timestamp",
     sortDirection: "without",
     searchKeywords: "",
+    addedElemID: "",
   } as BudgetsSlice,
   reducers: {
     setSelectedOption: (state, action) => {
@@ -663,6 +664,9 @@ const budgetsSlice = createSlice({
     },
     setSearchKeywords: (state, action) => {
       state.searchKeywords = action.payload;
+    },
+    resetAddedElemID: (state) => {
+      state.addedElemID = "";
     },
   },
   extraReducers: (builder) => {
@@ -713,6 +717,7 @@ const budgetsSlice = createSlice({
 
         state.budgetsArray?.push(action.payload);
         state.currencyType = action.payload.currencyType;
+        state.addedElemID = action.payload.budgetID;
       })
 
       //------------------------------------------------------------------------
@@ -786,6 +791,7 @@ const budgetsSlice = createSlice({
         if (!action.payload) return;
 
         state.transactions?.push(action.payload);
+        state.addedElemID = action.payload.id;
 
         if (action.payload.type === "expense") {
           state.budgetValue -= action.payload.amount;
@@ -865,6 +871,7 @@ export const {
   setCurrentPage,
   setSortOptions,
   setSearchKeywords,
+  resetAddedElemID,
 } = budgetsSlice.actions;
 
 export default budgetsSlice.reducer;

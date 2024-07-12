@@ -4,8 +4,6 @@ import { TbArrowsSort, TbArrowsUp, TbArrowsDown } from "react-icons/tb";
 import Pagination from "./Pagination";
 import useGroupTransition from "../hooks/useGroupTransition";
 import useOnMountAnimation from "../hooks/useOnMountAnimation";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { setAllowAnimationOnMount } from "../redux/transitionSlice";
 import useOnUnMountAnimation from "../hooks/useOnUnMountAnimation";
 
 export default function Table({
@@ -31,20 +29,13 @@ export default function Table({
   setGlobalRowsPerPage,
   setGlobalCurrentPage,
   handleSearchGlobal,
-  disablePageChange = false,
   startSortAnimation,
-  paginatedDataLength,
+  addedElemID,
   handleDeleteRowID,
   handleDeleteRowType,
   handleDeleteRow,
   handleDeleteRowWithType,
 }: TableProps) {
-  const dispatch = useAppDispatch();
-
-  const allowOnMountAnimation = useAppSelector(
-    (state) => state.transition.allowOnMountAnimation
-  );
-
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
   const [clickedCell, setClickedCell] = useState("");
@@ -77,22 +68,19 @@ export default function Table({
     groupTransitionEnd,
     enableTransition,
     disableTransition,
-  } = useGroupTransition(tableBodyRef.current, startSortAnimation);
+  } = useGroupTransition({
+    elemsArray: tableBodyRef.current,
+    startAnim: startSortAnimation,
+  });
 
   useEffect(() => {
     if (groupTransitionEnd) disableTransition();
   }, [groupTransitionEnd, disableTransition]);
 
-  const onMountAnimationEnd = useCallback(() => {
-    dispatch(setAllowAnimationOnMount(false));
-  }, [dispatch]);
-
   useOnMountAnimation({
     containerElem: tableBodyRef.current,
-    animateElemIndex:
-      rowsPerPage === Infinity ? dataLength : paginatedDataLength,
-    allowOnMountAnimation,
-    onOnMountAnimEnd: onMountAnimationEnd,
+    addedElemID: addedElemID ? addedElemID : "",
+    pageChanged: currentPage,
   });
 
   const { startUnMountAnim } = useOnUnMountAnimation({
@@ -304,7 +292,7 @@ export default function Table({
             setCurrentPage={setCurrentPage && setCurrentPage}
             setGlobalCurrentPage={setGlobalCurrentPage && setGlobalCurrentPage}
             scrollElementRef={tableBodyRef}
-            disablePageChange={disablePageChange}
+            addedElemID={addedElemID}
           />
         )}
       </div>

@@ -68,6 +68,7 @@ export interface BudgetsSlice extends SortOptions {
   rowsPerPage: number;
   currentPage: number;
   searchKeywords: string;
+  addedElemID: string;
 }
 
 export interface InvitedUser {
@@ -103,7 +104,6 @@ export interface TransitionSlice {
   };
   activeElemIndex: number;
   allowTransition: boolean;
-  allowOnMountAnimation: boolean;
 }
 
 export interface User {
@@ -211,13 +211,12 @@ export interface TableProps extends SortOptions {
   setGlobalRowsPerPage?: (number: number) => void;
   setGlobalCurrentPage?: (number: number) => void;
   setCurrentPage?: Dispatch<SetStateAction<number>>;
-  disablePageChange?: boolean;
   startSortAnimation?: Record<string, any>[];
-  paginatedDataLength?: number;
   handleDeleteRowWithType?: (id: string, type: "expense" | "income") => void;
   handleDeleteRowType?: "expense" | "income";
   handleDeleteRowID?: string;
   handleDeleteRow?: ((id: string) => void) | undefined;
+  addedElemID?: string;
 }
 
 export interface ButtonProps {
@@ -274,7 +273,7 @@ export interface PaginationProps {
   setCurrentPage?: Dispatch<SetStateAction<number>>;
   setGlobalCurrentPage?: (pageNumber: number) => void;
   scrollElementRef: React.RefObject<HTMLDivElement>;
-  disablePageChange?: boolean;
+  addedElemID?: string;
 }
 
 export interface ShowErrorProps {

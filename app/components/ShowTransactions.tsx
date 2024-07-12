@@ -3,8 +3,9 @@ import {
   deleteTransaction,
   updateTransaction,
   deleteAllTransactions,
+  resetAddedElemID,
 } from "../redux/budgetsSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useFormatter from "../hooks/useFormatter";
 import AddTransaction from "./AddTransaction";
 import Table from "./Table";
@@ -36,10 +37,10 @@ export default function ShowTransactions({
   );
   const userName = useAppSelector((state) => state.user.username);
   const budgetOwnerID = useAppSelector((state) => state.budgets.ownerID);
+  const addedElemID = useAppSelector((state) => state.budgets.addedElemID);
 
   const [addNewExpense, setAddNewExpense] = useState(false);
   const [addNewIncome, setAddNewIncome] = useState(false);
-  const [disablePageChange, setDisablePageChange] = useState(true);
 
   const [editedTransaction, setEditedTransaction] = useState({
     id: "",
@@ -124,6 +125,10 @@ export default function ShowTransactions({
     setCurrentPage,
   } = usePagination(filteredArray);
 
+  useEffect(() => {
+    dispatch(resetAddedElemID());
+  }, [dispatch, sortBy, sortDirection, currentPage]);
+
   return (
     <div className="w-full mt-10">
       <Table
@@ -141,20 +146,17 @@ export default function ShowTransactions({
         startSortAnimation={filteredArray}
         setRowsPerPage={setRowsPerPage}
         dataLength={filteredArray.length}
-        paginatedDataLength={paginatedData.length}
+        addedElemID={addedElemID}
         currentPage={currentPage}
         rowsPerPage={rowsPerPage}
         setCurrentPage={setCurrentPage}
-        //-------------------------------------------------------------
         handleDeleteRowWithType={handleDeleteTransaction}
         handleDeleteRowType={deleteRowType}
         handleDeleteRowID={deleteRowID}
-        //-------------------------------------------------------
         emptyTableCondition={
           transactions?.length === 0 && !addNewExpense && !addNewIncome
         }
         emptyTableTitle="You don't have any expenses yet"
-        disablePageChange={disablePageChange}
         addNewRow={
           <>
             {editedTransaction.id === "" && addNewExpense && (
@@ -331,10 +333,6 @@ export default function ShowTransactions({
                           transaction.ownerID === userID ||
                           userID === budgetOwnerID)
                       ) {
-                        index === 0
-                          ? setDisablePageChange(false)
-                          : setDisablePageChange(true);
-
                         setDeleteRowData((state) => ({
                           ...state,
                           deleteRowID: transaction.id,

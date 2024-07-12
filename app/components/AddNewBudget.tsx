@@ -3,7 +3,6 @@ import { useAppDispatch } from "../redux/hooks";
 import { AddNewBudgetProps } from "../types";
 import { addNewBudget } from "../redux/budgetsSlice";
 import Button from "./Button";
-import { setAllowAnimationOnMount } from "../redux/transitionSlice";
 
 export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
   const dispatch = useAppDispatch();
@@ -33,8 +32,6 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
       );
       setBudgetFromInput({ name: "", amount: "", currencyType: "PLN" });
       setNewBudget(false);
-
-      dispatch(setAllowAnimationOnMount(true));
     },
     [amount, currencyType, dispatch, name, setNewBudget]
   );

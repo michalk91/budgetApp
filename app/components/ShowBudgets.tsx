@@ -8,6 +8,7 @@ import {
   setCurrentPage as setGlobalCurrent,
   setSortOptions,
   setSearchKeywords,
+  resetAddedElemID,
 } from "../redux/budgetsSlice";
 import Table from "./Table";
 import type { SortOptions, DeleteRowData } from "../types";
@@ -59,8 +60,9 @@ export default function ShowBudgets() {
     (state) => state.budgets.searchKeywords
   );
 
+  const addedElemID = useAppSelector((state) => state.budgets.addedElemID);
+
   const [addNewBudget, setAddNewBudget] = useState(false);
-  const [disablePageChange, setDisablePageChange] = useState(true);
 
   const [deleteRowData, setDeleteRowData] = useState<DeleteRowData>({
     deleteRowID: "",
@@ -145,6 +147,14 @@ export default function ShowBudgets() {
     [dispatch]
   );
 
+  useEffect(() => {
+    dispatch(resetAddedElemID());
+  }, [
+    dispatch,
+    globalBudgetSortBy,
+    globalBudgetSortDirection,
+    globalCurrentPage,
+  ]);
   return (
     <div className="flex flex-col items-center w-full mt-10 max-md:mt-4">
       <>
@@ -159,13 +169,13 @@ export default function ShowBudgets() {
           ]}
           setGlobalRowsPerPage={setGlobalRowsPerPage}
           dataLength={globalFilteredArray.length}
-          paginatedDataLength={paginatedData.length}
           currentPage={globalCurrentPage}
           setGlobalCurrentPage={setGlobalCurrentPage}
           rowsPerPage={globalRowsPerPage}
           handleDeleteRow={handleDeleteBudget}
           handleDeleteRowID={deleteRowData.deleteRowID}
           startSortAnimation={globalFilteredArray}
+          addedElemID={addedElemID}
           emptyTableCondition={
             fetchBudgetsStatus === "succeeded" &&
             budgets?.length === 0 &&
@@ -181,7 +191,6 @@ export default function ShowBudgets() {
           handleSearchGlobal={setGlobalSearchKeywords}
           searchKeywords={globalSearchKeywords}
           notFound={notFoundGlobal}
-          disablePageChange={disablePageChange}
         >
           {paginatedData?.map(
             (budget, index) =>
@@ -243,7 +252,6 @@ export default function ShowBudgets() {
                             e.target as HTMLElement
                           );
                           dispatch(setFirstElemPos(position));
-                          setDisablePageChange(true);
                         }}
                         additionalStyles={
                           !addNewBudget
@@ -257,10 +265,6 @@ export default function ShowBudgets() {
                     {budget.ownerID === userID ? (
                       <Button
                         handleClick={() => {
-                          index === 0
-                            ? setDisablePageChange(false)
-                            : setDisablePageChange(true);
-
                           if (
                             !addNewBudget &&
                             budget.budgetID &&
@@ -318,7 +322,6 @@ export default function ShowBudgets() {
                   if (globalSearchKeywords !== "") return;
 
                   setAddNewBudget(true);
-                  setDisablePageChange(false);
                 }}
                 additionalStyles={
                   globalSearchKeywords !== ""
