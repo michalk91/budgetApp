@@ -11,6 +11,8 @@ const Animate = ({
   type,
   handleUnmountElemWithBudgetID,
   budgetID,
+  handleUnmountElemWithDecision,
+  decision,
 }: {
   elem: HTMLElement;
   keyFrames: Record<string, string | number | undefined>[];
@@ -21,6 +23,11 @@ const Animate = ({
   type?: "expense" | "income";
   handleUnmountElemWithBudgetID?: (id: string, budgetID: string) => void;
   budgetID?: string;
+  handleUnmountElemWithDecision?: (
+    id: string,
+    decision: "accept" | "decline"
+  ) => void;
+  decision?: "accept" | "decline";
 }) => {
   if (!elem) return;
 
@@ -32,14 +39,21 @@ const Animate = ({
 
   animation.onfinish = () => {
     handleUnmountElem && id && handleUnmountElem(id);
+
     handleUnmountElemWithType &&
       id &&
       type &&
       handleUnmountElemWithType(id, type);
+
     handleUnmountElemWithBudgetID &&
       id &&
       budgetID &&
       handleUnmountElemWithBudgetID(id, budgetID);
+
+    handleUnmountElemWithDecision &&
+      id &&
+      decision &&
+      handleUnmountElemWithDecision(id, decision);
   };
 };
 
@@ -61,9 +75,11 @@ const useOnUnMountAnimation = ({
       handleUnmountElem,
       handleUnmountElemWithType,
       handleUnmountElemWithBudgetID,
+      handleUnmountElemWithDecision,
       id,
       type,
       budgetID,
+      decision,
     }: {
       id: string;
       handleUnmountElem?: ((id: string) => void) | undefined;
@@ -74,6 +90,11 @@ const useOnUnMountAnimation = ({
       type?: "expense" | "income";
       handleUnmountElemWithBudgetID?: (id: string, budgetID: string) => void;
       budgetID?: string;
+      handleUnmountElemWithDecision?: (
+        id: string,
+        decision: "accept" | "decline"
+      ) => void;
+      decision?: "accept" | "decline";
     }) => {
       if (containerElem === null) return;
 
@@ -121,6 +142,15 @@ const useOnUnMountAnimation = ({
               id,
               handleUnmountElemWithBudgetID,
               budgetID,
+            });
+          } else if (handleUnmountElemWithDecision && decision) {
+            Animate({
+              elem,
+              keyFrames,
+              duration: 300,
+              id,
+              handleUnmountElemWithDecision,
+              decision,
             });
           }
         }
