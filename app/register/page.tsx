@@ -105,6 +105,7 @@ const Register = () => {
             <input
               className="peer h-10 w-full rounded-md bg-gray-50 px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
               id="username"
+              autoComplete="username"
               name="username"
               type="username"
               required
@@ -120,13 +121,16 @@ const Register = () => {
         </div>
         <div className="p-2">
           <label
-            htmlFor="email-address"
+            htmlFor="email"
             className="inline-block w-full text-sm font-medium text-gray-500 transition-all duration-200 ease-in-out group-focus-within:text-blue-400"
           >
             Email address:
           </label>
           <div className="relative flex items-center">
             <input
+              id="email"
+              autoComplete="email"
+              name="email"
               className="peer h-10 w-full rounded-md bg-gray-50 px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
               type="email"
               value={email}
@@ -151,6 +155,9 @@ const Register = () => {
           </label>
           <div className="relative flex items-center">
             <input
+              id="password"
+              name="password"
+              autoComplete="new-password"
               className="peer h-10 w-full rounded-md bg-gray-50 px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
               type={showEnteredPassword ? "text" : "password"}
               value={password}
@@ -185,13 +192,16 @@ const Register = () => {
 
         <div className="p-2">
           <label
-            htmlFor="password"
+            htmlFor="repeat-password"
             className="inline-block w-full text-sm font-medium text-gray-500 transition-all duration-200 ease-in-out group-focus-within:text-blue-400"
           >
             Repeat password:
           </label>
           <div className="relative flex items-center">
             <input
+              id="repeat-password"
+              name="repeat-password"
+              autoComplete="new-password"
               className="peer h-10 w-full rounded-md bg-gray-50 px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
               type={showRepeatedPassword ? "text" : "password"}
               value={repeatPassword}

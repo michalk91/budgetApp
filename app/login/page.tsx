@@ -74,6 +74,7 @@ const Login = () => {
           <div className="relative flex items-center">
             <input
               id="email-address"
+              autoComplete="email"
               name="email"
               type="email"
               required
@@ -97,6 +98,7 @@ const Login = () => {
             <input
               id="password"
               name="password"
+              autoComplete="current-password"
               type={showPassword ? "text" : "password"}
               required
               placeholder="Password"

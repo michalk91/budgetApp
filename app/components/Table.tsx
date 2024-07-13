@@ -180,6 +180,7 @@ export default function Table({
             <div className="flex items-center justify-center flex-wrap py-2">
               <p>Search: </p>
               <input
+                id="search-keywords"
                 value={searchKeywords}
                 onChange={(e) => {
                   handleSearch && handleSearch(e);
