@@ -45,6 +45,7 @@ const useOnUnMountAnimation = ({
   const { updateTransitionDimensions } = useGroupTransition({
     elemsArray: containerElem,
     startAnim: startGroupAnim ? startGroupAnim : undefined,
+    duration: 600,
   });
 
   const startUnMountAnim = useCallback(

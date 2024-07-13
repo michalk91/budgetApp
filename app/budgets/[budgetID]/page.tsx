@@ -32,6 +32,8 @@ export default function SelectedBudget() {
     onlyYAxis: true,
     onTransitionStart,
     onTransitionEnd,
+    easing: "cubic-bezier(.25,.75,.5,1.25)",
+    duration: 450,
   });
 
   const getElemPosition = usePosition();

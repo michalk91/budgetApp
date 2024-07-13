@@ -131,6 +131,8 @@ export default function ShowBudgets() {
     allowTransition,
     onTransitionEnd,
     onlyYAxis: true,
+    easing: "cubic-bezier(.25,.75,.5,1.25)",
+    duration: 450,
   });
 
   const getElemPosition = usePosition();

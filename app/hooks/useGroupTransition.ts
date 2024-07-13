@@ -5,9 +5,11 @@ import { usePosition } from "./usePosition";
 const useGroupTransition = ({
   elemsArray,
   startAnim,
+  duration = 700,
 }: {
   elemsArray?: HTMLElement | null;
   startAnim?: Record<string, any>[];
+  duration?: number;
 }) => {
   const initialPositions = useRef<{ [key: string]: DOMRect }>({});
   const disableTransitionRef = useRef(false);
@@ -71,7 +73,7 @@ const useGroupTransition = ({
             delta,
             elem: child,
             easing: "cubic-bezier(.25,.75,.5,1.25)",
-            duration: 700,
+            duration,
             onlyYAxis: true,
             onTransitionStart: onGroupTransitionStart,
             onTransitionEnd: onGroupTransitionEnd,
@@ -84,6 +86,7 @@ const useGroupTransition = ({
     startAnim,
     onGroupTransitionEnd,
     onGroupTransitionStart,
+    duration,
   ]);
 
   return {
