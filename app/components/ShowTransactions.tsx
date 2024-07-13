@@ -186,7 +186,7 @@ export default function ShowTransactions({
         notFound={notFound}
       >
         {paginatedData.length > 0 &&
-          paginatedData?.map((transaction, index) => (
+          paginatedData?.map((transaction) => (
             <tr
               key={transaction.id}
               data-id={transaction.id}

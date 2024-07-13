@@ -93,12 +93,14 @@ export default function Table({
   );
 
   useEffect(() => {
-    if (!handleDeleteRowID) return;
+    if (!handleDeleteRowID || !tableBodyRef.current) return;
+
     updateDeleteRowDimensions();
 
     if (handleDeleteRowWithType) {
       handleDeleteRowType &&
         startUnMountAnim({
+          containerElem: tableBodyRef.current,
           id: handleDeleteRowID,
           type: handleDeleteRowType,
           handleUnmountElemWithType: handleDeleteRowWithType,
@@ -106,12 +108,14 @@ export default function Table({
     } else if (handleDeleteRowWithBudgetID) {
       handleDeleteRowBudgetID &&
         startUnMountAnim({
+          containerElem: tableBodyRef.current,
           id: handleDeleteRowID,
           budgetID: handleDeleteRowBudgetID,
           handleUnmountElemWithBudgetID: handleDeleteRowWithBudgetID,
         });
     } else if (handleDeleteRow) {
       startUnMountAnim({
+        containerElem: tableBodyRef.current,
         id: handleDeleteRowID,
         handleUnmountElem: handleDeleteRow,
       });

@@ -61,7 +61,7 @@ const useOnUnMountAnimation = ({
   containerElem,
   startGroupAnim,
 }: {
-  containerElem: HTMLElement | null;
+  containerElem?: HTMLElement | null;
   startGroupAnim?: Record<string, any>[];
 }) => {
   const { updateTransitionDimensions } = useGroupTransition({
@@ -72,6 +72,7 @@ const useOnUnMountAnimation = ({
 
   const startUnMountAnim = useCallback(
     ({
+      containerElem,
       handleUnmountElem,
       handleUnmountElemWithType,
       handleUnmountElemWithBudgetID,
@@ -81,6 +82,7 @@ const useOnUnMountAnimation = ({
       budgetID,
       decision,
     }: {
+      containerElem: HTMLElement;
       id: string;
       handleUnmountElem?: ((id: string) => void) | undefined;
       handleUnmountElemWithType?: (
@@ -148,8 +150,8 @@ const useOnUnMountAnimation = ({
               elem,
               keyFrames,
               duration: 300,
-              id,
               handleUnmountElemWithDecision,
+              id,
               decision,
             });
           }
