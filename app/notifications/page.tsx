@@ -3,6 +3,7 @@ import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { decideInvitation } from "../redux/invitationsSlice";
 import useOnUnMountAnimation from "../hooks/useOnUnMountAnimation";
 import { useCallback, useRef } from "react";
+import { toast } from "react-toastify";
 
 export default function Notifications() {
   const dispatch = useAppDispatch();
@@ -30,6 +31,16 @@ export default function Notifications() {
     }
   );
 
+  const notifyJoinedBudget = useCallback(
+    () => toast.success("The budget has been added to your dashboard"),
+    []
+  );
+
+  const notifyRejectedInvitation = useCallback(
+    () => toast.info("The invitation has been deleted"),
+    []
+  );
+
   return (
     <div
       ref={containerRef}
@@ -38,9 +49,9 @@ export default function Notifications() {
       {invitations.length > 0 ? (
         invitations.map((item) => (
           <div
-            className="flex flex-wrap justify-between bg-white rounded-lg m-4 shadow-xl w-full p-2"
             key={item.invitationID}
             data-id={item.invitationID}
+            className="flex flex-wrap justify-between bg-white rounded-lg m-4 shadow-xl w-full p-2"
           >
             <div className="p-8 self-center">
               <p>
@@ -56,13 +67,17 @@ export default function Notifications() {
             <div className="flex flex-wrap justify-center item-center p-8">
               <button
                 onClick={() => {
+                  if (!containerRef.current) return;
+
                   updateDeleteRowDimensions();
 
                   startUnMountAnim({
+                    containerElem: containerRef.current,
                     handleUnmountElemWithDecision: handleDecideInvitation,
                     id: item.invitationID,
                     decision: "accept",
                   });
+                  notifyJoinedBudget();
                 }}
                 className="self-center bg-green-700 hover:bg-green-800 text-white font-bold py-2 my-2 mx-2 px-6 rounded-full max-md:px-6 max-md:py-4"
               >
@@ -70,13 +85,17 @@ export default function Notifications() {
               </button>
               <button
                 onClick={() => {
+                  if (!containerRef.current) return;
+
                   updateDeleteRowDimensions();
 
                   startUnMountAnim({
+                    containerElem: containerRef.current,
                     handleUnmountElemWithDecision: handleDecideInvitation,
                     id: item.invitationID,
                     decision: "decline",
                   });
+                  notifyRejectedInvitation();
                 }}
                 className="self-center bg-red-700 hover:bg-red-800 text-white font-bold py-2 my-2 mx-2 px-6 rounded-full max-md:px-6 max-md:py-4"
               >
