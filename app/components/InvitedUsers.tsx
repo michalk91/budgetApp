@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { fetchInvitedUsers } from "../redux/invitationsSlice";
 import AddNewUser from "./AddNewUser";
 import Button from "./Button";
-import type { SortOptions } from "../types";
+import type { SortOptions, DeleteRowData } from "../types";
 import {
   deleteInvitation,
   deleteAllInvitations,
@@ -14,7 +14,10 @@ import usePagination from "../hooks/usePagination";
 import { useIDfromPathname } from "../hooks/useIDfromPathname";
 import { toast } from "react-toastify";
 import { useCallback } from "react";
-import { resetinviteUserStatus } from "../redux/invitationsSlice";
+import {
+  resetinviteUserStatus,
+  resetAddedElemID,
+} from "../redux/invitationsSlice";
 
 export default function InvitedUsers() {
   const dispatch = useAppDispatch();
@@ -30,6 +33,7 @@ export default function InvitedUsers() {
   const inviteUserStatus = useAppSelector(
     (state) => state.invitations.inviteUserStatus
   );
+  const addedElemID = useAppSelector((state) => state.invitations.addedElemID);
 
   const [addNewUser, setAddNewUser] = useState(false);
 
@@ -39,6 +43,12 @@ export default function InvitedUsers() {
   });
 
   const { sortBy, sortDirection } = usersSort;
+
+  const [deleteRowData, setDeleteRowData] = useState<DeleteRowData>({
+    deleteRowID: "",
+  });
+
+  const { deleteRowID } = deleteRowData;
 
   const notifyInvited = useCallback(
     () => toast.success("The user has been successfully invited"),
@@ -58,6 +68,13 @@ export default function InvitedUsers() {
       dispatch(resetinviteUserStatus());
     }
   }, [inviteUserStatus, notifyFailedInvite, dispatch, notifyInvited]);
+
+  const handleDeleteInvitation = useCallback(
+    (id: string) => {
+      dispatch(deleteInvitation(id));
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     dispatch(
@@ -82,6 +99,10 @@ export default function InvitedUsers() {
     rowsPerPage,
     setCurrentPage,
   } = usePagination(filteredArray);
+
+  useEffect(() => {
+    dispatch(resetAddedElemID());
+  }, [dispatch, sortBy, sortDirection, currentPage]);
 
   return (
     <div className="flex flex-col items-center w-full ">
@@ -108,6 +129,10 @@ export default function InvitedUsers() {
         handleSearch={handleSearch}
         searchKeywords={searchKeywords}
         notFound={notFound}
+        handleDeleteRow={handleDeleteInvitation}
+        handleDeleteRowID={deleteRowID}
+        startSortAnimation={filteredArray}
+        addedElemID={addedElemID}
       >
         {paginatedData.length > 0 &&
           paginatedData.map((user) => (
@@ -140,9 +165,12 @@ export default function InvitedUsers() {
                 </td>
                 <td className="max-lg:block max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
                   <Button
-                    handleClick={() => {
-                      dispatch(deleteInvitation(user.invitationID));
-                    }}
+                    handleClick={() =>
+                      setDeleteRowData((state) => ({
+                        ...state,
+                        deleteRowID: user.invitationID,
+                      }))
+                    }
                     additionalStyles={
                       !addNewUser
                         ? "bg-red-500 hover:bg-red-700"

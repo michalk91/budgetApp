@@ -9,6 +9,8 @@ const Animate = ({
   handleUnmountElemWithType,
   id,
   type,
+  handleUnmountElemWithBudgetID,
+  budgetID,
 }: {
   elem: HTMLElement;
   keyFrames: Record<string, string | number | undefined>[];
@@ -17,6 +19,8 @@ const Animate = ({
   handleUnmountElemWithType?: (id: string, type: "expense" | "income") => void;
   id?: string;
   type?: "expense" | "income";
+  handleUnmountElemWithBudgetID?: (id: string, budgetID: string) => void;
+  budgetID?: string;
 }) => {
   if (!elem) return;
 
@@ -32,6 +36,10 @@ const Animate = ({
       id &&
       type &&
       handleUnmountElemWithType(id, type);
+    handleUnmountElemWithBudgetID &&
+      id &&
+      budgetID &&
+      handleUnmountElemWithBudgetID(id, budgetID);
   };
 };
 
@@ -52,8 +60,10 @@ const useOnUnMountAnimation = ({
     ({
       handleUnmountElem,
       handleUnmountElemWithType,
+      handleUnmountElemWithBudgetID,
       id,
       type,
+      budgetID,
     }: {
       id: string;
       handleUnmountElem?: ((id: string) => void) | undefined;
@@ -62,6 +72,8 @@ const useOnUnMountAnimation = ({
         type: "expense" | "income"
       ) => void;
       type?: "expense" | "income";
+      handleUnmountElemWithBudgetID?: (id: string, budgetID: string) => void;
+      budgetID?: string;
     }) => {
       if (containerElem === null) return;
 
@@ -100,6 +112,15 @@ const useOnUnMountAnimation = ({
               handleUnmountElemWithType,
               id,
               type,
+            });
+          } else if (handleUnmountElemWithBudgetID && budgetID) {
+            Animate({
+              elem,
+              keyFrames,
+              duration: 300,
+              id,
+              handleUnmountElemWithBudgetID,
+              budgetID,
             });
           }
         }

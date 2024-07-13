@@ -1,4 +1,4 @@
-import { Children, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { SortOptions, TableProps } from "../types";
 import { TbArrowsSort, TbArrowsUp, TbArrowsDown } from "react-icons/tb";
 import Pagination from "./Pagination";
@@ -35,6 +35,8 @@ export default function Table({
   handleDeleteRowType,
   handleDeleteRow,
   handleDeleteRowWithType,
+  handleDeleteRowBudgetID,
+  handleDeleteRowWithBudgetID,
 }: TableProps) {
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
@@ -101,6 +103,13 @@ export default function Table({
           type: handleDeleteRowType,
           handleUnmountElemWithType: handleDeleteRowWithType,
         });
+    } else if (handleDeleteRowWithBudgetID) {
+      handleDeleteRowBudgetID &&
+        startUnMountAnim({
+          id: handleDeleteRowID,
+          budgetID: handleDeleteRowBudgetID,
+          handleUnmountElemWithBudgetID: handleDeleteRowWithBudgetID,
+        });
     } else if (handleDeleteRow) {
       startUnMountAnim({
         id: handleDeleteRowID,
@@ -114,6 +123,8 @@ export default function Table({
     handleDeleteRowWithType,
     handleDeleteRow,
     updateDeleteRowDimensions,
+    handleDeleteRowBudgetID,
+    handleDeleteRowWithBudgetID,
   ]);
 
   useEffect(() => {

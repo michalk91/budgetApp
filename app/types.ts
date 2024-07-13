@@ -87,6 +87,7 @@ export interface InvitationsSlice {
   allowManageCategories: string[];
   invitedUsers: InvitedUser[];
   inviteUserErrorMessage?: string;
+  addedElemID: string;
 }
 
 export interface TransitionSlice {
@@ -213,6 +214,8 @@ export interface TableProps extends SortOptions {
   setCurrentPage?: Dispatch<SetStateAction<number>>;
   startSortAnimation?: Record<string, any>[];
   handleDeleteRowWithType?: (id: string, type: "expense" | "income") => void;
+  handleDeleteRowWithBudgetID?: (id: string, budgetID: string) => void;
+  handleDeleteRowBudgetID?: string;
   handleDeleteRowType?: "expense" | "income";
   handleDeleteRowID?: string;
   handleDeleteRow?: ((id: string) => void) | undefined;
@@ -314,4 +317,5 @@ export interface DeleteRowData {
   deleteRowID: string;
   deleteRowType?: "expense" | "income";
   deleteRowInteractionType?: "delete" | "leave";
+  deleteRowBudgetID?: string;
 }

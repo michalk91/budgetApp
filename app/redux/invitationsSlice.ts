@@ -342,11 +342,15 @@ const invitationsSlice = createSlice({
     allowManageCategories: [],
     invitedUsers: [],
     inviteUserErrorMessage: "",
+    addedElemID: "",
   } as InvitationsSlice,
   reducers: {
     resetinviteUserStatus: (state) => {
       state.inviteUserStatus = "idle";
       state.inviteUserErrorMessage = "";
+    },
+    resetAddedElemID: (state) => {
+      state.addedElemID = "";
     },
   },
   extraReducers: (builder) => {
@@ -358,6 +362,7 @@ const invitationsSlice = createSlice({
       .addCase(inviteUser.fulfilled, (state, action) => {
         if (!action.payload) return;
 
+        state.addedElemID = action.payload.invitationID;
         state.inviteUserStatus = "succeeded";
         state.invitedUsers.push(action.payload);
       })
@@ -445,5 +450,6 @@ const invitationsSlice = createSlice({
   },
 });
 
-export const { resetinviteUserStatus } = invitationsSlice.actions;
+export const { resetinviteUserStatus, resetAddedElemID } =
+  invitationsSlice.actions;
 export default invitationsSlice.reducer;

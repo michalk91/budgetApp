@@ -1,8 +1,8 @@
 import Table from "./Table";
 import Button from "./Button";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { useState, useEffect } from "react";
-import type { SortOptions } from "../types";
+import { useState, useEffect, useCallback } from "react";
+import type { SortOptions, DeleteRowData } from "../types";
 import {
   fetchJoinedUsers,
   editJoinedUserPermissions,
@@ -35,6 +35,13 @@ export default function JoinedUsers() {
     allowManageCategories: false,
     allowManageAllTransactions: false,
   });
+
+  const [deleteRowData, setDeleteRowData] = useState<DeleteRowData>({
+    deleteRowID: "",
+    deleteRowBudgetID: "",
+  });
+
+  const { deleteRowID, deleteRowBudgetID } = deleteRowData;
 
   useEffect(() => {
     dispatch(
@@ -76,6 +83,18 @@ export default function JoinedUsers() {
     setCurrentPage,
   } = usePagination(filteredArray);
 
+  const handleDeleteUser = useCallback(
+    (id: string, budgetID: string) => {
+      dispatch(
+        deleteUser({
+          userID: id,
+          budgetID,
+        })
+      );
+    },
+    [dispatch]
+  );
+
   return (
     usersWithAccess.length > 0 && (
       <div className="flex flex-col items-center">
@@ -101,10 +120,15 @@ export default function JoinedUsers() {
           handleSearch={handleSearch}
           searchKeywords={searchKeywords}
           notFound={notFound}
+          handleDeleteRowWithBudgetID={handleDeleteUser}
+          handleDeleteRowID={deleteRowID}
+          handleDeleteRowBudgetID={deleteRowBudgetID}
+          startSortAnimation={filteredArray}
         >
           {paginatedData?.map((user) => (
             <tr
               key={user.userID}
+              data-id={user.userID}
               className={`hover:bg-gray-100 bg-white border-b `}
             >
               <td
@@ -209,12 +233,11 @@ export default function JoinedUsers() {
                 <td className="max-lg:block max-lg:mt-6 max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
                   <Button
                     handleClick={() => {
-                      dispatch(
-                        deleteUser({
-                          userID: user.userID,
-                          budgetID,
-                        })
-                      );
+                      setDeleteRowData((state) => ({
+                        ...state,
+                        deleteRowID: user.userID,
+                        deleteRowBudgetID: budgetID,
+                      }));
                     }}
                     additionalStyles={
                       editedUserPermissions.id === ""
