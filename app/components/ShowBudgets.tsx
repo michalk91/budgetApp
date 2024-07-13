@@ -297,7 +297,7 @@ export default function ShowBudgets() {
                             setDeleteRowData((state) => ({
                               ...state,
                               deleteRowID: budget.budgetID,
-                              deleteRowIteractionType: "delete",
+                              deleteRowInteractionType: "delete",
                             }));
                           }
                         }}
@@ -320,7 +320,7 @@ export default function ShowBudgets() {
                             setDeleteRowData((state) => ({
                               ...state,
                               deleteRowID: budget.budgetID,
-                              deleteRowIteractionType: "leave",
+                              deleteRowInteractionType: "leave",
                             }));
                           }
                         }}

@@ -2,13 +2,15 @@
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { decideInvitation } from "../redux/invitationsSlice";
 import useOnUnMountAnimation from "../hooks/useOnUnMountAnimation";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
 export default function Notifications() {
   const dispatch = useAppDispatch();
 
   const invitations = useAppSelector((state) => state.invitations.budgets);
+
+  const [elemsCount, setElemsCount] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -27,7 +29,7 @@ export default function Notifications() {
   const { startUnMountAnim, updateDeleteRowDimensions } = useOnUnMountAnimation(
     {
       containerElem: containerRef.current,
-      startGroupAnim: invitations,
+      startGroupAnim: elemsCount,
     }
   );
 
@@ -40,6 +42,10 @@ export default function Notifications() {
     () => toast.info("The invitation has been deleted"),
     []
   );
+
+  useEffect(() => {
+    setElemsCount(invitations.length);
+  }, [invitations]);
 
   return (
     <div

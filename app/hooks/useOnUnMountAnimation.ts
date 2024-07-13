@@ -62,7 +62,7 @@ const useOnUnMountAnimation = ({
   startGroupAnim,
 }: {
   containerElem?: HTMLElement | null;
-  startGroupAnim?: Record<string, any>[];
+  startGroupAnim?: Record<string, any>[] | number;
 }) => {
   const { updateTransitionDimensions } = useGroupTransition({
     elemsArray: containerElem,
@@ -158,7 +158,7 @@ const useOnUnMountAnimation = ({
         }
       });
     },
-    [containerElem]
+    []
   );
 
   return {

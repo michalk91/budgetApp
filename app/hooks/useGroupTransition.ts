@@ -8,7 +8,7 @@ const useGroupTransition = ({
   duration = 700,
 }: {
   elemsArray?: HTMLElement | null;
-  startAnim?: Record<string, any>[];
+  startAnim?: Record<string, any>[] | number;
   duration?: number;
 }) => {
   const initialPositions = useRef<{ [key: string]: DOMRect }>({});
