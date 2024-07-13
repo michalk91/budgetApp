@@ -75,6 +75,7 @@ export default function Categories({ type }: CategoriesProps) {
               onChange={(e) => {
                 setNewCategory((state) => [...state, e.target.value]);
               }}
+              id="new-category"
               ref={inputRef}
               required
               type="text"
