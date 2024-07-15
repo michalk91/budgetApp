@@ -106,7 +106,7 @@ const useOnUnMountAnimation = ({
 
       const children: HTMLElement[] = Array.prototype.slice.call(list.children);
 
-      const keyFrames = [
+      const keyFramesFadeInRight = [
         {
           transform: `translateX(0)`,
           opacity: 1,
@@ -119,6 +119,19 @@ const useOnUnMountAnimation = ({
         { opacity: 0, transform: `translateX(100px)` },
       ];
 
+      const keyFramesFadeInLeft = [
+        {
+          transform: `translateX(0)`,
+          opacity: 1,
+        },
+
+        {
+          transform: `translateX(-50px)`,
+          offset: 0.3,
+        },
+        { opacity: 0, transform: `translateX(-100px)` },
+      ];
+
       children.forEach((elem) => {
         if (!elem) return;
 
@@ -126,11 +139,17 @@ const useOnUnMountAnimation = ({
 
         if (elemID === id) {
           if (handleUnmountElem) {
-            Animate({ elem, keyFrames, duration: 300, handleUnmountElem, id });
+            Animate({
+              elem,
+              keyFrames: keyFramesFadeInRight,
+              duration: 300,
+              handleUnmountElem,
+              id,
+            });
           } else if (handleUnmountElemWithType && type) {
             Animate({
               elem,
-              keyFrames,
+              keyFrames: keyFramesFadeInRight,
               duration: 300,
               handleUnmountElemWithType,
               id,
@@ -139,7 +158,7 @@ const useOnUnMountAnimation = ({
           } else if (handleUnmountElemWithBudgetID && budgetID) {
             Animate({
               elem,
-              keyFrames,
+              keyFrames: keyFramesFadeInRight,
               duration: 300,
               id,
               handleUnmountElemWithBudgetID,
@@ -148,7 +167,10 @@ const useOnUnMountAnimation = ({
           } else if (handleUnmountElemWithDecision && decision) {
             Animate({
               elem,
-              keyFrames,
+              keyFrames:
+                decision === "accept"
+                  ? keyFramesFadeInRight
+                  : keyFramesFadeInLeft,
               duration: 300,
               handleUnmountElemWithDecision,
               id,
