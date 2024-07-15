@@ -39,7 +39,7 @@ export default function Notifications() {
   );
 
   const notifyRejectedInvitation = useCallback(
-    () => toast.info("The invitation has been deleted"),
+    () => toast.error("The invitation has been deleted"),
     []
   );
 
