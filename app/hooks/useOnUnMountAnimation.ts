@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import useGroupTransition from "./useGroupTransition";
 
 const Animate = ({
@@ -64,11 +64,20 @@ const useOnUnMountAnimation = ({
   containerElem?: HTMLElement | null;
   startGroupAnim?: Record<string, any>[] | number;
 }) => {
-  const { updateTransitionDimensions } = useGroupTransition({
+  const {
+    updateTransitionDimensions,
+    disableTransition,
+    enableTransition,
+    groupTransitionEnd,
+  } = useGroupTransition({
     elemsArray: containerElem,
     startAnim: startGroupAnim ? startGroupAnim : undefined,
     duration: 600,
   });
+
+  useEffect(() => {
+    groupTransitionEnd && disableTransition();
+  }, [groupTransitionEnd, disableTransition]);
 
   const startUnMountAnim = useCallback(
     ({
@@ -138,6 +147,8 @@ const useOnUnMountAnimation = ({
         const elemID = elem.dataset.id!;
 
         if (elemID === id) {
+          enableTransition();
+
           if (handleUnmountElem) {
             Animate({
               elem,
@@ -180,7 +191,7 @@ const useOnUnMountAnimation = ({
         }
       });
     },
-    []
+    [enableTransition]
   );
 
   return {
