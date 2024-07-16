@@ -645,6 +645,8 @@ const budgetsSlice = createSlice({
     transactions: [],
     fetchTransactionsStatus: "idle",
     fetchBudgetsStatus: "idle",
+    deleteAllBudgetsStatus: "idle",
+    deleteAllTransactionsStatus: "idle",
     selectedOption: "Expenses",
     allowManageAllTransactions: [],
     allowManageCategories: [],
@@ -678,6 +680,12 @@ const budgetsSlice = createSlice({
     },
     resetAddedElemID: (state) => {
       state.addedElemID = "";
+    },
+    resetDeleteAllTransactionsStatus: (state) => {
+      state.deleteAllTransactionsStatus = "idle";
+    },
+    resetDeleteAllBudgetsStatus: (state) => {
+      state.deleteAllBudgetsStatus = "idle";
     },
   },
   extraReducers: (builder) => {
@@ -741,10 +749,19 @@ const budgetsSlice = createSlice({
       })
       //--------------------------------------------------
 
+      .addCase(deleteAllBudgets.pending, (state) => {
+        state.deleteAllBudgetsStatus = "loading";
+      })
+
       .addCase(deleteAllBudgets.fulfilled, (state, action) => {
         if (!action.payload) return;
 
         state.budgetsArray = action.payload.budgets;
+        state.deleteAllBudgetsStatus = "succeeded";
+      })
+
+      .addCase(deleteAllBudgets.rejected, (state) => {
+        state.deleteAllBudgetsStatus = "failed";
       })
 
       //-------------------------------------------------
@@ -831,6 +848,10 @@ const budgetsSlice = createSlice({
       })
       //--------------------------------------------------
 
+      .addCase(deleteAllTransactions.pending, (state) => {
+        state.deleteAllTransactionsStatus = "loading";
+      })
+
       .addCase(deleteAllTransactions.fulfilled, (state, action) => {
         if (!action.payload) return;
 
@@ -838,6 +859,12 @@ const budgetsSlice = createSlice({
         state.budgetValue += action.payload.allTransactionsAmount;
         state.expensesValue = 0;
         state.incomesValue = 0;
+
+        state.deleteAllTransactionsStatus = "succeeded";
+      })
+
+      .addCase(deleteAllTransactions.rejected, (state) => {
+        state.deleteAllTransactionsStatus = "failed";
       })
 
       //-------------------------------------------------
@@ -883,6 +910,8 @@ export const {
   setSortOptions,
   setSearchKeywords,
   resetAddedElemID,
+  resetDeleteAllBudgetsStatus,
+  resetDeleteAllTransactionsStatus,
 } = budgetsSlice.actions;
 
 export default budgetsSlice.reducer;

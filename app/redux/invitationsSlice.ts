@@ -90,7 +90,7 @@ export const deleteInvitation = createAsyncThunk(
 
 export const deleteAllInvitations = createAsyncThunk(
   "invitations/deleteAllInvitations",
-  async (budgetID) => {
+  async (budgetID: string) => {
     const invitations = await getDocs(
       query(collection(db, `invitations`), where("budgetID", "==", budgetID))
     );
@@ -337,6 +337,8 @@ const invitationsSlice = createSlice({
     budgets: [],
     inviteUserStatus: "idle",
     fetchInvitationsStatus: "idle",
+    deleteAllInvitationsStatus: "idle",
+    deleteAllUsersStatus: "idle",
     usersWithAccess: [],
     allowManageAllTransactions: [],
     allowManageCategories: [],
@@ -351,6 +353,12 @@ const invitationsSlice = createSlice({
     },
     resetAddedElemID: (state) => {
       state.addedElemID = "";
+    },
+    resetDeleteAllInvitationsStatus: (state) => {
+      state.deleteAllInvitationsStatus = "idle";
+    },
+    resetDeleteAllUsersStatus: (state) => {
+      state.deleteAllUsersStatus = "idle";
     },
   },
   extraReducers: (builder) => {
@@ -438,18 +446,40 @@ const invitationsSlice = createSlice({
 
       //---------------------------------------------------------------------
 
+      .addCase(deleteAllInvitations.pending, (state) => {
+        state.deleteAllInvitationsStatus = "loading";
+      })
+
       .addCase(deleteAllInvitations.fulfilled, (state, action) => {
         state.invitedUsers = action.payload;
+        state.deleteAllInvitationsStatus = "succeeded";
+      })
+
+      .addCase(deleteAllInvitations.rejected, (state) => {
+        state.deleteAllInvitationsStatus = "failed";
       })
 
       //------------------------------------------------------------------------
 
+      .addCase(deleteAllUsers.pending, (state) => {
+        state.deleteAllUsersStatus = "loading";
+      })
+
       .addCase(deleteAllUsers.fulfilled, (state, action) => {
         state.usersWithAccess = action.payload;
+        state.deleteAllUsersStatus = "succeeded";
+      })
+
+      .addCase(deleteAllUsers.rejected, (state) => {
+        state.deleteAllUsersStatus = "failed";
       });
   },
 });
 
-export const { resetinviteUserStatus, resetAddedElemID } =
-  invitationsSlice.actions;
+export const {
+  resetinviteUserStatus,
+  resetAddedElemID,
+  resetDeleteAllInvitationsStatus,
+  resetDeleteAllUsersStatus,
+} = invitationsSlice.actions;
 export default invitationsSlice.reducer;

@@ -8,6 +8,7 @@ import type { SortOptions, DeleteRowData } from "../types";
 import {
   deleteInvitation,
   deleteAllInvitations,
+  resetDeleteAllInvitationsStatus,
 } from "../redux/invitationsSlice";
 import useSearch from "../hooks/useSearch";
 import usePagination from "../hooks/usePagination";
@@ -18,6 +19,7 @@ import {
   resetinviteUserStatus,
   resetAddedElemID,
 } from "../redux/invitationsSlice";
+import Loader from "./Loader";
 
 export default function InvitedUsers() {
   const dispatch = useAppDispatch();
@@ -32,6 +34,9 @@ export default function InvitedUsers() {
   );
   const inviteUserStatus = useAppSelector(
     (state) => state.invitations.inviteUserStatus
+  );
+  const deleteAllInvitationsStatus = useAppSelector(
+    (state) => state.invitations.deleteAllInvitationsStatus
   );
   const addedElemID = useAppSelector((state) => state.invitations.addedElemID);
 
@@ -103,6 +108,18 @@ export default function InvitedUsers() {
   useEffect(() => {
     dispatch(resetAddedElemID());
   }, [dispatch, sortBy, sortDirection, currentPage]);
+
+  const notifyDeleteAllInvitations = useCallback(
+    () => toast.success("All invitations have been successfully deleted"),
+    []
+  );
+
+  useEffect(() => {
+    if (deleteAllInvitationsStatus === "succeeded") {
+      notifyDeleteAllInvitations();
+      dispatch(resetDeleteAllInvitationsStatus());
+    }
+  }, [dispatch, deleteAllInvitationsStatus, notifyDeleteAllInvitations]);
 
   return (
     <div className="flex flex-col items-center w-full ">
@@ -184,7 +201,7 @@ export default function InvitedUsers() {
             </>
           ))}
       </Table>
-      <div className="text-center mt-6 max-md:-mt-2">
+      <div className="flex text-center mt-6 max-md:-mt-2">
         {!addNewUser && (
           <>
             <Button
@@ -193,17 +210,21 @@ export default function InvitedUsers() {
             >
               Invite user
             </Button>
-
-            {invitedUsers?.length > 1 && (
-              <Button
-                handleClick={() => {
-                  dispatch(deleteAllInvitations());
-                }}
-                additionalStyles="bg-red-600 hover:bg-red-800"
-              >
-                Delete All
-              </Button>
-            )}
+            {invitedUsers?.length > 1 &&
+              (deleteAllInvitationsStatus === "loading" ? (
+                <Button additionalStyles="w-36 bg-red-600">
+                  <Loader />
+                </Button>
+              ) : (
+                <Button
+                  handleClick={() => {
+                    dispatch(deleteAllInvitations(budgetID));
+                  }}
+                  additionalStyles="w-36 bg-red-600 hover:bg-red-800"
+                >
+                  Delete All
+                </Button>
+              ))}
           </>
         )}
       </div>

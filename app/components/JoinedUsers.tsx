@@ -8,11 +8,14 @@ import {
   editJoinedUserPermissions,
   deleteUser,
   deleteAllUsers,
+  resetDeleteAllUsersStatus,
 } from "../redux/invitationsSlice";
 import { ImCross, ImCheckmark } from "react-icons/im";
 import useSearch from "../hooks/useSearch";
 import usePagination from "../hooks/usePagination";
 import { useIDfromPathname } from "../hooks/useIDfromPathname";
+import Loader from "./Loader";
+import { toast } from "react-toastify";
 
 export default function JoinedUsers() {
   const dispatch = useAppDispatch();
@@ -21,6 +24,9 @@ export default function JoinedUsers() {
 
   const usersWithAccess = useAppSelector(
     (state) => state.invitations.usersWithAccess
+  );
+  const deleteAllUsersStatus = useAppSelector(
+    (state) => state.invitations.deleteAllUsersStatus
   );
 
   const [usersSort, setUsersSort] = useState<SortOptions>({
@@ -94,6 +100,18 @@ export default function JoinedUsers() {
     },
     [dispatch]
   );
+
+  const notifyDeleteAllUsers = useCallback(
+    () => toast.success("All users have been successfully deleted"),
+    []
+  );
+
+  useEffect(() => {
+    if (deleteAllUsersStatus === "succeeded") {
+      notifyDeleteAllUsers();
+      dispatch(resetDeleteAllUsersStatus());
+    }
+  }, [dispatch, deleteAllUsersStatus, notifyDeleteAllUsers]);
 
   return (
     usersWithAccess.length > 0 && (
@@ -299,21 +317,26 @@ export default function JoinedUsers() {
             </tr>
           ))}
         </Table>
-        {usersWithAccess?.length > 1 && (
-          <Button
-            handleClick={() => {
-              editedUserPermissions.id === "" &&
-                dispatch(deleteAllUsers(budgetID));
-            }}
-            additionalStyles={` mt-8  ${
-              editedUserPermissions.id === ""
-                ? "bg-red-700 hover:bg-red-700 hover:bg-red-800"
-                : "bg-red-200 hover:cursor-not-allowed"
-            }`}
-          >
-            Delete All
-          </Button>
-        )}
+        {usersWithAccess?.length > 1 &&
+          (deleteAllUsersStatus === "loading" ? (
+            <Button additionalStyles="bg-red-700 mt-8 w-36">
+              <Loader />
+            </Button>
+          ) : (
+            <Button
+              handleClick={() => {
+                editedUserPermissions.id === "" &&
+                  dispatch(deleteAllUsers(budgetID));
+              }}
+              additionalStyles={` mt-8 w-36   ${
+                editedUserPermissions.id === ""
+                  ? "bg-red-700 hover:bg-red-700 hover:bg-red-800"
+                  : "bg-red-200 hover:cursor-not-allowed"
+              }`}
+            >
+              Delete All
+            </Button>
+          ))}
       </div>
     )
   );

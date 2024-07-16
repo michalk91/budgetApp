@@ -4,8 +4,9 @@ import {
   updateTransaction,
   deleteAllTransactions,
   resetAddedElemID,
+  resetDeleteAllTransactionsStatus,
 } from "../redux/budgetsSlice";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import useFormatter from "../hooks/useFormatter";
 import AddTransaction from "./AddTransaction";
 import Table from "./Table";
@@ -14,6 +15,8 @@ import type { ShowTransactionsProps, DeleteRowData } from "../types";
 import useSearch from "../hooks/useSearch";
 import usePagination from "../hooks/usePagination";
 import { useIDfromPathname } from "../hooks/useIDfromPathname";
+import Loader from "./Loader";
+import { toast } from "react-toastify";
 
 export default function ShowTransactions({
   expensesSort,
@@ -38,6 +41,9 @@ export default function ShowTransactions({
   const userName = useAppSelector((state) => state.user.username);
   const budgetOwnerID = useAppSelector((state) => state.budgets.ownerID);
   const addedElemID = useAppSelector((state) => state.budgets.addedElemID);
+  const deleteAllTransactionsStatus = useAppSelector(
+    (state) => state.budgets.deleteAllTransactionsStatus
+  );
 
   const [addNewExpense, setAddNewExpense] = useState(false);
   const [addNewIncome, setAddNewIncome] = useState(false);
@@ -128,6 +134,18 @@ export default function ShowTransactions({
   useEffect(() => {
     dispatch(resetAddedElemID());
   }, [dispatch, sortBy, sortDirection, currentPage]);
+
+  const notifyDeleteAllTransactions = useCallback(
+    () => toast.success("All transactions have been successfully deleted"),
+    []
+  );
+
+  useEffect(() => {
+    if (deleteAllTransactionsStatus === "succeeded") {
+      notifyDeleteAllTransactions();
+      dispatch(resetDeleteAllTransactionsStatus());
+    }
+  }, [deleteAllTransactionsStatus, notifyDeleteAllTransactions, dispatch]);
 
   return (
     <div className="w-full mt-10">
@@ -413,7 +431,7 @@ export default function ShowTransactions({
           ))}
       </Table>
 
-      <div className="text-center mt-6">
+      <div className="flex justify-center text-center mt-6">
         {!addNewExpense && !addNewIncome && (
           <>
             <Button
@@ -447,22 +465,30 @@ export default function ShowTransactions({
 
             {transactions?.length > 1 &&
               ((userID && allowToManageAllTransactions?.includes(userID)) ||
-                userID === budgetOwnerID) && (
+                userID === budgetOwnerID) &&
+              (deleteAllTransactionsStatus === "loading" ? (
+                <Button additionalStyles="bg-red-700 w-36">
+                  <Loader />
+                </Button>
+              ) : (
                 <Button
-                  handleClick={() =>
+                  handleClick={() => {
                     userID &&
-                    editedTransaction.id === "" &&
-                    dispatch(deleteAllTransactions(budgetID))
-                  }
-                  additionalStyles={
-                    editedTransaction.id === ""
-                      ? "bg-red-700 hover:bg-red-800"
-                      : "bg-red-300 hover:cursor-not-allowed"
-                  }
+                      editedTransaction.id === "" &&
+                      dispatch(deleteAllTransactions(budgetID));
+
+                    // notifyDeleteAllTransactions();
+                  }}
+                  additionalStyles={`w-36
+                    ${
+                      editedTransaction.id === ""
+                        ? "bg-red-700 hover:bg-red-800"
+                        : "bg-red-300 hover:cursor-not-allowed"
+                    }`}
                 >
                   Delete All
                 </Button>
-              )}
+              ))}
           </>
         )}
       </div>

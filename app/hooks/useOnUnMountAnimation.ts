@@ -13,7 +13,6 @@ const Animate = ({
   keyFrames: Record<string, string | number | undefined>[];
   duration: number;
   handleUnmountElem: (id: string, secondArg?: any) => void;
-
   id?: string;
   secondArg: any;
 }) => {

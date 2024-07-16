@@ -9,6 +9,7 @@ import {
   setSortOptions,
   setSearchKeywords,
   resetAddedElemID,
+  resetDeleteAllBudgetsStatus,
 } from "../redux/budgetsSlice";
 import Table from "./Table";
 import type { SortOptions, DeleteRowData } from "../types";
@@ -28,6 +29,8 @@ import {
 } from "../redux/transitionSlice";
 import ArrowsLoader from "./ArrowsLoader";
 import { usePathname } from "next/navigation";
+import Loader from "./Loader";
+import { toast } from "react-toastify";
 
 export default function ShowBudgets() {
   const dispatch = useAppDispatch();
@@ -59,6 +62,9 @@ export default function ShowBudgets() {
 
   const globalSearchKeywords = useAppSelector(
     (state) => state.budgets.searchKeywords
+  );
+  const deleteAllBudgetsStatus = useAppSelector(
+    (state) => state.budgets.deleteAllBudgetsStatus
   );
 
   const addedElemID = useAppSelector((state) => state.budgets.addedElemID);
@@ -176,6 +182,18 @@ export default function ShowBudgets() {
   useEffect(() => {
     setBudgetLoaded(false);
   }, [pathname]);
+
+  const notifyDeleteAllBudgets = useCallback(
+    () => toast.success("All budgets have been successfully deleted"),
+    []
+  );
+
+  useEffect(() => {
+    if (deleteAllBudgetsStatus === "succeeded") {
+      notifyDeleteAllBudgets();
+      dispatch(resetDeleteAllBudgetsStatus());
+    }
+  }, [deleteAllBudgetsStatus, dispatch, notifyDeleteAllBudgets]);
 
   return (
     <div className="flex flex-col items-center w-full mt-10 max-md:mt-4">
@@ -348,7 +366,7 @@ export default function ShowBudgets() {
           )}
         </Table>
 
-        <div className="text-center mt-6">
+        <div className="flex text-center mt-6">
           {!addNewBudget && (
             <>
               <Button
@@ -366,22 +384,30 @@ export default function ShowBudgets() {
                 Add new budget
               </Button>
 
-              {budgets?.length > 1 && (
-                <Button
-                  handleClick={() => {
-                    if (globalSearchKeywords !== "") return;
+              {budgets?.length > 1 &&
+                (deleteAllBudgetsStatus === "loading" ? (
+                  <Button additionalStyles="bg-red-700 w-36">
+                    <Loader />
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      handleClick={() => {
+                        if (globalSearchKeywords !== "") return;
 
-                    dispatch(deleteAllBudgets());
-                  }}
-                  additionalStyles={
-                    globalSearchKeywords !== ""
-                      ? "bg-red-200 hover:hover:cursor-not-allowed"
-                      : "bg-red-700 hover:bg-red-900"
-                  }
-                >
-                  Delete All
-                </Button>
-              )}
+                        dispatch(deleteAllBudgets());
+                      }}
+                      additionalStyles={`w-36
+                      ${
+                        globalSearchKeywords !== ""
+                          ? "bg-red-200 hover:hover:cursor-not-allowed"
+                          : "bg-red-700 hover:bg-red-900"
+                      }`}
+                    >
+                      Delete All
+                    </Button>
+                  </>
+                ))}
             </>
           )}
         </div>

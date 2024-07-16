@@ -58,6 +58,8 @@ export interface BudgetsSlice extends SortOptions {
   transactions: Transaction[];
   fetchTransactionsStatus: "idle" | "loading" | "succeeded" | "failed";
   fetchBudgetsStatus: "idle" | "loading" | "succeeded" | "failed";
+  deleteAllBudgetsStatus: "idle" | "loading" | "succeeded" | "failed";
+  deleteAllTransactionsStatus: "idle" | "loading" | "succeeded" | "failed";
   selectedOption: string;
   allowManageAllTransactions: string[];
   allowManageCategories: string[];
@@ -81,6 +83,8 @@ export interface InvitedUser {
 export interface InvitationsSlice {
   inviteUserStatus: "idle" | "loading" | "succeeded" | "failed";
   fetchInvitationsStatus: "idle" | "loading" | "succeeded" | "failed";
+  deleteAllInvitationsStatus: "idle" | "loading" | "succeeded" | "failed";
+  deleteAllUsersStatus: "idle" | "loading" | "succeeded" | "failed";
   budgets: Budget[];
   usersWithAccess: UsersWithPermissions[];
   allowManageAllTransactions: string[];
@@ -221,7 +225,7 @@ export interface TableProps extends SortOptions {
 
 export interface ButtonProps {
   children: React.ReactNode;
-  handleClick: (e: SyntheticEvent) => void;
+  handleClick?: (e: SyntheticEvent) => void;
   additionalStyles?: string;
 }
 
