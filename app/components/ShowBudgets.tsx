@@ -71,6 +71,8 @@ export default function ShowBudgets() {
     deleteRowInteractionType: "delete",
   });
 
+  const { deleteRowID, deleteRowInteractionType } = deleteRowData;
+
   const setGlobalSortOptions = useCallback(
     ({ sortBy, sortDirection }: SortOptions) => {
       dispatch(setSortOptions({ sortBy, sortDirection }));
@@ -193,11 +195,11 @@ export default function ShowBudgets() {
           setGlobalCurrentPage={setGlobalCurrentPage}
           rowsPerPage={globalRowsPerPage}
           handleDeleteRow={
-            deleteRowData.deleteRowInteractionType === "delete"
+            deleteRowInteractionType === "delete"
               ? handleDeleteBudget
               : handleLeaveBudget
           }
-          handleDeleteRowID={deleteRowData.deleteRowID}
+          handleDeleteRowID={deleteRowID}
           startSortAnimation={globalFilteredArray}
           addedElemID={addedElemID}
           emptyTableCondition={

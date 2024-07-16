@@ -213,12 +213,9 @@ export interface TableProps extends SortOptions {
   setGlobalCurrentPage?: (number: number) => void;
   setCurrentPage?: Dispatch<SetStateAction<number>>;
   startSortAnimation?: Record<string, any>[];
-  handleDeleteRowWithType?: (id: string, type: "expense" | "income") => void;
-  handleDeleteRowWithBudgetID?: (id: string, budgetID: string) => void;
-  handleDeleteRowBudgetID?: string;
-  handleDeleteRowType?: "expense" | "income";
   handleDeleteRowID?: string;
-  handleDeleteRow?: ((id: string) => void) | undefined;
+  handleDeleteRowSecondArg?: any;
+  handleDeleteRow?: (id: string, handleDeleteRowSecondArg: any) => void;
   addedElemID?: string;
 }
 

@@ -120,9 +120,9 @@ export default function JoinedUsers() {
           handleSearch={handleSearch}
           searchKeywords={searchKeywords}
           notFound={notFound}
-          handleDeleteRowWithBudgetID={handleDeleteUser}
+          handleDeleteRow={handleDeleteUser}
           handleDeleteRowID={deleteRowID}
-          handleDeleteRowBudgetID={deleteRowBudgetID}
+          handleDeleteRowSecondArg={deleteRowBudgetID}
           startSortAnimation={filteredArray}
         >
           {paginatedData?.map((user) => (

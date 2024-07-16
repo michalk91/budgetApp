@@ -79,9 +79,9 @@ export default function Notifications() {
 
                   startUnMountAnim({
                     containerElem: containerRef.current,
-                    handleUnmountElemWithDecision: handleDecideInvitation,
+                    handleUnmountElem: handleDecideInvitation,
                     id: item.invitationID,
-                    decision: "accept",
+                    secondArg: "accept",
                   });
                   notifyJoinedBudget();
                 }}
@@ -97,9 +97,10 @@ export default function Notifications() {
 
                   startUnMountAnim({
                     containerElem: containerRef.current,
-                    handleUnmountElemWithDecision: handleDecideInvitation,
+                    handleUnmountElem: handleDecideInvitation,
                     id: item.invitationID,
-                    decision: "decline",
+                    secondArg: "decline",
+                    animDir: "fadeInLeft",
                   });
                   notifyRejectedInvitation();
                 }}

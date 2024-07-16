@@ -150,8 +150,8 @@ export default function ShowTransactions({
         currentPage={currentPage}
         rowsPerPage={rowsPerPage}
         setCurrentPage={setCurrentPage}
-        handleDeleteRowWithType={handleDeleteTransaction}
-        handleDeleteRowType={deleteRowType}
+        handleDeleteRow={handleDeleteTransaction}
+        handleDeleteRowSecondArg={deleteRowType}
         handleDeleteRowID={deleteRowID}
         emptyTableCondition={
           transactions?.length === 0 && !addNewExpense && !addNewIncome

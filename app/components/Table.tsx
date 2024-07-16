@@ -32,11 +32,8 @@ export default function Table({
   startSortAnimation,
   addedElemID,
   handleDeleteRowID,
-  handleDeleteRowType,
+  handleDeleteRowSecondArg,
   handleDeleteRow,
-  handleDeleteRowWithType,
-  handleDeleteRowBudgetID,
-  handleDeleteRowWithBudgetID,
 }: TableProps) {
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
@@ -97,38 +94,24 @@ export default function Table({
 
     updateDeleteRowDimensions();
 
-    if (handleDeleteRowWithType) {
-      handleDeleteRowType &&
-        startUnMountAnim({
+    handleDeleteRowSecondArg
+      ? startUnMountAnim({
           containerElem: tableBodyRef.current,
+          handleUnmountElem: handleDeleteRow,
           id: handleDeleteRowID,
-          type: handleDeleteRowType,
-          handleUnmountElemWithType: handleDeleteRowWithType,
-        });
-    } else if (handleDeleteRowWithBudgetID) {
-      handleDeleteRowBudgetID &&
-        startUnMountAnim({
+          secondArg: handleDeleteRowSecondArg,
+        })
+      : startUnMountAnim({
           containerElem: tableBodyRef.current,
+          handleUnmountElem: handleDeleteRow,
           id: handleDeleteRowID,
-          budgetID: handleDeleteRowBudgetID,
-          handleUnmountElemWithBudgetID: handleDeleteRowWithBudgetID,
         });
-    } else if (handleDeleteRow) {
-      startUnMountAnim({
-        containerElem: tableBodyRef.current,
-        id: handleDeleteRowID,
-        handleUnmountElem: handleDeleteRow,
-      });
-    }
   }, [
     handleDeleteRowID,
-    handleDeleteRowType,
+    handleDeleteRowSecondArg,
     startUnMountAnim,
-    handleDeleteRowWithType,
-    handleDeleteRow,
     updateDeleteRowDimensions,
-    handleDeleteRowBudgetID,
-    handleDeleteRowWithBudgetID,
+    handleDeleteRow,
   ]);
 
   useEffect(() => {

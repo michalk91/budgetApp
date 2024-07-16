@@ -6,28 +6,16 @@ const Animate = ({
   keyFrames,
   duration,
   handleUnmountElem,
-  handleUnmountElemWithType,
   id,
-  type,
-  handleUnmountElemWithBudgetID,
-  budgetID,
-  handleUnmountElemWithDecision,
-  decision,
+  secondArg,
 }: {
   elem: HTMLElement;
   keyFrames: Record<string, string | number | undefined>[];
   duration: number;
-  handleUnmountElem?: (id: string) => void;
-  handleUnmountElemWithType?: (id: string, type: "expense" | "income") => void;
+  handleUnmountElem: (id: string, secondArg?: any) => void;
+
   id?: string;
-  type?: "expense" | "income";
-  handleUnmountElemWithBudgetID?: (id: string, budgetID: string) => void;
-  budgetID?: string;
-  handleUnmountElemWithDecision?: (
-    id: string,
-    decision: "accept" | "decline"
-  ) => void;
-  decision?: "accept" | "decline";
+  secondArg: any;
 }) => {
   if (!elem) return;
 
@@ -38,22 +26,13 @@ const Animate = ({
   });
 
   animation.onfinish = () => {
-    handleUnmountElem && id && handleUnmountElem(id);
+    if (!handleUnmountElem) return;
 
-    handleUnmountElemWithType &&
-      id &&
-      type &&
-      handleUnmountElemWithType(id, type);
-
-    handleUnmountElemWithBudgetID &&
-      id &&
-      budgetID &&
-      handleUnmountElemWithBudgetID(id, budgetID);
-
-    handleUnmountElemWithDecision &&
-      id &&
-      decision &&
-      handleUnmountElemWithDecision(id, decision);
+    if (id && secondArg) {
+      handleUnmountElem(id, secondArg);
+    } else if (id) {
+      handleUnmountElem(id);
+    }
   };
 };
 
@@ -83,29 +62,15 @@ const useOnUnMountAnimation = ({
     ({
       containerElem,
       handleUnmountElem,
-      handleUnmountElemWithType,
-      handleUnmountElemWithBudgetID,
-      handleUnmountElemWithDecision,
       id,
-      type,
-      budgetID,
-      decision,
+      secondArg,
+      animDir = "fadeInRight",
     }: {
       containerElem: HTMLElement;
       id: string;
-      handleUnmountElem?: ((id: string) => void) | undefined;
-      handleUnmountElemWithType?: (
-        id: string,
-        type: "expense" | "income"
-      ) => void;
-      type?: "expense" | "income";
-      handleUnmountElemWithBudgetID?: (id: string, budgetID: string) => void;
-      budgetID?: string;
-      handleUnmountElemWithDecision?: (
-        id: string,
-        decision: "accept" | "decline"
-      ) => void;
-      decision?: "accept" | "decline";
+      handleUnmountElem: ((id: string, secondArg?: any) => void) | undefined;
+      secondArg?: any;
+      animDir?: "fadeInRight" | "fadeInLeft";
     }) => {
       if (containerElem === null) return;
 
@@ -152,40 +117,14 @@ const useOnUnMountAnimation = ({
           if (handleUnmountElem) {
             Animate({
               elem,
-              keyFrames: keyFramesFadeInRight,
-              duration: 300,
-              handleUnmountElem,
-              id,
-            });
-          } else if (handleUnmountElemWithType && type) {
-            Animate({
-              elem,
-              keyFrames: keyFramesFadeInRight,
-              duration: 300,
-              handleUnmountElemWithType,
-              id,
-              type,
-            });
-          } else if (handleUnmountElemWithBudgetID && budgetID) {
-            Animate({
-              elem,
-              keyFrames: keyFramesFadeInRight,
-              duration: 300,
-              id,
-              handleUnmountElemWithBudgetID,
-              budgetID,
-            });
-          } else if (handleUnmountElemWithDecision && decision) {
-            Animate({
-              elem,
               keyFrames:
-                decision === "accept"
+                animDir === "fadeInRight"
                   ? keyFramesFadeInRight
                   : keyFramesFadeInLeft,
               duration: 300,
-              handleUnmountElemWithDecision,
+              handleUnmountElem,
               id,
-              decision,
+              secondArg,
             });
           }
         }
