@@ -112,15 +112,15 @@ export default function ShowSelectedBudget() {
               />
             </div>
             {
-              <span className="text-center mb-6 mt-1 text-lg text-blue-700 flex items-center justify-center flex-wrap">
+              <span className="text-center mb-8 mt-3 text-lg text-blue-700 flex items-center justify-center flex-wrap">
                 <RiAdminFill />
                 {userID !== ownerID ? (
-                  <p className="pl-2 mb-4 mt-2">
+                  <p className="pl-2">
                     OWNER:<b className="pl-2">{`${ownerUsername}`}</b>
                     {` (${ownerEmail})`}
                   </p>
                 ) : (
-                  <p className="pl-2 mt-2">
+                  <p className="pl-2">
                     OWNER: <b>{`You`}</b>
                   </p>
                 )}
