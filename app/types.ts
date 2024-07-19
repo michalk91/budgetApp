@@ -36,6 +36,7 @@ export interface UsersSlice {
   userID: null | string;
   username: null | string;
   email: string;
+  loggedInAsGuest: boolean;
 }
 
 export interface State {
@@ -319,4 +320,10 @@ export interface DeleteRowData {
   deleteRowType?: "expense" | "income";
   deleteRowInteractionType?: "delete" | "leave";
   deleteRowBudgetID?: string;
+}
+
+export interface WarningProps {
+  text: string;
+  textColor?: string;
+  additionalStyles?: string;
 }

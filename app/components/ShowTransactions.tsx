@@ -476,8 +476,6 @@ export default function ShowTransactions({
                     userID &&
                       editedTransaction.id === "" &&
                       dispatch(deleteAllTransactions(budgetID));
-
-                    // notifyDeleteAllTransactions();
                   }}
                   additionalStyles={`w-36
                     ${

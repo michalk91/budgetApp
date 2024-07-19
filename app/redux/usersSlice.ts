@@ -173,6 +173,7 @@ const userSlice = createSlice({
     changeUsernameStatus: "idle",
     changeEmailStatus: "idle",
     removeUserStatus: "idle",
+    loggedInAsGuest: false,
     error: undefined,
   } as UsersSlice,
   reducers: {
@@ -222,6 +223,7 @@ const userSlice = createSlice({
 
         state.loginStatus = "succeeded";
         state.userID = action.payload.userID;
+        state.loggedInAsGuest = true;
       })
       .addCase(loginGuest.rejected, (state, action) => {
         state.loginStatus = "failed";
@@ -287,6 +289,8 @@ const userSlice = createSlice({
 
       //------------------------------------------------------------------------------
       .addCase(logoutUser.fulfilled, (state) => {
+        if (state.loggedInAsGuest) state.loggedInAsGuest = false;
+
         state.loginStatus = "loggedOut";
       })
 

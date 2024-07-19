@@ -17,7 +17,7 @@ export default function Categories({ type }: CategoriesProps) {
       ? state.budgets.expenseCategories
       : state.budgets.incomeCategories
   );
-  // const userEmail = useAppSelector((state) => state.user.email);
+  const loggedInAsGuest = useAppSelector((state) => state.user.loggedInAsGuest);
   const allowManageCategories = useAppSelector(
     (state) => state.budgets.allowManageCategories
   );
@@ -28,8 +28,6 @@ export default function Categories({ type }: CategoriesProps) {
   const [newCategory, setNewCategory] = useState(categories);
 
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // const GUEST_EMAIL = process.env.GUEST_EMAIL;
 
   return (
     <form
@@ -87,10 +85,10 @@ export default function Categories({ type }: CategoriesProps) {
               handleClick={(e) => {
                 e.preventDefault();
                 if (
-                  // userEmail === GUEST_EMAIL ||
-                  userID !== ownerID &&
-                  userID &&
-                  !allowManageCategories.includes(userID)
+                  loggedInAsGuest ||
+                  (userID !== ownerID &&
+                    userID &&
+                    !allowManageCategories.includes(userID))
                 )
                   return;
 
@@ -109,10 +107,10 @@ export default function Categories({ type }: CategoriesProps) {
                 inputRef.current.value = "";
               }}
               additionalStyles={`text-white font-bold py-2 px-6 rounded-full mt-4 max-md:px-6 max-md:py-4 ${
-                // userEmail === GUEST_EMAIL ||
-                userID !== ownerID &&
-                userID &&
-                !allowManageCategories.includes(userID)
+                loggedInAsGuest ||
+                (userID !== ownerID &&
+                  userID &&
+                  !allowManageCategories.includes(userID))
                   ? "cursor-not-allowed bg-blue-300 "
                   : "bg-blue-500 hover:bg-blue-700"
               }`}
@@ -128,10 +126,10 @@ export default function Categories({ type }: CategoriesProps) {
                 e.preventDefault();
 
                 if (
-                  // userEmail === GUEST_EMAIL ||
-                  userID !== ownerID &&
-                  userID &&
-                  !allowManageCategories.includes(userID)
+                  loggedInAsGuest ||
+                  (userID !== ownerID &&
+                    userID &&
+                    !allowManageCategories.includes(userID))
                 )
                   return;
 
@@ -145,10 +143,10 @@ export default function Categories({ type }: CategoriesProps) {
                 setCategoryToDelete("");
               }}
               additionalStyles={`text-white font-bold py-2 mx-1 px-6 rounded-full max-md:px-6 max-md:py-4 ${
-                // userEmail === GUEST_EMAIL ||
-                userID !== ownerID &&
-                userID &&
-                !allowManageCategories.includes(userID)
+                loggedInAsGuest ||
+                (userID !== ownerID &&
+                  userID &&
+                  !allowManageCategories.includes(userID))
                   ? "cursor-not-allowed bg-red-300 "
                   : "bg-red-600 hover:bg-red-800"
               } `}
