@@ -67,11 +67,26 @@ export default function ShowTransactions({
 
   const formatter = useFormatter();
 
-  const handleDeleteTransaction = (id: string, type: "expense" | "income") => {
-    dispatch(
-      deleteTransaction({ budgetID, transactionToDelete: { id, type } })
-    );
-  };
+  const notifyDeleteAllTransactions = useCallback(
+    () => toast.success("All transactions have been successfully deleted."),
+    []
+  );
+
+  const notifyTransactionDeleted = useCallback(
+    () => toast.success("The transaction has been successfully deleted."),
+    []
+  );
+
+  const handleDeleteTransaction = useCallback(
+    (id: string, type: "expense" | "income") => {
+      dispatch(
+        deleteTransaction({ budgetID, transactionToDelete: { id, type } })
+      );
+
+      notifyTransactionDeleted();
+    },
+    [dispatch, budgetID, notifyTransactionDeleted]
+  );
 
   const handleStartEdit = (id: string) => {
     setEditedTransaction((state) => ({ ...state, id }));
@@ -134,11 +149,6 @@ export default function ShowTransactions({
   useEffect(() => {
     dispatch(resetAddedElemID());
   }, [dispatch, sortBy, sortDirection, currentPage]);
-
-  const notifyDeleteAllTransactions = useCallback(
-    () => toast.success("All transactions have been successfully deleted"),
-    []
-  );
 
   useEffect(() => {
     if (deleteAllTransactionsStatus === "succeeded") {

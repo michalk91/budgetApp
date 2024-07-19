@@ -90,6 +90,21 @@ export default function ShowBudgets() {
 
   const pathname = usePathname();
 
+  const notifyDeleteAllBudgets = useCallback(
+    () => toast.success("All budgets have been successfully deleted."),
+    []
+  );
+
+  const notifyBudgetDeleted = useCallback(
+    () => toast.success("The budget has been successfully deleted."),
+    []
+  );
+
+  const notifyBudgetLeft = useCallback(
+    () => toast.success("The budget has been successfully left."),
+    []
+  );
+
   useEffect(() => {
     dispatch(
       fetchBudgets({
@@ -99,13 +114,23 @@ export default function ShowBudgets() {
     );
   }, [dispatch, globalBudgetSortBy, globalBudgetSortDirection]);
 
-  const handleDeleteBudget = (id: string) => {
-    dispatch(deleteBudget(id));
-  };
+  const handleDeleteBudget = useCallback(
+    (id: string) => {
+      dispatch(deleteBudget(id));
 
-  const handleLeaveBudget = (id: string) => {
-    dispatch(leaveBudget(id));
-  };
+      notifyBudgetDeleted();
+    },
+    [notifyBudgetDeleted, dispatch]
+  );
+
+  const handleLeaveBudget = useCallback(
+    (id: string) => {
+      dispatch(leaveBudget(id));
+
+      notifyBudgetLeft();
+    },
+    [dispatch, notifyBudgetLeft]
+  );
 
   const onTransitionEnd = useCallback(() => {
     dispatch(setAllowTransition(false));
@@ -182,11 +207,6 @@ export default function ShowBudgets() {
   useEffect(() => {
     setBudgetLoaded(false);
   }, [pathname]);
-
-  const notifyDeleteAllBudgets = useCallback(
-    () => toast.success("All budgets have been successfully deleted"),
-    []
-  );
 
   useEffect(() => {
     if (deleteAllBudgetsStatus === "succeeded") {

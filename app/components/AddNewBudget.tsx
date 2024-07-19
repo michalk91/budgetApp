@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { AddNewBudgetProps } from "../types";
 import { addNewBudget } from "../redux/budgetsSlice";
 import Button from "./Button";
+import { toast } from "react-toastify";
 
 export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
   const dispatch = useAppDispatch();
@@ -28,13 +29,49 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
 
   const { name, amount, currencyType } = budgetFromInput;
 
+  const notifyBudgetValueIsTooSmall = useCallback(
+    () => toast.error("The budget value must be greater than 0."),
+    []
+  );
+
+  const notifyEmptyAmountValue = useCallback(
+    () => toast.error("You need to enter the budget amount."),
+    []
+  );
+
+  const notifyEmptyBudgetName = useCallback(
+    () => toast.error("You need to enter the budget name."),
+    []
+  );
+
+  const notifyBudgetAdded = useCallback(
+    () =>
+      toast.success(
+        "The budget has been successfully added to your dashboard."
+      ),
+    []
+  );
+
   const handleAddBudget = useCallback(
     (e: SyntheticEvent) => {
       e.preventDefault();
 
+      if (!loggedInAsGuest && name === "") {
+        notifyEmptyBudgetName();
+        return;
+      }
+
+      if (amount === "") {
+        notifyEmptyAmountValue();
+        return;
+      }
+
       const budgetValue = Number(amount);
 
-      if (budgetValue <= 0) return;
+      if (budgetValue <= 0) {
+        notifyBudgetValueIsTooSmall();
+        return;
+      }
 
       dispatch(
         addNewBudget({
@@ -45,6 +82,7 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
       );
       setBudgetFromInput({ name: "", amount: "", currencyType: "PLN" });
       setNewBudget(false);
+      notifyBudgetAdded();
     },
     [
       amount,
@@ -54,6 +92,10 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
       setNewBudget,
       loggedInAsGuest,
       sampleBudgetName,
+      notifyBudgetValueIsTooSmall,
+      notifyEmptyAmountValue,
+      notifyBudgetAdded,
+      notifyEmptyBudgetName,
     ]
   );
 

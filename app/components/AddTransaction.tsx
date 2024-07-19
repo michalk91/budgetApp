@@ -4,6 +4,7 @@ import { useAppDispatch } from "../redux/hooks";
 import type { AddTransactionProps } from "../types";
 import Button from "./Button";
 import { useAppSelector } from "../redux/hooks";
+import { toast } from "react-toastify";
 
 export default function AddTransaction({
   setAdd,
@@ -23,10 +24,36 @@ export default function AddTransaction({
 
   const { amount, category, comment } = valueFromInput;
 
+  const notifyEmptyAmountValue = useCallback(
+    () => toast.error("You need to enter the transaction amount."),
+    []
+  );
+
+  const notifyAmountIsTooSmall = useCallback(
+    () => toast.error("The amount value must be greater than 0."),
+    []
+  );
+
+  const notifyTransactionAdded = useCallback(
+    () =>
+      toast.success(
+        "The transaction has been successfully added to your expenses."
+      ),
+    []
+  );
+
   const addNew = useCallback(() => {
+    if (amount === "") {
+      notifyEmptyAmountValue();
+      return;
+    }
+
     const amountValue = Number(amount);
 
-    if (amountValue <= 0) return;
+    if (amountValue <= 0) {
+      notifyAmountIsTooSmall();
+      return;
+    }
 
     dispatch(
       addTransaction({
@@ -38,7 +65,20 @@ export default function AddTransaction({
     setValueFromInput((state) => ({ ...state, amount: "" }));
 
     setAdd(false);
-  }, [amount, category, dispatch, type, setAdd, comment, budgetID]);
+
+    notifyTransactionAdded();
+  }, [
+    amount,
+    category,
+    dispatch,
+    type,
+    setAdd,
+    comment,
+    budgetID,
+    notifyEmptyAmountValue,
+    notifyAmountIsTooSmall,
+    notifyTransactionAdded,
+  ]);
 
   return (
     <tr className="bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700 max-xl:text-center">
