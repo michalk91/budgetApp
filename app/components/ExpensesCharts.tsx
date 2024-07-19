@@ -1,5 +1,6 @@
 import { Chart } from "react-google-charts";
 import { useAppSelector } from "../redux/hooks";
+import Warning from "./Warning";
 
 export default function ExpensesCharts() {
   const transactions = useAppSelector((state) => state.budgets.transactions);
@@ -55,11 +56,10 @@ export default function ExpensesCharts() {
           </section>
         </div>
       ) : (
-        <div className="p-10 bg-white mt-10 rounded-lg shadow-xl">
-          <span className="text-2xl">
-            There is not enough data to generate a visualization.
-          </span>
-        </div>
+        <Warning
+          text="There is not enough data to generate a visualization."
+          additionalStyles="mt-10"
+        />
       )}
     </>
   );

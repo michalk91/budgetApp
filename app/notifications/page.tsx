@@ -4,6 +4,7 @@ import { decideInvitation } from "../redux/invitationsSlice";
 import useOnUnMountAnimation from "../hooks/useOnUnMountAnimation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import Warning from "../components/Warning";
 
 export default function Notifications() {
   const dispatch = useAppDispatch();
@@ -112,11 +113,10 @@ export default function Notifications() {
           </div>
         ))
       ) : (
-        <div className="p-10 w-full text-center bg-white mt-4 rounded-lg shadow-xl">
-          <span className="text-2xl">
-            {`You don't have any notifications.`}
-          </span>
-        </div>
+        <Warning
+          text="You don't have any notifications."
+          additionalStyles="text-center w-full mt-4"
+        />
       )}
     </div>
   );

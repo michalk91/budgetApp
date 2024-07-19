@@ -17,6 +17,7 @@ import { RiAdminFill } from "react-icons/ri";
 import type { SortOptions } from "../types";
 import ShowError from "./ShowError";
 import { useIDfromPathname } from "../hooks/useIDfromPathname";
+import Warning from "./Warning";
 
 export default function ShowSelectedBudget() {
   const dispatch = useAppDispatch();
@@ -42,6 +43,8 @@ export default function ShowSelectedBudget() {
   const fetchSelectedBudgetError = useAppSelector(
     (state) => state.budgets.showSelectedBudgetError
   );
+  const userEmail = useAppSelector((state) => state.user.email);
+  const loggedInAsGuest = useAppSelector((state) => state.user.loggedInAsGuest);
 
   const [expensesSort, setExpensesSort] = useState<SortOptions>({
     sortBy: "timestamp",
@@ -167,6 +170,12 @@ export default function ShowSelectedBudget() {
 
             {activeOption === "Manage categories" && (
               <>
+                {loggedInAsGuest && (
+                  <Warning
+                    text={`The "guest" account cannot manage categories. Create your own account.`}
+                    additionalStyles="text-red-700 my-10"
+                  />
+                )}
                 <Categories type="expense" />
                 <Categories type="income" />
               </>
