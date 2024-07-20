@@ -40,7 +40,7 @@ const useOnUnMountAnimation = ({
   startGroupAnim,
 }: {
   containerElem?: HTMLElement | null;
-  startGroupAnim?: Record<string, any>[] | number;
+  startGroupAnim?: Record<string, any>[] | number | string;
 }) => {
   const {
     updateTransitionDimensions,
@@ -111,8 +111,6 @@ const useOnUnMountAnimation = ({
         const elemID = elem.dataset.id!;
 
         if (elemID === id) {
-          enableTransition();
-
           if (handleUnmountElem) {
             Animate({
               elem,
@@ -128,6 +126,7 @@ const useOnUnMountAnimation = ({
           }
         }
       });
+      enableTransition();
     },
     [enableTransition]
   );

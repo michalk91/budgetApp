@@ -6,10 +6,12 @@ const useGroupTransition = ({
   elemsArray,
   startAnim,
   duration = 700,
+  easing = "cubic-bezier(.25,.75,.5,1.25)",
 }: {
   elemsArray?: HTMLElement | null;
-  startAnim?: Record<string, any>[] | number;
+  startAnim?: Record<string, any>[] | number | string;
   duration?: number;
+  easing?: string;
 }) => {
   const initialPositions = useRef<{ [key: string]: DOMRect }>({});
   const disableTransitionRef = useRef(false);
@@ -68,11 +70,11 @@ const useGroupTransition = ({
 
         const delta = getDelta(previous, next as DOMRect);
 
-        delta.translateY !== 0 &&
+        Math.abs(delta.translateY) > 0 &&
           invertAndPlay({
             delta,
             elem: child,
-            easing: "cubic-bezier(.25,.75,.5,1.25)",
+            easing,
             duration,
             onlyYAxis: true,
             onTransitionStart: onGroupTransitionStart,
@@ -87,6 +89,7 @@ const useGroupTransition = ({
     onGroupTransitionEnd,
     onGroupTransitionStart,
     duration,
+    easing,
   ]);
 
   return {
