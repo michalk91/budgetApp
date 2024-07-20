@@ -62,13 +62,24 @@ export const fetchBudgets = createAsyncThunk(
     );
     const combinedBudgets = [...yourBudgets, ...sharedBudgets];
 
+    const yourBudgetsCounter = yourBudgets.length;
+    const sharedBudgetsCounter = sharedBudgets.length;
+
     if (sortDirection === "without") {
-      return combinedBudgets;
+      return {
+        sortedBudget: combinedBudgets,
+        yourBudgetsCounter,
+        sharedBudgetsCounter,
+      };
     } else {
       const sortedBudget = useSort(combinedBudgets, `${sortBy}`);
       return sortDirection === "ascending"
-        ? sortedBudget
-        : sortedBudget.reverse();
+        ? { sortedBudget, yourBudgetsCounter, sharedBudgetsCounter }
+        : {
+            sortedBudget: sortedBudget.reverse(),
+            yourBudgetsCounter,
+            sharedBudgetsCounter,
+          };
     }
   }
 );
@@ -151,6 +162,8 @@ export const deleteAllBudgets = createAsyncThunk(
       query(collection(db, "budgets"), where("ownerID", "==", currentUserID))
     );
 
+    const deletedBudgetsIDs = [];
+
     for (const budget of budgets.docs) {
       const transactions = await getDocs(
         collection(db, `budgets/${budget.id}/transactions`)
@@ -164,10 +177,11 @@ export const deleteAllBudgets = createAsyncThunk(
 
       for (const budget of budgets.docs) {
         await deleteDoc(doc(db, "budgets", budget.id));
+        deletedBudgetsIDs.push(budget.id);
       }
     }
 
-    return { budgets: [] };
+    return { deletedBudgetsIDs };
   }
 );
 
@@ -629,6 +643,38 @@ export const leaveBudget = createAsyncThunk(
   }
 );
 
+export const leaveAllBudgets = createAsyncThunk(
+  "invitations/leaveAllBudgets",
+  async (_, { getState }) => {
+    const state = getState() as State;
+
+    const currentUserID = state.user.userID;
+
+    if (!currentUserID) return;
+
+    const sharedBudgetsQuery = query(
+      collection(db, "budgets"),
+      where("usersWithAccess", "array-contains", currentUserID)
+    );
+    const querySnapSharedBudgets = await getDocs(sharedBudgetsQuery);
+
+    const leftBudgetsIDs = [];
+
+    for (const budget of querySnapSharedBudgets.docs) {
+      await updateDoc(
+        doc(db, "budgets", budget.id),
+
+        {
+          usersWithAccess: arrayRemove(currentUserID),
+        }
+      );
+      leftBudgetsIDs.push(budget.id);
+    }
+
+    return { leftBudgetsIDs };
+  }
+);
+
 const budgetsSlice = createSlice({
   name: "budgets",
   initialState: {
@@ -647,6 +693,7 @@ const budgetsSlice = createSlice({
     fetchBudgetsStatus: "idle",
     deleteAllBudgetsStatus: "idle",
     deleteAllTransactionsStatus: "idle",
+    leaveAllBudgetsStatus: "idle",
     selectedOption: "Expenses",
     allowManageAllTransactions: [],
     allowManageCategories: [],
@@ -660,6 +707,8 @@ const budgetsSlice = createSlice({
     sortDirection: "without",
     searchKeywords: "",
     addedElemID: "",
+    yourBudgetsCounter: 0,
+    sharedBudgetsCounter: 0,
   } as BudgetsSlice,
   reducers: {
     setSelectedOption: (state, action) => {
@@ -686,6 +735,9 @@ const budgetsSlice = createSlice({
     },
     resetDeleteAllBudgetsStatus: (state) => {
       state.deleteAllBudgetsStatus = "idle";
+    },
+    resetLeaveAllBudgetsStatus: (state) => {
+      state.leaveAllBudgetsStatus = "idle";
     },
   },
   extraReducers: (builder) => {
@@ -726,7 +778,9 @@ const budgetsSlice = createSlice({
       .addCase(fetchBudgets.fulfilled, (state, action) => {
         if (!action.payload) return;
 
-        state.budgetsArray = action.payload;
+        state.budgetsArray = action.payload.sortedBudget;
+        state.yourBudgetsCounter = action.payload.yourBudgetsCounter;
+        state.sharedBudgetsCounter = action.payload.sharedBudgetsCounter;
         state.fetchBudgetsStatus = "succeeded";
       })
 
@@ -737,6 +791,7 @@ const budgetsSlice = createSlice({
         state.budgetsArray?.push(action.payload);
         state.currencyType = action.payload.currencyType;
         state.addedElemID = action.payload.budgetID;
+        state.yourBudgetsCounter++;
       })
 
       //------------------------------------------------------------------------
@@ -746,6 +801,8 @@ const budgetsSlice = createSlice({
         state.budgetsArray = state.budgetsArray.filter(
           (budget) => budget.budgetID !== action.payload?.id
         );
+
+        state.yourBudgetsCounter--;
       })
       //--------------------------------------------------
 
@@ -756,7 +813,11 @@ const budgetsSlice = createSlice({
       .addCase(deleteAllBudgets.fulfilled, (state, action) => {
         if (!action.payload) return;
 
-        state.budgetsArray = action.payload.budgets;
+        state.budgetsArray = state.budgetsArray.filter(
+          (budget) =>
+            !action.payload?.deletedBudgetsIDs.includes(budget.budgetID)
+        );
+        state.yourBudgetsCounter = 0;
         state.deleteAllBudgetsStatus = "succeeded";
       })
 
@@ -765,6 +826,26 @@ const budgetsSlice = createSlice({
       })
 
       //-------------------------------------------------
+
+      .addCase(leaveAllBudgets.pending, (state) => {
+        state.leaveAllBudgetsStatus = "loading";
+      })
+
+      .addCase(leaveAllBudgets.fulfilled, (state, action) => {
+        if (!action.payload) return;
+
+        state.budgetsArray = state.budgetsArray.filter(
+          (budget) => !action.payload?.leftBudgetsIDs.includes(budget.budgetID)
+        );
+        state.sharedBudgetsCounter = 0;
+        state.leaveAllBudgetsStatus = "succeeded";
+      })
+
+      .addCase(leaveAllBudgets.rejected, (state) => {
+        state.leaveAllBudgetsStatus = "failed";
+      })
+
+      //----------------------------------------------------
 
       .addCase(addCategory.fulfilled, (state, action) => {
         if (!action.payload) return;
@@ -899,6 +980,7 @@ const budgetsSlice = createSlice({
         state.budgetsArray = state.budgetsArray.filter(
           (budget) => budget.budgetID !== action.payload
         );
+        state.sharedBudgetsCounter--;
       });
   },
 });
@@ -912,6 +994,7 @@ export const {
   resetAddedElemID,
   resetDeleteAllBudgetsStatus,
   resetDeleteAllTransactionsStatus,
+  resetLeaveAllBudgetsStatus,
 } = budgetsSlice.actions;
 
 export default budgetsSlice.reducer;

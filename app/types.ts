@@ -61,6 +61,7 @@ export interface BudgetsSlice extends SortOptions {
   fetchBudgetsStatus: "idle" | "loading" | "succeeded" | "failed";
   deleteAllBudgetsStatus: "idle" | "loading" | "succeeded" | "failed";
   deleteAllTransactionsStatus: "idle" | "loading" | "succeeded" | "failed";
+  leaveAllBudgetsStatus: "idle" | "loading" | "succeeded" | "failed";
   selectedOption: string;
   allowManageAllTransactions: string[];
   allowManageCategories: string[];
@@ -72,6 +73,8 @@ export interface BudgetsSlice extends SortOptions {
   currentPage: number;
   searchKeywords: string;
   addedElemID: string;
+  yourBudgetsCounter: number;
+  sharedBudgetsCounter: number;
 }
 
 export interface InvitedUser {

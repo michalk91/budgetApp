@@ -10,6 +10,8 @@ import {
   setSearchKeywords,
   resetAddedElemID,
   resetDeleteAllBudgetsStatus,
+  leaveAllBudgets,
+  resetLeaveAllBudgetsStatus,
 } from "../redux/budgetsSlice";
 import Table from "./Table";
 import type { SortOptions, DeleteRowData } from "../types";
@@ -67,6 +69,17 @@ export default function ShowBudgets() {
     (state) => state.budgets.deleteAllBudgetsStatus
   );
 
+  const leaveAllBudgetsStatus = useAppSelector(
+    (state) => state.budgets.leaveAllBudgetsStatus
+  );
+
+  const yourBudgetsCounter = useAppSelector(
+    (state) => state.budgets.yourBudgetsCounter
+  );
+  const sharedBudgetsCounter = useAppSelector(
+    (state) => state.budgets.sharedBudgetsCounter
+  );
+
   const addedElemID = useAppSelector((state) => state.budgets.addedElemID);
 
   const [addNewBudget, setAddNewBudget] = useState(false);
@@ -95,13 +108,18 @@ export default function ShowBudgets() {
     []
   );
 
+  const notifyLeaveAllBudgets = useCallback(
+    () => toast.success("All shared budgets have been successfully exited."),
+    []
+  );
+
   const notifyBudgetDeleted = useCallback(
     () => toast.success("The budget has been successfully deleted."),
     []
   );
 
   const notifyBudgetLeft = useCallback(
-    () => toast.success("The budget has been successfully left."),
+    () => toast.success("The shared budget has been successfully left."),
     []
   );
 
@@ -214,6 +232,13 @@ export default function ShowBudgets() {
       dispatch(resetDeleteAllBudgetsStatus());
     }
   }, [deleteAllBudgetsStatus, dispatch, notifyDeleteAllBudgets]);
+
+  useEffect(() => {
+    if (leaveAllBudgetsStatus === "succeeded") {
+      notifyLeaveAllBudgets();
+      dispatch(resetLeaveAllBudgetsStatus());
+    }
+  }, [leaveAllBudgetsStatus, dispatch, notifyLeaveAllBudgets]);
 
   return (
     <div className="flex flex-col items-center w-full mt-10 max-md:mt-4">
@@ -404,7 +429,7 @@ export default function ShowBudgets() {
                 Add new budget
               </Button>
 
-              {budgets?.length > 1 &&
+              {yourBudgetsCounter > 1 &&
                 (deleteAllBudgetsStatus === "loading" ? (
                   <Button additionalStyles="bg-red-700 w-36">
                     <Loader />
@@ -425,6 +450,31 @@ export default function ShowBudgets() {
                       }`}
                     >
                       Delete All
+                    </Button>
+                  </>
+                ))}
+
+              {sharedBudgetsCounter > 1 &&
+                (leaveAllBudgetsStatus === "loading" ? (
+                  <Button additionalStyles="bg-blue-600 w-36">
+                    <Loader />
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      handleClick={() => {
+                        if (globalSearchKeywords !== "") return;
+
+                        dispatch(leaveAllBudgets());
+                      }}
+                      additionalStyles={`w-36
+                      ${
+                        globalSearchKeywords !== ""
+                          ? "bg-blue-200 hover:hover:cursor-not-allowed"
+                          : "bg-blue-600 hover:bg-blue-800"
+                      }`}
+                    >
+                      Leave All
                     </Button>
                   </>
                 ))}
