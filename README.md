@@ -17,13 +17,14 @@ This is a budget management application. Budgets can be managed independently or
 ![BudgetApp - Google Chrome 2024-07-13 18-59-44](https://github.com/user-attachments/assets/7933c3d4-c892-44fd-9370-3c69144ba467) <p>&nbsp;</p>
 ![BudgetApp - Google Chrome 2024-07-13 19-02-06](https://github.com/user-attachments/assets/81652d81-439c-4001-be1e-e0b40aeb3aab)  <p>&nbsp;</p>
 ![BudgetApp - Google Chrome 2024-07-13 19-07-29](https://github.com/user-attachments/assets/e0174920-2a18-42d6-a460-7047d9d423d7)  <p>&nbsp;</p>
-![BudgetApp - Google Chrome 2024-07-13 19-39-29](https://github.com/user-attachments/assets/7ee0b487-c460-4cef-a4bc-1233f393b003)  <p>&nbsp;</p>
+ ![BudgetApp - Google Chrome 2024-07-15 19-51-15](https://github.com/user-attachments/assets/70e767a8-2df6-465c-8ab7-236596b65fa7) <p>&nbsp;</p>
 
 
 ## NPM Packages used:
 - NextJS 14,
 - Tailwindcss
 - Redux-Toolkit,
+
 - Redux-persist,
 - Firebase,
 - React-toastify,
