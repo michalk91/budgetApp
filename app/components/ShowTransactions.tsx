@@ -441,7 +441,7 @@ export default function ShowTransactions({
           ))}
       </Table>
 
-      <div className="flex justify-center text-center mt-6">
+      <div className="flex justify-center flex-wrap mt-6">
         {!addNewExpense && !addNewIncome && (
           <>
             <Button

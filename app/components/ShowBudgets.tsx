@@ -411,7 +411,7 @@ export default function ShowBudgets() {
           )}
         </Table>
 
-        <div className="flex text-center mt-6">
+        <div className="flex flex-wrap justify-center mt-6">
           {!addNewBudget && (
             <>
               <Button

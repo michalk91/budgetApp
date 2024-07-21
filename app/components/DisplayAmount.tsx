@@ -14,9 +14,11 @@ export default function DisplayAmount({
 
   return (
     <>
-      <span className={`text-center p-5 text-${fontSize} max-md:p-1`}>
+      <span
+        className={`max-w-full text-center p-5 text-${fontSize} max-md:p-1`}
+      >
         {`${title}: `}
-        <b className={titleClass}>
+        <b className={`break-words ${titleClass}`}>
           {formatCurrency(valueFromStore, currencyType)}
         </b>
       </span>

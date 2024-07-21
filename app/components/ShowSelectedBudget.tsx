@@ -76,12 +76,14 @@ export default function ShowSelectedBudget() {
     <div className="flex flex-col items-center animate-fadeInUp w-full opacity-0">
       {fetchSelectedBudgetError === "" ? (
         <>
-          <div className="border-solid border-2 border-blue-400 shadow-xl rounded-md p-4 mt-10">
+          <div className="max-w-full border-solid border-2 border-blue-400 shadow-xl rounded-md p-4 mt-10">
             <div className="flex flex-wrap  justify-center">
               {budgetName !== "" && (
-                <span className={`text-center p-5 text-2xl max-md:p-1`}>
+                <span
+                  className={`max-w-full text-center p-5 text-2xl max-md:p-1`}
+                >
                   {`Budget name: `}
-                  <b className="text-blac">{`"${budgetName}"`}</b>
+                  <b className="break-words text-blac">{`"${budgetName}"`}</b>
                 </span>
               )}
 
