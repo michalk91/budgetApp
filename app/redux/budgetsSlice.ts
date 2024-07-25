@@ -196,7 +196,7 @@ export const addNewBudget = createAsyncThunk(
 
     const username = state.user.username;
 
-    if (!currentUserEmail || !currentUserID) return;
+    if (!currentUserID) return;
 
     const currentDate = new Date(
       Timestamp.now().seconds * 1000
@@ -206,8 +206,8 @@ export const addNewBudget = createAsyncThunk(
       ...newBudget,
       timestamp: Timestamp.now().seconds,
       ownerID: currentUserID,
-      ownerEmail: currentUserEmail,
-      ownerUsername: username,
+      ownerEmail: currentUserEmail ? currentUserEmail : "anonymous",
+      ownerUsername: username ? username : "anonymous",
       addDate: currentDate,
       usersWithAccess: [],
       allowManageAllTransactions: [],
@@ -469,7 +469,7 @@ export const addTransaction = createAsyncThunk(
 
     const username = state.user.username;
 
-    if (!budgetID || !userID || !username) return;
+    if (!budgetID || !userID) return;
 
     const currentDate = new Date(
       Timestamp.now().seconds * 1000
@@ -481,7 +481,7 @@ export const addTransaction = createAsyncThunk(
       timestamp: Timestamp.now().seconds,
       date: currentDate,
       ownerID: userID,
-      ownerUsername: username,
+      ownerUsername: username ? username : "anonymous",
       comment: transaction.comment,
     };
 

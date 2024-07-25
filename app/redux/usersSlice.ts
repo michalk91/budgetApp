@@ -10,6 +10,7 @@ import {
   deleteUser,
   setPersistence,
   browserLocalPersistence,
+  signInAnonymously,
 } from "firebase/auth";
 import { auth, db } from "../firebase/config";
 import {
@@ -21,10 +22,8 @@ import {
   collection,
   getDocs,
 } from "firebase/firestore";
-import type { User, UsersSlice } from "../types";
-
-const GUEST_EMAIL = process.env.GUEST_EMAIL;
-const GUEST_PASS = process.env.GUEST_PASS;
+import type { User, UsersSlice, State } from "../types";
+import { query, where } from "firebase/firestore";
 
 export const fetchUserData = createAsyncThunk(
   "users/fetchUserData",
@@ -145,24 +144,71 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-export const loginGuest = createAsyncThunk("users/loginGuest", async () => {
-  if (!GUEST_EMAIL || !GUEST_PASS) return;
+export const loginAnonymously = createAsyncThunk(
+  "users/loginGuest",
+  async () => {
+    const userCredential = await signInAnonymously(auth);
 
-  const userCredential = await signInWithEmailAndPassword(
-    auth,
-    GUEST_EMAIL,
-    GUEST_PASS
-  );
+    const userID = userCredential.user.uid;
 
-  const userID = userCredential.user.uid;
+    return { userID };
+  }
+);
 
-  return { userID };
-});
+export const logoutUser = createAsyncThunk(
+  "users/logoutUser",
+  async (_, { getState }) => {
+    const auth = getAuth();
 
-export const logoutUser = createAsyncThunk("users/logoutUser", async () => {
-  const auth = getAuth();
-  signOut(auth);
-});
+    const state = getState() as State;
+    const isAnonymusUser = state.user.loggedInAsAnonymous;
+
+    if (isAnonymusUser) {
+      const currentUserID = state.user.userID;
+
+      if (!currentUserID) return;
+
+      const budgets = await getDocs(
+        query(collection(db, "budgets"), where("ownerID", "==", currentUserID))
+      );
+
+      const invitations = await getDocs(
+        query(
+          collection(db, `invitations`),
+          where("ownerID", "==", currentUserID)
+        )
+      );
+
+      for (const invitation of invitations.docs) {
+        await deleteDoc(doc(db, `invitations`, invitation.id));
+      }
+
+      const deletedBudgetsIDs = [];
+
+      for (const budget of budgets.docs) {
+        const transactions = await getDocs(
+          collection(db, `budgets/${budget.id}/transactions`)
+        );
+
+        for (const transaction of transactions.docs) {
+          await deleteDoc(
+            doc(db, `budgets/${budget.id}/transactions`, transaction.id)
+          );
+        }
+
+        for (const budget of budgets.docs) {
+          await deleteDoc(doc(db, "budgets", budget.id));
+          deletedBudgetsIDs.push(budget.id);
+        }
+      }
+      const user = auth?.currentUser;
+      await user?.reload();
+      if (user) await deleteUser(user);
+    } else {
+      signOut(auth);
+    }
+  }
+);
 
 const userSlice = createSlice({
   name: "user",
@@ -173,7 +219,7 @@ const userSlice = createSlice({
     changeUsernameStatus: "idle",
     changeEmailStatus: "idle",
     removeUserStatus: "idle",
-    loggedInAsGuest: false,
+    loggedInAsAnonymous: false,
     error: undefined,
   } as UsersSlice,
   reducers: {
@@ -215,17 +261,17 @@ const userSlice = createSlice({
 
       //--------------------------------------------------------------------------------
 
-      .addCase(loginGuest.pending, (state) => {
-        state.loginStatus = "loadingGuest";
+      .addCase(loginAnonymously.pending, (state) => {
+        state.loginStatus = "loadingAnonymous";
       })
-      .addCase(loginGuest.fulfilled, (state, action) => {
+      .addCase(loginAnonymously.fulfilled, (state, action) => {
         if (!action.payload) return;
 
         state.loginStatus = "succeeded";
         state.userID = action.payload.userID;
-        state.loggedInAsGuest = true;
+        state.loggedInAsAnonymous = true;
       })
-      .addCase(loginGuest.rejected, (state, action) => {
+      .addCase(loginAnonymously.rejected, (state, action) => {
         state.loginStatus = "failed";
         state.error = action.error.message;
       })
@@ -289,9 +335,14 @@ const userSlice = createSlice({
 
       //------------------------------------------------------------------------------
       .addCase(logoutUser.fulfilled, (state) => {
-        if (state.loggedInAsGuest) state.loggedInAsGuest = false;
+        if (state.loggedInAsAnonymous) {
+          state.loggedInAsAnonymous = false;
+        }
 
         state.loginStatus = "loggedOut";
+        state.email = "";
+        state.userID = "";
+        state.username = "";
       })
 
       //-----------------------------------------------------------------------------------

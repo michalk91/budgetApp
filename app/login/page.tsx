@@ -6,7 +6,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAppSelector } from "../redux/hooks";
 import { useAppDispatch } from "../redux/hooks";
-import { loginUser, loginGuest, resetLoginStatus } from "../redux/usersSlice";
+import {
+  loginUser,
+  loginAnonymously,
+  resetLoginStatus,
+} from "../redux/usersSlice";
 import Loader from "../components/Loader";
 import { toast } from "react-toastify";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
@@ -41,10 +45,10 @@ const Login = () => {
     dispatch(loginUser({ email: email, password: password }));
   };
 
-  const handleGuestLogin = (e: SyntheticEvent) => {
+  const handleAnonymousLogin = (e: SyntheticEvent) => {
     e.preventDefault();
 
-    dispatch(loginGuest());
+    dispatch(loginAnonymously());
   };
 
   useEffect(() => {
@@ -149,18 +153,18 @@ const Login = () => {
           </Link>
         </p>
 
-        {loginStatus !== "loadingGuest" ? (
+        {loginStatus !== "loadingAnonymous" ? (
           <button
             type="button"
-            className="bg-green-600 w-3/4 hover:bg-green-800 text-white font-bold py-2 mt-6 px-6 rounded-full -mb-4 max-md:mb-4"
-            onClick={(e) => handleGuestLogin(e)}
+            className="bg-green-600 w-3/4 h-[75px] hover:bg-green-800 text-white font-bold py-2 mt-6 px-6 rounded-full -mb-4 max-md:mb-4"
+            onClick={(e) => handleAnonymousLogin(e)}
           >
-            Login as guest
+            Login as anonymous
           </button>
         ) : (
           <button
             type="button"
-            className="bg-green-600 w-3/4 hover:bg-green-800 text-white font-bold py-2 mt-6 px-6 rounded-full -mb-4 max-md:mb-4"
+            className="bg-green-600 w-3/4 h-[75px] hover:bg-green-800 text-white font-bold py-2 mt-6 px-6 rounded-full -mb-4 max-md:mb-4"
           >
             <Loader />
           </button>

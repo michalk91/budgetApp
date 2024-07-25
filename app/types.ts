@@ -24,7 +24,7 @@ export interface UsersSlice {
   loginStatus:
     | "idle"
     | "loading"
-    | "loadingGuest"
+    | "loadingAnonymous"
     | "succeeded"
     | "failed"
     | "loggedOut";
@@ -36,7 +36,7 @@ export interface UsersSlice {
   userID: null | string;
   username: null | string;
   email: string;
-  loggedInAsGuest: boolean;
+  loggedInAsAnonymous: boolean;
 }
 
 export interface State {

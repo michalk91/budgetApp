@@ -1,5 +1,5 @@
 import { SyntheticEvent, useCallback, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { useAppDispatch } from "../redux/hooks";
 import { AddNewBudgetProps } from "../types";
 import { addNewBudget } from "../redux/budgetsSlice";
 import Button from "./Button";
@@ -8,24 +8,11 @@ import { toast } from "react-toastify";
 export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
   const dispatch = useAppDispatch();
 
-  const loggedInAsGuest = useAppSelector((state) => state.user.loggedInAsGuest);
-
   const [budgetFromInput, setBudgetFromInput] = useState({
     name: "",
     amount: "",
     currencyType: "PLN",
   });
-
-  const [sampleBudgetName, setSampleBudgetName] = useState("Personal budget");
-
-  const sampleBudgets = [
-    "Personal budget",
-    "Household budget",
-    "Travel budget",
-    "Business budget",
-    "Event budget",
-    "Savings budget",
-  ];
 
   const { name, amount, currencyType } = budgetFromInput;
 
@@ -56,7 +43,7 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
     (e: SyntheticEvent) => {
       e.preventDefault();
 
-      if (!loggedInAsGuest && name === "") {
+      if (name === "") {
         notifyEmptyBudgetName();
         return;
       }
@@ -75,7 +62,7 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
 
       dispatch(
         addNewBudget({
-          budgetName: loggedInAsGuest ? sampleBudgetName : name,
+          budgetName: name,
           budgetValue,
           currencyType: currencyType as "PLN" | "EUR" | "USD",
         })
@@ -90,8 +77,6 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
       dispatch,
       name,
       setNewBudget,
-      loggedInAsGuest,
-      sampleBudgetName,
       notifyBudgetValueIsTooSmall,
       notifyEmptyAmountValue,
       notifyBudgetAdded,
@@ -112,34 +97,19 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
           data-cell="name"
           className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0 max-lg:flex max-lg:flex-col max-lg:items-center"
         >
-          {loggedInAsGuest ? (
-            <select
-              onChange={(e) => setSampleBudgetName(e.target.value)}
-              className="bg-white px-2 py-1 rounded-full -ml-2 border-2 "
-              value={sampleBudgetName}
-              name="choice"
-            >
-              {sampleBudgets.map((budget) => (
-                <option key={budget} value={budget}>
-                  {budget}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <input
-              onChange={(e) =>
-                setBudgetFromInput((state) => ({
-                  ...state,
-                  name: e.target.value,
-                }))
-              }
-              required
-              type="text"
-              value={name}
-              placeholder="name"
-              className="px-2 py-1 rounded-full bg-white max-w-32 border-2 -ml-2 max-lg:ml-0"
-            ></input>
-          )}
+          <input
+            onChange={(e) =>
+              setBudgetFromInput((state) => ({
+                ...state,
+                name: e.target.value,
+              }))
+            }
+            required
+            type="text"
+            value={name}
+            placeholder="name"
+            className="px-2 py-1 rounded-full bg-white max-w-32 border-2 -ml-2 max-lg:ml-0"
+          ></input>
         </td>
 
         <td

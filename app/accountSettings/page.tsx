@@ -7,11 +7,11 @@ import RemoveUser from "../components/RemoveUser";
 import { useAppSelector } from "../redux/hooks";
 
 export default function Account() {
-  const userEmail = useAppSelector((state) => state.user.email);
+  const loggedInAsAnonymous = useAppSelector(
+    (state) => state.user.loggedInAsAnonymous
+  );
 
   const [active, setActive] = useState("");
-
-  const GUEST_EMAIL = process.env.GUEST_EMAIL;
 
   return (
     <section className="flex flex-col  w-72 grow justify-center items-center m-auto ">
@@ -21,10 +21,10 @@ export default function Account() {
           <>
             <button
               onClick={() =>
-                userEmail !== GUEST_EMAIL && setActive("change-username")
+                !loggedInAsAnonymous && setActive("change-username")
               }
               className={`w-full my-2 text-white font-bold py-2 rounded-full ${
-                userEmail === GUEST_EMAIL
+                loggedInAsAnonymous
                   ? "cursor-not-allowed bg-blue-300 "
                   : "bg-blue-500 hover:bg-blue-700"
               }`}
@@ -32,11 +32,9 @@ export default function Account() {
               Change username
             </button>
             <button
-              onClick={() =>
-                userEmail !== GUEST_EMAIL && setActive("change-email")
-              }
+              onClick={() => !loggedInAsAnonymous && setActive("change-email")}
               className={`w-full my-2 text-white font-bold py-2 rounded-full ${
-                userEmail === GUEST_EMAIL
+                loggedInAsAnonymous
                   ? "cursor-not-allowed bg-blue-300 "
                   : "bg-blue-500 hover:bg-blue-700"
               }`}
@@ -45,10 +43,10 @@ export default function Account() {
             </button>
             <button
               onClick={() =>
-                userEmail !== GUEST_EMAIL && setActive("change-password")
+                !loggedInAsAnonymous && setActive("change-password")
               }
               className={`w-full my-2 text-white font-bold py-2 rounded-full ${
-                userEmail === GUEST_EMAIL
+                loggedInAsAnonymous
                   ? "cursor-not-allowed bg-blue-300 "
                   : "bg-blue-500 hover:bg-blue-700"
               }`}
@@ -56,14 +54,8 @@ export default function Account() {
               Change password
             </button>
             <button
-              onClick={() =>
-                userEmail !== GUEST_EMAIL && setActive("remove-user")
-              }
-              className={`w-full my-2 text-white font-bold py-2 rounded-full ${
-                userEmail === GUEST_EMAIL
-                  ? "cursor-not-allowed bg-red-300 "
-                  : "bg-red-500 hover:bg-red-700"
-              }`}
+              onClick={() => setActive("remove-user")}
+              className={`w-full my-2 text-white font-bold py-2 rounded-full bg-red-500 hover:bg-red-700 `}
             >
               Delete account
             </button>

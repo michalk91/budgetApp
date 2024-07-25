@@ -14,8 +14,6 @@ export default function AddTransaction({
 }: AddTransactionProps) {
   const dispatch = useAppDispatch();
 
-  const loggedInAsGuest = useAppSelector((state) => state.user.loggedInAsGuest);
-
   const [valueFromInput, setValueFromInput] = useState({
     category: categories[0],
     amount: "",
@@ -134,34 +132,28 @@ export default function AddTransaction({
         className="pl-6 py-6 pr-16 max-xl:px-10 max-md:px-6 max-xl:block max-xl:before:font-bold max-xl:before:uppercase max-xl:text-center max-md:pb-0 max-xl:flex max-xl:flex-col max-xl:items-center"
         colSpan={2}
       >
-        {loggedInAsGuest ? (
-          <div className="flex relative max-xl:justify-center max-xl:my-8 w-full max-xl:px-48 max-lg:px-24 max-md:px-8">
-            <p className="text-red-600 font-medium text-base">{`The "guest" account can't add comments.`}</p>
-          </div>
-        ) : (
-          <div className="flex justify-center relative max-xl:mt-8 w-full max-xl:px-48 max-lg:px-24 max-md:px-8">
-            <label
-              className="block absolute -top-[20px] max-xl:font-bold max-xl:uppercase "
-              htmlFor="comment"
-            >
-              Comment: (not required)
-            </label>
-            <textarea
-              onChange={(e) =>
-                setValueFromInput((state) => ({
-                  ...state,
-                  comment: e.target.value,
-                }))
-              }
-              value={comment}
-              className="p-2 w-full rounded-lg border-2 -ml-2"
-              name="comment"
-              id="comment"
-            >
-              ...
-            </textarea>
-          </div>
-        )}
+        <div className="flex justify-center relative max-xl:mt-8 w-full max-xl:px-48 max-lg:px-24 max-md:px-8">
+          <label
+            className="block absolute -top-[20px] max-xl:font-bold max-xl:uppercase "
+            htmlFor="comment"
+          >
+            Comment: (not required)
+          </label>
+          <textarea
+            onChange={(e) =>
+              setValueFromInput((state) => ({
+                ...state,
+                comment: e.target.value,
+              }))
+            }
+            value={comment}
+            className="p-2 w-full rounded-lg border-2 -ml-2"
+            name="comment"
+            id="comment"
+          >
+            ...
+          </textarea>
+        </div>
       </td>
       <td className="max-xl:block max-xl:pb-4 max-md:mt-5">
         <Button
