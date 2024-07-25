@@ -85,6 +85,8 @@ export const changeEmail = createAsyncThunk(
     await updateDoc(doc(db, "users", currentUserID), {
       email: newEmail,
     });
+
+    return newEmail;
   }
 );
 
@@ -325,7 +327,10 @@ const userSlice = createSlice({
       .addCase(changeEmail.pending, (state) => {
         state.changeEmailStatus = "loading";
       })
-      .addCase(changeEmail.fulfilled, (state) => {
+      .addCase(changeEmail.fulfilled, (state, action) => {
+        if (!action.payload) return;
+
+        state.email = action.payload;
         state.changeEmailStatus = "succeeded";
       })
       .addCase(changeEmail.rejected, (state, action) => {
