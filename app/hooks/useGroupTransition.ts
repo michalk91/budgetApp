@@ -16,7 +16,7 @@ const useGroupTransition = ({
   const initialPositions = useRef<{ [key: string]: DOMRect }>({});
   const disableTransitionRef = useRef(false);
 
-  const [groupTransitionEnd, setGroupTransitionEnd] = useState(false);
+  const [groupTransitionEnd, setGroupTransitionEnd] = useState(true);
 
   const onGroupTransitionStart = useCallback(() => {
     setGroupTransitionEnd(false);
