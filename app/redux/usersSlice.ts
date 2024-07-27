@@ -184,7 +184,6 @@ export const logoutUser = createAsyncThunk(
       for (const invitation of invitations.docs) {
         await deleteDoc(doc(db, `invitations`, invitation.id));
       }
-
       const deletedBudgetsIDs = [];
 
       for (const budget of budgets.docs) {
@@ -198,15 +197,16 @@ export const logoutUser = createAsyncThunk(
           );
         }
 
-        for (const budget of budgets.docs) {
-          await deleteDoc(doc(db, "budgets", budget.id));
-          deletedBudgetsIDs.push(budget.id);
-        }
+        await deleteDoc(doc(db, "budgets", budget.id));
+        deletedBudgetsIDs.push(budget.id);
       }
+
+      signOut(auth);
+
       const user = auth?.currentUser;
       await user?.reload();
       if (user) await deleteUser(user);
-    } else {
+    } else if (!isAnonymusUser) {
       signOut(auth);
     }
   }
