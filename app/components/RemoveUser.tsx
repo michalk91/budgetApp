@@ -1,4 +1,4 @@
-import { SyntheticEvent, useEffect } from "react";
+import { SyntheticEvent, useCallback, useEffect } from "react";
 import { removeUser } from "../redux/usersSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { toast } from "react-toastify";
@@ -11,13 +11,16 @@ export default function RemoveUser({ setActive }: ChangeComponentsProps) {
   const dispatch = useAppDispatch();
 
   const notifyUserRemoved = () =>
-    toast.success("The user has been successfully removed");
+    toast.success("The user has been successfully removed.");
 
-  const handleRemoveUser = (e: SyntheticEvent) => {
-    e.preventDefault();
+  const handleRemoveUser = useCallback(
+    (e: SyntheticEvent) => {
+      e.preventDefault();
 
-    dispatch(removeUser());
-  };
+      dispatch(removeUser());
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     if (removeUserStatus === "succeeded") {

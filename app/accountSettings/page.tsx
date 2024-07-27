@@ -1,17 +1,24 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ChangePassword from "../components/ChangePassword";
 import ChangeUsername from "../components/ChangeUsername";
 import ChangeEmail from "../components/ChangeEmail";
 import RemoveUser from "../components/RemoveUser";
-import { useAppSelector } from "../redux/hooks";
+import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { resetRemoveUserStatus } from "../redux/usersSlice";
 
 export default function Account() {
+  const dispatch = useAppDispatch();
+
   const loggedInAsAnonymous = useAppSelector(
     (state) => state.user.loggedInAsAnonymous
   );
 
   const [active, setActive] = useState("");
+
+  useEffect(() => {
+    dispatch(resetRemoveUserStatus());
+  }, [dispatch]);
 
   return (
     <section className="flex flex-col  w-72 grow justify-center items-center m-auto ">
