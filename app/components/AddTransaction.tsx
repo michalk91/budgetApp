@@ -79,7 +79,7 @@ export default function AddTransaction({
   ]);
 
   return (
-    <tr className="bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700 max-xl:text-center">
+    <tr className="bg-gray-100 max-xl:text-center">
       <td className="px-6 py-6 max-xl:block">
         <span className="font-bold text-xl mx-auto">
           {type === "expense" ? "New expense" : "New income"}

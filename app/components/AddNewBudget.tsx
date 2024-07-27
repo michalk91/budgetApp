@@ -86,7 +86,7 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
 
   return (
     <>
-      <tr className="bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700 max-lg:text-center ">
+      <tr className="bg-gray-100 max-lg:text-center ">
         <td className="px-6 py-6 max-lg:block">
           <span className="font-bold text-xl mx-auto max-lg:ml-0">
             New budget
