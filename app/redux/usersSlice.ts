@@ -56,13 +56,40 @@ export const removeUser = createAsyncThunk("users/removeUser", async () => {
   const currentUserID = user?.uid;
 
   if (!user || !currentUserID) return;
-
   const users = await getDocs(collection(db, "users"));
 
   for (const currentUser of users.docs) {
     if (currentUser.id === currentUserID) {
       await deleteDoc(doc(db, "users", currentUser.id));
     }
+  }
+
+  const budgets = await getDocs(
+    query(collection(db, "budgets"), where("ownerID", "==", currentUserID))
+  );
+
+  const invitations = await getDocs(
+    query(collection(db, `invitations`), where("ownerID", "==", currentUserID))
+  );
+
+  for (const invitation of invitations.docs) {
+    await deleteDoc(doc(db, `invitations`, invitation.id));
+  }
+  const deletedBudgetsIDs = [];
+
+  for (const budget of budgets.docs) {
+    const transactions = await getDocs(
+      collection(db, `budgets/${budget.id}/transactions`)
+    );
+
+    for (const transaction of transactions.docs) {
+      await deleteDoc(
+        doc(db, `budgets/${budget.id}/transactions`, transaction.id)
+      );
+    }
+
+    await deleteDoc(doc(db, "budgets", budget.id));
+    deletedBudgetsIDs.push(budget.id);
   }
 
   await user.reload();
@@ -231,6 +258,9 @@ const userSlice = createSlice({
     resetLoginStatus: (state) => {
       state.loginStatus = "idle";
     },
+    resetRemoveUserStatus: (state) => {
+      state.removeUserStatus = "idle";
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -361,4 +391,8 @@ const userSlice = createSlice({
 });
 
 export default userSlice.reducer;
-export const { resetCreateAccountStatus, resetLoginStatus } = userSlice.actions;
+export const {
+  resetCreateAccountStatus,
+  resetLoginStatus,
+  resetRemoveUserStatus,
+} = userSlice.actions;
