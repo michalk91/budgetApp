@@ -327,9 +327,16 @@ const userSlice = createSlice({
         state.removeUserStatus = "loading";
       })
       .addCase(removeUser.fulfilled, (state) => {
+        if (state.loggedInAsAnonymous) {
+          state.loggedInAsAnonymous = false;
+        }
+
         state.removeUserStatus = "succeeded";
         state.loginStatus = "idle";
         state.registeredStatus = "idle";
+        state.email = "";
+        state.userID = "";
+        state.username = "";
       })
       .addCase(removeUser.rejected, (state, action) => {
         state.removeUserStatus = "failed";
