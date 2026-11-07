@@ -30,7 +30,7 @@ export default function SubNavigation({ activeOption }: SubNavigationProps) {
     width: 0,
   });
 
-  const ref = useRef<HTMLElement>();
+  const ref = useRef<HTMLElement>(undefined);
 
   const animateElemCallback = useTransition({
     animateToElemPos: position,

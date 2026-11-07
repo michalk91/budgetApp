@@ -280,7 +280,7 @@ export interface PaginationProps {
   currentPage: number;
   setCurrentPage?: Dispatch<SetStateAction<number>>;
   setGlobalCurrentPage?: (pageNumber: number) => void;
-  scrollElementRef: React.RefObject<HTMLDivElement>;
+  scrollElementRef: React.RefObject<HTMLElement | null>;
   addedElemID?: string;
 }
 
