@@ -21,7 +21,7 @@ This is a budget management application. Budgets can be managed independently or
 
 
 ## NPM Packages used:
-- NextJS 14,
+- NextJS 16,
 - Tailwindcss
 - Redux-Toolkit,
 
