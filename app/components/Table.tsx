@@ -130,7 +130,7 @@ export default function Table({
           <p>Sort by: </p>
           {sortDirection !== "without" && (
             <select
-              className="px-1 m-2 rounded-xl bg-white "
+              className="px-2 py-1 m-2 rounded-xl max-w-full bg-white border-gray-300 border-2"
               onChange={(e) => handleSort(e.target.value, sortDirection)}
               value={sortBy}
               name="choice"
@@ -146,7 +146,7 @@ export default function Table({
             </select>
           )}
           <select
-            className="px-1 ml-1 self-center rounded-xl max-w-full bg-white "
+            className="px-2 py-1 ml-1 self-center rounded-xl max-w-full bg-white border-gray-300 border-2"
             onChange={(e) =>
               handleSort(
                 sortBy,
