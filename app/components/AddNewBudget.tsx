@@ -108,7 +108,7 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
             type="text"
             value={name}
             placeholder="name"
-            className="px-2 py-1 rounded-full bg-white max-w-32 border-2 -ml-2 max-lg:ml-0"
+            className="px-2 py-1 rounded-xl bg-white max-w-32 border-2 -ml-2 max-lg:ml-0"
           ></input>
         </td>
 
@@ -127,10 +127,10 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
             type="number"
             value={amount}
             placeholder="amount"
-            className="px-2 py-1 rounded-full bg-white max-w-32 bg-white border-2 -ml-1"
+            className="px-2 py-1 rounded-xl bg-white max-w-32 bg-white border-2 -ml-1"
           ></input>
           <select
-            className="px-2 py-1 ml-1 rounded-full bg-white max-w-32 bg-white border-2"
+            className="px-2 py-1 ml-1 rounded-xl bg-white max-w-32 bg-white border-2"
             onChange={(e) => {
               setBudgetFromInput((state) => ({
                 ...state,

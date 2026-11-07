@@ -68,7 +68,7 @@ export default function ChangePassword({ setActive }: ChangeComponentsProps) {
             </label>
             <div className="relative flex items-center">
               <input
-                className="peer h-10 w-full rounded-md  px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
+                className="peer h-10 w-full rounded-xl  px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
                 type={showEnteredPassword ? "text" : "password"}
                 value={password}
                 autoComplete="new-password"
@@ -112,7 +112,7 @@ export default function ChangePassword({ setActive }: ChangeComponentsProps) {
               <input
                 autoComplete="new-password"
                 name="repeat-new-password"
-                className="peer h-10 w-full rounded-md px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
+                className="peer h-10 w-full rounded-xl px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
                 type={showRepeatedPassword ? "text" : "password"}
                 value={repeat}
                 onChange={(e) =>

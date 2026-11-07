@@ -192,7 +192,7 @@ export default function JoinedUsers() {
                           e.target.value === "yes" ? true : false,
                       }))
                     }
-                    className="px-2 mt-2 py-1 rounded-full -ml-3 max-w-full max-lg:ml-1 bg-white border-2 "
+                    className="px-2 mt-2 py-1 rounded-xl -ml-3 max-w-full max-lg:ml-1 bg-white border-2 "
                     value={
                       editedUserPermissions.allowManageCategories ? "yes" : "no"
                     }
@@ -233,7 +233,7 @@ export default function JoinedUsers() {
                           e.target.value === "yes" ? true : false,
                       }))
                     }
-                    className="px-2 py-1 mt-2 rounded-full -ml-3 max-w-full max-lg:ml-1 bg-white border-2 "
+                    className="px-2 py-1 mt-2 rounded-xl -ml-3 max-w-full max-lg:ml-1 bg-white border-2 "
                     name="choice"
                     value={
                       editedUserPermissions.allowManageAllTransactions

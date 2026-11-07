@@ -46,7 +46,7 @@ export default function ChangeUsername({ setActive }: ChangeComponentsProps) {
             </label>
             <div className="relative flex items-center">
               <input
-                className="peer h-10 w-full rounded-md  px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
+                className="peer h-10 w-full rounded-xl  px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
                 type="text"
                 value={newUsername}
                 onChange={(e) => setNewUsername(e.target.value)}

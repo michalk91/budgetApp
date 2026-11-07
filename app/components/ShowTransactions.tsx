@@ -257,7 +257,7 @@ export default function ShowTransactions({
                         category: e.target.value,
                       }))
                     }
-                    className="px-2 py-1 rounded-full -ml-3 max-w-full max-xl:ml-1 bg-white border-2 "
+                    className="px-2 py-1 rounded-xl -ml-3 max-w-full max-xl:ml-1 bg-white border-2 "
                     defaultValue={transaction.category}
                     name="choice"
                   >
@@ -299,7 +299,7 @@ export default function ShowTransactions({
                       }))
                     }
                     defaultValue={transaction.amount}
-                    className="px-2 -ml-[10px] py-1 rounded-full -ml-[11px] max-w-40 max-xl:ml-1 max-md:max-w-32 bg-white border-2 "
+                    className="px-2 -ml-[10px] py-1 rounded-xl -ml-[11px] max-w-40 max-xl:ml-1 max-md:max-w-32 bg-white border-2 "
                   ></input>
                 )}
               </td>
@@ -338,7 +338,7 @@ export default function ShowTransactions({
                         }))
                       }
                       defaultValue={transaction.comment}
-                      className="p-2 w-5/6 rounded-lg border-2 -ml-2 max-xl:w-full border-2"
+                      className="p-2 w-5/6 rounded-xl border-2 -ml-2 max-xl:w-full border-2"
                       name="comment"
                       id="comment"
                     ></textarea>

@@ -78,7 +78,7 @@ export default function Categories({ type }: CategoriesProps) {
               required
               type="text"
               placeholder="new category"
-              className="font-bold py-2 mr-3 px-4 rounded-full bg-white border-2 border-black"
+              className="font-bold py-2 mr-3 px-4 rounded-xl bg-white border-2 border-black"
             ></input>
 
             <Button

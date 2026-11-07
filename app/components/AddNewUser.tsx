@@ -72,7 +72,7 @@ export default function AddNewUser({ setNewUser }: AddNewUserProps) {
             type="text"
             value={email}
             placeholder="e-mail"
-            className="px-2 py-1 rounded-full bg-white max-w-32 border-2 -ml-2 max-lg:ml-0"
+            className="px-2 py-1 rounded-xl bg-white max-w-32 border-2 -ml-2 max-lg:ml-0"
           ></input>
         </td>
 
@@ -81,7 +81,7 @@ export default function AddNewUser({ setNewUser }: AddNewUserProps) {
           className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0 max-lg:flex max-lg:flex-col max-lg:items-center"
         >
           <select
-            className="px-2 py-1 -ml-2 rounded-full bg-white max-w-32 bg-white border-2"
+            className="px-2 py-1 -ml-2 rounded-xl bg-white max-w-32 bg-white border-2"
             onChange={(e) => {
               setUserFromInput((state) => ({
                 ...state,
@@ -100,7 +100,7 @@ export default function AddNewUser({ setNewUser }: AddNewUserProps) {
           className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0 max-lg:flex max-lg:flex-col max-lg:items-center"
         >
           <select
-            className="px-2 py-1 -ml-2 rounded-full bg-white max-w-32 bg-white border-2"
+            className="px-2 py-1 -ml-2 rounded-xl bg-white max-w-32 bg-white border-2"
             onChange={(e) => {
               setUserFromInput((state) => ({
                 ...state,

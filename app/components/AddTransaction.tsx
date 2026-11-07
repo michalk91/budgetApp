@@ -97,7 +97,7 @@ export default function AddTransaction({
               category: e.target.value,
             }));
           }}
-          className="bg-white px-2 py-1 rounded-full -ml-2 border-2 "
+          className="bg-white px-2 py-1 rounded-xl -ml-2 border-2 "
           value={category}
           name="choice"
         >
@@ -124,7 +124,7 @@ export default function AddTransaction({
           type="number"
           value={amount}
           placeholder="amount"
-          className="px-2 py-1 -ml-1 rounded-full bg-white max-w-32 border-2 "
+          className="px-2 py-1 -ml-1 rounded-xl bg-white max-w-32 border-2 "
         ></input>
       </td>
       <td className="pl-6 max-xl:hidden">You</td>
@@ -147,7 +147,7 @@ export default function AddTransaction({
               }))
             }
             value={comment}
-            className="p-2 w-full rounded-lg border-2 -ml-2"
+            className="p-2 w-full rounded-xl border-2 -ml-2"
             name="comment"
             id="comment"
           >

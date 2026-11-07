@@ -130,7 +130,7 @@ export default function Table({
           <p>Sort by: </p>
           {sortDirection !== "without" && (
             <select
-              className="px-1 m-2 rounded-full bg-white "
+              className="px-1 m-2 rounded-xl bg-white "
               onChange={(e) => handleSort(e.target.value, sortDirection)}
               value={sortBy}
               name="choice"
@@ -146,7 +146,7 @@ export default function Table({
             </select>
           )}
           <select
-            className="px-1 ml-1 self-center rounded-full max-w-full bg-white "
+            className="px-1 ml-1 self-center rounded-xl max-w-full bg-white "
             onChange={(e) =>
               handleSort(
                 sortBy,
@@ -173,13 +173,13 @@ export default function Table({
                   handleSearch && handleSearch(e);
                   handleSearchGlobal && handleSearchGlobal(e.target.value);
                 }}
-                className="px-2 py-1 rounded-full max-lg: ml-1 max-lg:max-w-32 bg-white border-gray-300 border-2 "
+                className="px-2 py-1 rounded-xl max-lg: ml-1 max-lg:max-w-32 bg-white border-gray-300 border-2 "
               ></input>
             </div>
             <div className="flex items-center justify-center flex-wrap py-2">
               <p>Show per page: </p>
               <select
-                className="px-2 py-1 rounded-full max-lg: ml-1 max-lg:max-w-32 bg-white border-gray-300 border-2  "
+                className="px-2 py-1 rounded-xl max-lg: ml-1 max-lg:max-w-32 bg-white border-gray-300 border-2  "
                 onChange={(e) => {
                   setRowsPerPage &&
                     setRowsPerPage(
