@@ -1,6 +1,7 @@
 export default function Loader() {
   return (
     <div className="flex justify-center" role="status">
+      <span aria-hidden="true">&#8203;</span>
       <svg
         aria-hidden="true"
         className="w-6 h-6 text-white/30 animate-spin fill-white"
