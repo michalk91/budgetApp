@@ -156,7 +156,7 @@ const Login = () => {
         {loginStatus !== "loadingAnonymous" ? (
           <button
             type="button"
-            className="bg-green-600 w-3/4 h-[75px] hover:bg-green-800 text-white font-bold py-2 mt-6 px-6 rounded-full -mb-4 max-md:mb-4"
+            className="bg-green-600 w-3/4 min-w-fit whitespace-nowrap hover:bg-green-800 text-white font-bold py-2 mt-6 px-6 rounded-full -mb-4 max-md:mb-4"
             onClick={(e) => handleAnonymousLogin(e)}
           >
             Login as anonymous
@@ -164,7 +164,7 @@ const Login = () => {
         ) : (
           <button
             type="button"
-            className="bg-green-600 w-3/4 h-[75px] hover:bg-green-800 text-white font-bold py-2 mt-6 px-6 rounded-full -mb-4 max-md:mb-4"
+            className="bg-green-600 w-3/4 min-w-fit whitespace-nowrap hover:bg-green-800 text-white font-bold py-2 mt-6 px-6 rounded-full -mb-4 max-md:mb-4"
           >
             <Loader />
           </button>
