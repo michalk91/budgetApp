@@ -343,7 +343,7 @@ export default function ShowTransactions({
                         }))
                       }
                       defaultValue={transaction.comment}
-                      className="p-2 w-5/6 rounded-xl border-2 -ml-2 max-xl:w-full"
+                      className="p-2 w-5/6 rounded-xl bg-surface border-2 -ml-2 max-xl:w-full"
                       name="comment"
                       id="comment"
                     ></textarea>

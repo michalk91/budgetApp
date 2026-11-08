@@ -147,7 +147,7 @@ export default function AddTransaction({
               }))
             }
             value={comment}
-            className="p-2 w-full rounded-xl border-2 -ml-2"
+            className="p-2 w-full rounded-xl bg-surface border-2 -ml-2"
             name="comment"
             id="comment"
           >
