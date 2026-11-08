@@ -3,6 +3,8 @@ import { addTransaction } from "../redux/budgetsSlice";
 import { useAppDispatch } from "../redux/hooks";
 import type { AddTransactionProps } from "../types";
 import Button from "./Button";
+import AmountInput from "./AmountInput";
+import { validateAmount } from "../utils/validateAmount";
 import { useAppSelector } from "../redux/hooks";
 import { toast } from "react-toastify";
 
@@ -22,16 +24,6 @@ export default function AddTransaction({
 
   const { amount, category, comment } = valueFromInput;
 
-  const notifyEmptyAmountValue = useCallback(
-    () => toast.error("You need to enter the transaction amount."),
-    []
-  );
-
-  const notifyAmountIsTooSmall = useCallback(
-    () => toast.error("The amount value must be greater than 0."),
-    []
-  );
-
   const notifyTransactionAdded = useCallback(
     () =>
       toast.success(
@@ -41,17 +33,14 @@ export default function AddTransaction({
   );
 
   const addNew = useCallback(() => {
-    if (amount === "") {
-      notifyEmptyAmountValue();
+    const amountError = validateAmount(amount, "transaction");
+
+    if (amountError) {
+      toast.error(amountError);
       return;
     }
 
     const amountValue = Number(amount);
-
-    if (amountValue <= 0) {
-      notifyAmountIsTooSmall();
-      return;
-    }
 
     dispatch(
       addTransaction({
@@ -73,8 +62,6 @@ export default function AddTransaction({
     setAdd,
     comment,
     budgetID,
-    notifyEmptyAmountValue,
-    notifyAmountIsTooSmall,
     notifyTransactionAdded,
   ]);
 
@@ -113,7 +100,7 @@ export default function AddTransaction({
         data-cell="amount"
         className="px-6 py-6 max-xl:block max-xl:before:content-[attr(data-cell)':_']  max-xl:before:font-bold max-xl:before:uppercase max-xl:text-center max-md:pb-0 max-xl:flex max-xl:flex-col max-xl:items-center"
       >
-        <input
+        <AmountInput
           onChange={(e) =>
             setValueFromInput((state) => ({
               ...state,
@@ -121,11 +108,9 @@ export default function AddTransaction({
             }))
           }
           required
-          type="number"
           value={amount}
-          placeholder="amount"
-          className="px-2 py-1 -ml-1 rounded-xl bg-surface max-w-32 border-2 "
-        ></input>
+          className="-ml-1 max-w-32"
+        />
       </td>
       <td className="pl-6 max-xl:hidden">You</td>
       <td

@@ -3,6 +3,8 @@ import { useAppDispatch } from "../redux/hooks";
 import { AddNewBudgetProps } from "../types";
 import { addNewBudget } from "../redux/budgetsSlice";
 import Button from "./Button";
+import AmountInput from "./AmountInput";
+import { validateAmount } from "../utils/validateAmount";
 import { toast } from "react-toastify";
 
 export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
@@ -15,16 +17,6 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
   });
 
   const { name, amount, currencyType } = budgetFromInput;
-
-  const notifyBudgetValueIsTooSmall = useCallback(
-    () => toast.error("The budget value must be greater than 0."),
-    []
-  );
-
-  const notifyEmptyAmountValue = useCallback(
-    () => toast.error("You need to enter the budget amount."),
-    []
-  );
 
   const notifyEmptyBudgetName = useCallback(
     () => toast.error("You need to enter the budget name."),
@@ -48,17 +40,14 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
         return;
       }
 
-      if (amount === "") {
-        notifyEmptyAmountValue();
+      const amountError = validateAmount(amount, "budget");
+
+      if (amountError) {
+        toast.error(amountError);
         return;
       }
 
       const budgetValue = Number(amount);
-
-      if (budgetValue <= 0) {
-        notifyBudgetValueIsTooSmall();
-        return;
-      }
 
       dispatch(
         addNewBudget({
@@ -77,8 +66,6 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
       dispatch,
       name,
       setNewBudget,
-      notifyBudgetValueIsTooSmall,
-      notifyEmptyAmountValue,
       notifyBudgetAdded,
       notifyEmptyBudgetName,
     ]
@@ -116,7 +103,7 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
           data-cell="amount"
           className="px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_']  max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-md:pb-0 max-lg:flex max-lg:flex-col max-lg:items-center"
         >
-          <input
+          <AmountInput
             onChange={(e) => {
               setBudgetFromInput((state) => ({
                 ...state,
@@ -124,11 +111,9 @@ export default function AddNewBudget({ setNewBudget }: AddNewBudgetProps) {
               }));
             }}
             required
-            type="number"
             value={amount}
-            placeholder="amount"
-            className="px-2 py-1 rounded-xl bg-surface max-w-32 border-2 -ml-1"
-          ></input>
+            className="max-w-32 -ml-1"
+          />
           <select
             className="px-2 py-1 ml-1 rounded-xl bg-surface max-w-32 border-2"
             onChange={(e) => {

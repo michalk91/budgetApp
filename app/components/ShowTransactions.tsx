@@ -11,6 +11,8 @@ import useFormatter from "../hooks/useFormatter";
 import AddTransaction from "./AddTransaction";
 import Table from "./Table";
 import Button from "./Button";
+import AmountInput from "./AmountInput";
+import { validateAmount } from "../utils/validateAmount";
 import type { ShowTransactionsProps, DeleteRowData } from "../types";
 import useSearch from "../hooks/useSearch";
 import usePagination from "../hooks/usePagination";
@@ -90,8 +92,16 @@ export default function ShowTransactions({
     [dispatch, budgetID]
   );
 
-  const handleStartEdit = (id: string) => {
-    setEditedTransaction((state) => ({ ...state, id }));
+  // Start from the transaction's current amount so an untouched field passes
+  // validation and values from a previously cancelled edit do not leak in.
+  const handleStartEdit = (id: string, amount: number) => {
+    setEditedTransaction((state) => ({
+      ...state,
+      id,
+      category: "",
+      amount: String(amount),
+      comment: "",
+    }));
   };
   const handleCancelEdit = () => {
     setEditedTransaction((state) => ({ ...state, id: "" }));
@@ -103,6 +113,14 @@ export default function ShowTransactions({
     type: "income" | "expense"
   ) => {
     const { category, amount, comment } = editedTransaction;
+
+    const amountError = validateAmount(amount, "transaction");
+
+    if (amountError) {
+      toast.error(amountError);
+      return;
+    }
+
     const transaction = {
       id,
       date,
@@ -295,17 +313,16 @@ export default function ShowTransactions({
                     currencyType
                   )}`
                 ) : (
-                  <input
-                    type="number"
+                  <AmountInput
                     onChange={(e) =>
                       setEditedTransaction((state) => ({
                         ...state,
                         amount: e.target.value,
                       }))
                     }
-                    defaultValue={transaction.amount}
-                    className="px-2 -ml-[10px] py-1 rounded-xl -ml-[11px] max-w-40 max-xl:ml-1 max-md:max-w-32 bg-surface border-2 "
-                  ></input>
+                    value={editedTransaction.amount}
+                    className="-ml-[11px] max-w-40 max-xl:ml-1 max-md:max-w-32"
+                  />
                 )}
               </td>
 
@@ -401,7 +418,7 @@ export default function ShowTransactions({
                       (allowToManageAllTransactions?.includes(userID) ||
                         transaction.ownerID === userID ||
                         userID === budgetOwnerID) &&
-                      handleStartEdit(transaction.id)
+                      handleStartEdit(transaction.id, transaction.amount)
                     }
                     additionalStyles={
                       userID &&
