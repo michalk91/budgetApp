@@ -20,9 +20,12 @@ import {
   resetAddedElemID,
 } from "../redux/invitationsSlice";
 import Loader from "./Loader";
+import { useConfirm } from "./ConfirmProvider";
+import { reportThunkResult } from "../utils/reportThunkResult";
 
 export default function InvitedUsers() {
   const dispatch = useAppDispatch();
+  const confirm = useConfirm();
 
   const budgetID = useIDfromPathname();
 
@@ -75,8 +78,14 @@ export default function InvitedUsers() {
   }, [inviteUserStatus, notifyFailedInvite, dispatch, notifyInvited]);
 
   const handleDeleteInvitation = useCallback(
-    (id: string) => {
-      dispatch(deleteInvitation(id));
+    async (id: string) => {
+      const result = await dispatch(deleteInvitation(id));
+      setDeleteRowData((state) => ({ ...state, deleteRowID: "" }));
+
+      return reportThunkResult(result, {
+        success: "The invitation has been deleted.",
+        error: "The invitation could not be deleted. Please try again.",
+      });
     },
     [dispatch]
   );
@@ -117,6 +126,9 @@ export default function InvitedUsers() {
   useEffect(() => {
     if (deleteAllInvitationsStatus === "succeeded") {
       notifyDeleteAllInvitations();
+      dispatch(resetDeleteAllInvitationsStatus());
+    } else if (deleteAllInvitationsStatus === "failed") {
+      toast.error("The invitations could not be deleted. Please try again.");
       dispatch(resetDeleteAllInvitationsStatus());
     }
   }, [dispatch, deleteAllInvitationsStatus, notifyDeleteAllInvitations]);
@@ -182,12 +194,17 @@ export default function InvitedUsers() {
                 </td>
                 <td className="max-lg:block max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
                   <Button
-                    handleClick={() =>
-                      setDeleteRowData((state) => ({
-                        ...state,
-                        deleteRowID: user.invitationID,
-                      }))
-                    }
+                    handleClick={async () => {
+                      const confirmed = await confirm({
+                        title: `Delete the invitation for ${user.invitedUsername}?`,
+                      });
+
+                      if (confirmed)
+                        setDeleteRowData((state) => ({
+                          ...state,
+                          deleteRowID: user.invitationID,
+                        }));
+                    }}
                     additionalStyles={
                       !addNewUser
                         ? "bg-red-500 hover:bg-red-700"
@@ -217,8 +234,13 @@ export default function InvitedUsers() {
                 </Button>
               ) : (
                 <Button
-                  handleClick={() => {
-                    dispatch(deleteAllInvitations(budgetID));
+                  handleClick={async () => {
+                    const confirmed = await confirm({
+                      title: "Delete all pending invitations?",
+                      confirmLabel: "Delete all",
+                    });
+
+                    if (confirmed) dispatch(deleteAllInvitations(budgetID));
                   }}
                   additionalStyles="w-36 bg-red-600 hover:bg-red-800"
                 >

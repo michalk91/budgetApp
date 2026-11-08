@@ -16,9 +16,12 @@ import usePagination from "../hooks/usePagination";
 import { useIDfromPathname } from "../hooks/useIDfromPathname";
 import Loader from "./Loader";
 import { toast } from "react-toastify";
+import { useConfirm } from "./ConfirmProvider";
+import { reportThunkResult } from "../utils/reportThunkResult";
 
 export default function JoinedUsers() {
   const dispatch = useAppDispatch();
+  const confirm = useConfirm();
 
   const budgetID = useIDfromPathname();
 
@@ -90,13 +93,14 @@ export default function JoinedUsers() {
   } = usePagination(filteredArray);
 
   const handleDeleteUser = useCallback(
-    (id: string, budgetID: string) => {
-      dispatch(
-        deleteUser({
-          userID: id,
-          budgetID,
-        })
-      );
+    async (id: string, budgetID: string) => {
+      const result = await dispatch(deleteUser({ userID: id, budgetID }));
+      setDeleteRowData((state) => ({ ...state, deleteRowID: "" }));
+
+      return reportThunkResult(result, {
+        success: "The user has been removed from this budget.",
+        error: "The user could not be removed. Please try again.",
+      });
     },
     [dispatch]
   );
@@ -109,6 +113,9 @@ export default function JoinedUsers() {
   useEffect(() => {
     if (deleteAllUsersStatus === "succeeded") {
       notifyDeleteAllUsers();
+      dispatch(resetDeleteAllUsersStatus());
+    } else if (deleteAllUsersStatus === "failed") {
+      toast.error("The users could not be removed. Please try again.");
       dispatch(resetDeleteAllUsersStatus());
     }
   }, [dispatch, deleteAllUsersStatus, notifyDeleteAllUsers]);
@@ -250,12 +257,20 @@ export default function JoinedUsers() {
               {editedUserPermissions.id !== user.userID ? (
                 <td className="max-lg:block max-lg:mt-6 max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center max-lg:pb-4">
                   <Button
-                    handleClick={() => {
-                      setDeleteRowData((state) => ({
-                        ...state,
-                        deleteRowID: user.userID,
-                        deleteRowBudgetID: budgetID,
-                      }));
+                    handleClick={async () => {
+                      const confirmed = await confirm({
+                        title: `Remove ${user.username} from this budget?`,
+                        message:
+                          "They will lose access until you invite them again.",
+                        confirmLabel: "Remove",
+                      });
+
+                      if (confirmed)
+                        setDeleteRowData((state) => ({
+                          ...state,
+                          deleteRowID: user.userID,
+                          deleteRowBudgetID: budgetID,
+                        }));
                     }}
                     additionalStyles={
                       editedUserPermissions.id === ""
@@ -324,9 +339,16 @@ export default function JoinedUsers() {
             </Button>
           ) : (
             <Button
-              handleClick={() => {
-                editedUserPermissions.id === "" &&
-                  dispatch(deleteAllUsers(budgetID));
+              handleClick={async () => {
+                if (editedUserPermissions.id !== "") return;
+
+                const confirmed = await confirm({
+                  title: "Remove all users from this budget?",
+                  message: "They will lose access until you invite them again.",
+                  confirmLabel: "Remove all",
+                });
+
+                if (confirmed) dispatch(deleteAllUsers(budgetID));
               }}
               additionalStyles={` mt-8 w-36   ${
                 editedUserPermissions.id === ""

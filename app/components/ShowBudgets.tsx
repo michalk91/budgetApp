@@ -33,9 +33,12 @@ import ArrowsLoader from "./ArrowsLoader";
 import { usePathname } from "next/navigation";
 import Loader from "./Loader";
 import { toast } from "react-toastify";
+import { useConfirm } from "./ConfirmProvider";
+import { reportThunkResult } from "../utils/reportThunkResult";
 
 export default function ShowBudgets() {
   const dispatch = useAppDispatch();
+  const confirm = useConfirm();
   const budgets = useAppSelector((state) => state.budgets.budgetsArray);
   const userID = useAppSelector((state) => state.user.userID);
   const userName = useAppSelector((state) => state.user.username);
@@ -113,17 +116,7 @@ export default function ShowBudgets() {
     []
   );
 
-  const notifyBudgetDeleted = useCallback(
-    () => toast.success("The budget has been successfully deleted."),
-    []
-  );
-
-  const notifyBudgetLeft = useCallback(
-    () => toast.success("The shared budget has been successfully left."),
-    []
-  );
-
-  useEffect(() => {
+  const refetchBudgets = useCallback(() => {
     dispatch(
       fetchBudgets({
         sortBy: globalBudgetSortBy,
@@ -132,22 +125,39 @@ export default function ShowBudgets() {
     );
   }, [dispatch, globalBudgetSortBy, globalBudgetSortDirection]);
 
-  const handleDeleteBudget = useCallback(
-    (id: string) => {
-      dispatch(deleteBudget(id));
+  useEffect(() => {
+    refetchBudgets();
+  }, [refetchBudgets]);
 
-      notifyBudgetDeleted();
+  const resetDeleteRow = useCallback(
+    () => setDeleteRowData((state) => ({ ...state, deleteRowID: "" })),
+    []
+  );
+
+  const handleDeleteBudget = useCallback(
+    async (id: string) => {
+      const result = await dispatch(deleteBudget(id));
+      resetDeleteRow();
+
+      return reportThunkResult(result, {
+        success: "The budget has been successfully deleted.",
+        error: "The budget could not be deleted. Please try again.",
+      });
     },
-    [notifyBudgetDeleted, dispatch]
+    [dispatch, resetDeleteRow]
   );
 
   const handleLeaveBudget = useCallback(
-    (id: string) => {
-      dispatch(leaveBudget(id));
+    async (id: string) => {
+      const result = await dispatch(leaveBudget(id));
+      resetDeleteRow();
 
-      notifyBudgetLeft();
+      return reportThunkResult(result, {
+        success: "The shared budget has been successfully left.",
+        error: "The budget could not be left. Please try again.",
+      });
     },
-    [dispatch, notifyBudgetLeft]
+    [dispatch, resetDeleteRow]
   );
 
   const onTransitionEnd = useCallback(() => {
@@ -230,15 +240,29 @@ export default function ShowBudgets() {
     if (deleteAllBudgetsStatus === "succeeded") {
       notifyDeleteAllBudgets();
       dispatch(resetDeleteAllBudgetsStatus());
+    } else if (deleteAllBudgetsStatus === "failed") {
+      // Some budgets may already be deleted, so sync the list with the database.
+      toast.error("Not all budgets could be deleted. Please try again.");
+      dispatch(resetDeleteAllBudgetsStatus());
+      refetchBudgets();
     }
-  }, [deleteAllBudgetsStatus, dispatch, notifyDeleteAllBudgets]);
+  }, [
+    deleteAllBudgetsStatus,
+    dispatch,
+    notifyDeleteAllBudgets,
+    refetchBudgets,
+  ]);
 
   useEffect(() => {
     if (leaveAllBudgetsStatus === "succeeded") {
       notifyLeaveAllBudgets();
       dispatch(resetLeaveAllBudgetsStatus());
+    } else if (leaveAllBudgetsStatus === "failed") {
+      toast.error("Not all shared budgets could be left. Please try again.");
+      dispatch(resetLeaveAllBudgetsStatus());
+      refetchBudgets();
     }
-  }, [leaveAllBudgetsStatus, dispatch, notifyLeaveAllBudgets]);
+  }, [leaveAllBudgetsStatus, dispatch, notifyLeaveAllBudgets, refetchBudgets]);
 
   return (
     <div className="flex flex-col items-center w-full mt-10 max-md:mt-4">
@@ -353,11 +377,16 @@ export default function ShowBudgets() {
                     </Link>
                     {budget.ownerID === userID ? (
                       <Button
-                        handleClick={() => {
+                        handleClick={async () => {
                           if (
                             !addNewBudget &&
                             budget.budgetID &&
-                            budget.ownerID === userID
+                            budget.ownerID === userID &&
+                            (await confirm({
+                              title: `Delete "${budget.budgetName}"?`,
+                              message:
+                                "The budget, its transactions and pending invitations will be permanently deleted.",
+                            }))
                           ) {
                             setDeleteRowData((state) => ({
                               ...state,
@@ -376,11 +405,17 @@ export default function ShowBudgets() {
                       </Button>
                     ) : (
                       <Button
-                        handleClick={() => {
+                        handleClick={async () => {
                           if (
                             !addNewBudget &&
                             budget.budgetID &&
-                            budget.ownerID !== userID
+                            budget.ownerID !== userID &&
+                            (await confirm({
+                              title: `Leave "${budget.budgetName}"?`,
+                              message:
+                                "You will lose access to this budget until the owner invites you again.",
+                              confirmLabel: "Leave",
+                            }))
                           ) {
                             setDeleteRowData((state) => ({
                               ...state,
@@ -437,10 +472,17 @@ export default function ShowBudgets() {
                 ) : (
                   <>
                     <Button
-                      handleClick={() => {
+                      handleClick={async () => {
                         if (globalSearchKeywords !== "") return;
 
-                        dispatch(deleteAllBudgets());
+                        const confirmed = await confirm({
+                          title: "Delete all your budgets?",
+                          message:
+                            "All budgets you own, with their transactions and pending invitations, will be permanently deleted.",
+                          confirmLabel: "Delete all",
+                        });
+
+                        if (confirmed) dispatch(deleteAllBudgets());
                       }}
                       additionalStyles={`w-36
                       ${
@@ -462,10 +504,17 @@ export default function ShowBudgets() {
                 ) : (
                   <>
                     <Button
-                      handleClick={() => {
+                      handleClick={async () => {
                         if (globalSearchKeywords !== "") return;
 
-                        dispatch(leaveAllBudgets());
+                        const confirmed = await confirm({
+                          title: "Leave all shared budgets?",
+                          message:
+                            "You will lose access to them until their owners invite you again.",
+                          confirmLabel: "Leave all",
+                        });
+
+                        if (confirmed) dispatch(leaveAllBudgets());
                       }}
                       additionalStyles={`w-36
                       ${

@@ -7,6 +7,8 @@ type NavItemProps = {
 
 export default function NavItem({ children, className }: NavItemProps) {
   return (
-    <li className={cn("mr-6 max-lg:p-6 max-md:mr-0", className)}>{children}</li>
+    <li className={cn("mr-6 max-lg:p-6 max-md:mr-0 select-none", className)}>
+      {children}
+    </li>
   );
 }

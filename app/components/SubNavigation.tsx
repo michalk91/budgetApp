@@ -63,7 +63,7 @@ export default function SubNavigation({ activeOption }: SubNavigationProps) {
                 position && setPosition(position);
                 dispatch(setSelectedOption(item));
               }}
-              className={`p-4 hover:cursor-pointer hover:text-fg-hover`}
+              className="p-4 select-none hover:cursor-pointer hover:text-fg-hover"
             >
               {`${item}`}
             </p>
@@ -85,7 +85,7 @@ export default function SubNavigation({ activeOption }: SubNavigationProps) {
                   position && setPosition(position);
                   dispatch(setSelectedOption(item));
                 }}
-                className={`p-4 hover:cursor-pointer hover:text-fg-hover`}
+                className="p-4 select-none hover:cursor-pointer hover:text-fg-hover"
               >
                 {`${item}`}
               </p>

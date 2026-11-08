@@ -17,12 +17,15 @@ import usePagination from "../hooks/usePagination";
 import { useIDfromPathname } from "../hooks/useIDfromPathname";
 import Loader from "./Loader";
 import { toast } from "react-toastify";
+import { useConfirm } from "./ConfirmProvider";
+import { reportThunkResult } from "../utils/reportThunkResult";
 
 export default function ShowTransactions({
   expensesSort,
   setExpensesSort,
 }: ShowTransactionsProps) {
   const dispatch = useAppDispatch();
+  const confirm = useConfirm();
 
   const budgetID = useIDfromPathname();
 
@@ -72,20 +75,19 @@ export default function ShowTransactions({
     []
   );
 
-  const notifyTransactionDeleted = useCallback(
-    () => toast.success("The transaction has been successfully deleted."),
-    []
-  );
-
   const handleDeleteTransaction = useCallback(
-    (id: string, type: "expense" | "income") => {
-      dispatch(
+    async (id: string, type: "expense" | "income") => {
+      const result = await dispatch(
         deleteTransaction({ budgetID, transactionToDelete: { id, type } })
       );
+      setDeleteRowData((state) => ({ ...state, deleteRowID: "" }));
 
-      notifyTransactionDeleted();
+      return reportThunkResult(result, {
+        success: "The transaction has been successfully deleted.",
+        error: "The transaction could not be deleted. Please try again.",
+      });
     },
-    [dispatch, budgetID, notifyTransactionDeleted]
+    [dispatch, budgetID]
   );
 
   const handleStartEdit = (id: string) => {
@@ -153,6 +155,9 @@ export default function ShowTransactions({
   useEffect(() => {
     if (deleteAllTransactionsStatus === "succeeded") {
       notifyDeleteAllTransactions();
+      dispatch(resetDeleteAllTransactionsStatus());
+    } else if (deleteAllTransactionsStatus === "failed") {
+      toast.error("The transactions could not be deleted. Please try again.");
       dispatch(resetDeleteAllTransactionsStatus());
     }
   }, [deleteAllTransactionsStatus, notifyDeleteAllTransactions, dispatch]);
@@ -349,7 +354,7 @@ export default function ShowTransactions({
               {editedTransaction.id !== transaction.id ? (
                 <td className="max-xl:block max-xl:mt-4  max-xl:before:content-[attr(data-cell)]  max-xl:before:font-bold max-xl:before:uppercase max-xl:text-center max-xl:pb-4">
                   <Button
-                    handleClick={() => {
+                    handleClick={async () => {
                       if (
                         userID &&
                         !addNewExpense &&
@@ -359,7 +364,11 @@ export default function ShowTransactions({
                         editedTransaction.id === "" &&
                         (allowToManageAllTransactions?.includes(userID) ||
                           transaction.ownerID === userID ||
-                          userID === budgetOwnerID)
+                          userID === budgetOwnerID) &&
+                        (await confirm({
+                          title: "Delete this transaction?",
+                          message: "The budget amount will be updated.",
+                        }))
                       ) {
                         setDeleteRowData((state) => ({
                           ...state,
@@ -482,10 +491,17 @@ export default function ShowTransactions({
                 </Button>
               ) : (
                 <Button
-                  handleClick={() => {
-                    userID &&
-                      editedTransaction.id === "" &&
-                      dispatch(deleteAllTransactions(budgetID));
+                  handleClick={async () => {
+                    if (!userID || editedTransaction.id !== "") return;
+
+                    const confirmed = await confirm({
+                      title: "Delete all transactions?",
+                      message:
+                        "All transactions in this budget will be permanently deleted and the budget amount will be updated.",
+                      confirmLabel: "Delete all",
+                    });
+
+                    if (confirmed) dispatch(deleteAllTransactions(budgetID));
                   }}
                   additionalStyles={`w-36
                     ${

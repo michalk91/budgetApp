@@ -5,6 +5,7 @@ import store from "./redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
 import { ThemeProvider } from "next-themes";
+import { ConfirmProvider } from "./components/ConfirmProvider";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   // Create the persistor once; calling persistStore on every render re-runs rehydration.
@@ -18,7 +19,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
     >
       <Provider store={store}>
-        <PersistGate persistor={persistor}>{children}</PersistGate>
+        <PersistGate persistor={persistor}>
+          <ConfirmProvider>{children}</ConfirmProvider>
+        </PersistGate>
       </Provider>
     </ThemeProvider>
   );

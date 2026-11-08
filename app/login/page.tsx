@@ -153,7 +153,11 @@ const Login = () => {
           handleClick={handleAnonymousLogin}
           additionalStyles="w-3/4 min-w-fit whitespace-nowrap mx-0 mt-6 -mb-4 max-md:py-2 max-md:mt-6 max-md:mb-4 bg-green-600 hover:bg-green-800"
         >
-          {loginStatus === "loadingAnonymous" ? <Loader /> : "Login as anonymous"}
+          {loginStatus === "loadingAnonymous" ? (
+            <Loader />
+          ) : (
+            "Login as anonymous"
+          )}
         </Button>
       </form>
     </section>

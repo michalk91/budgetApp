@@ -1,6 +1,9 @@
 import { useCallback, useEffect } from "react";
 import useGroupTransition from "./useGroupTransition";
 
+// Resolves to false when removing the element failed and it should be restored.
+type HandleUnmountElem = (id: string, secondArg?: any) => Promise<boolean>;
+
 const Animate = ({
   elem,
   keyFrames,
@@ -12,7 +15,7 @@ const Animate = ({
   elem: HTMLElement;
   keyFrames: Record<string, string | number | undefined>[];
   duration: number;
-  handleUnmountElem: (id: string, secondArg?: any) => void;
+  handleUnmountElem: HandleUnmountElem;
   id?: string;
   secondArg: any;
 }) => {
@@ -24,14 +27,19 @@ const Animate = ({
     fill: "forwards",
   });
 
-  animation.onfinish = () => {
-    if (!handleUnmountElem) return;
+  animation.onfinish = async () => {
+    if (!handleUnmountElem || !id) return;
 
-    if (id && secondArg) {
-      handleUnmountElem(id, secondArg);
-    } else if (id) {
-      handleUnmountElem(id);
-    }
+    const removed = await (secondArg
+      ? handleUnmountElem(id, secondArg)
+      : handleUnmountElem(id));
+
+    if (removed) return;
+
+    // Play the exit animation backwards to bring the element back. Detach the
+    // handler first, otherwise finishing the reversed animation deletes again.
+    animation.onfinish = null;
+    animation.reverse();
   };
 };
 
@@ -67,7 +75,7 @@ const useOnUnMountAnimation = ({
     }: {
       containerElem: HTMLElement;
       id: string;
-      handleUnmountElem: ((id: string, secondArg?: any) => void) | undefined;
+      handleUnmountElem: HandleUnmountElem | undefined;
       secondArg?: any;
       animDir?: "fadeInRight" | "fadeInLeft";
     }) => {

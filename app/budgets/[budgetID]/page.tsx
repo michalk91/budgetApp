@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import {
   setSecondElemPos,
   setAllowTransition,
+  resetFirstElemPos,
 } from "@/app/redux/transitionSlice";
 import Link from "next/link";
 import { usePosition } from "@/app/hooks/usePosition";
@@ -17,21 +18,22 @@ export default function SelectedBudget() {
 
   const firstElemPos = useAppSelector((state) => state.transition.firstElemPos);
 
-  const [animate, setAnimate] = useState(false);
+  // Two phases: first slide the header from the clicked "Show details" button,
+  // then shrink it. Without a start position (direct URL, refresh, browser
+  // back/forward) only shrink. The position is consumed once on mount.
+  const [startPosition] = useState(firstElemPos);
+  const hasStartPosition = startPosition.width > 0;
+  const [phase, setPhase] = useState<"move" | "shrink">(
+    hasStartPosition ? "move" : "shrink"
+  );
 
-  const onTransitionStart = useCallback(() => {
-    setAnimate(true);
-  }, []);
-
-  const onTransitionEnd = useCallback(() => {
-    setAnimate(false);
-  }, []);
+  const startShrinking = useCallback(() => setPhase("shrink"), []);
 
   const animateElemCallback = useTransition({
-    animateToElemPos: firstElemPos,
+    animateToElemPos: startPosition,
+    allowTransition: hasStartPosition,
     onlyYAxis: true,
-    onTransitionStart,
-    onTransitionEnd,
+    onTransitionEnd: startShrinking,
     easing: "cubic-bezier(.25,.75,.5,1.25)",
     duration: 450,
   });
@@ -40,14 +42,15 @@ export default function SelectedBudget() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+    dispatch(resetFirstElemPos());
+  }, [dispatch]);
 
   return (
     <div className="flex flex-col items-center w-full mt-6 relative max-md:mt-2">
       <div
         ref={animateElemCallback}
         className={`bg-surface min-w-full ${
-          animate ? "" : "animate-decreaseWidth"
+          phase === "shrink" ? "animate-decreaseWidth" : ""
         } relative text-center`}
       >
         <Link href="/">
@@ -58,7 +61,7 @@ export default function SelectedBudget() {
               dispatch(setSecondElemPos(position));
               dispatch(setAllowTransition(true));
             }}
-            additionalStyles="bg-red-500 hover:hover:bg-red-700 max-md:!m-2"
+            additionalStyles="bg-red-500 hover:bg-red-700 max-md:!m-2"
           >
             Back to budgets
           </Button>

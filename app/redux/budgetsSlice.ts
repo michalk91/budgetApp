@@ -15,6 +15,7 @@ import {
   getDoc,
   increment,
   orderBy,
+  writeBatch,
 } from "firebase/firestore";
 import type {
   SortOptions,
@@ -48,7 +49,7 @@ export const fetchBudgets = createAsyncThunk(
     const querySnapYourBudgets = await getDocs(yourBudgetsQuery);
 
     const yourBudgets = querySnapYourBudgets.docs.map(
-      (doc) => ({ budgetID: doc.id, ...doc.data() } as Budget)
+      (doc) => ({ budgetID: doc.id, ...doc.data() }) as Budget
     );
 
     const sharedBudgetsQuery = query(
@@ -58,7 +59,7 @@ export const fetchBudgets = createAsyncThunk(
     const querySnapSharedBudgets = await getDocs(sharedBudgetsQuery);
 
     const sharedBudgets = querySnapSharedBudgets.docs.map(
-      (doc) => ({ budgetID: doc.id, ...doc.data() } as Budget)
+      (doc) => ({ budgetID: doc.id, ...doc.data() }) as Budget
     );
     const combinedBudgets = [...yourBudgets, ...sharedBudgets];
 
@@ -108,6 +109,38 @@ export const fetchSelectedBudgetInfo = createAsyncThunk(
   }
 );
 
+// Firestore allows at most 500 writes in a single batch.
+const MAX_BATCH_WRITES = 500;
+
+// Deletes a budget together with its transactions and pending invitations.
+// The budget document is deleted in the last batch: once it is gone, security
+// rules no longer allow reading its transactions. Small budgets (the usual
+// case) fit into one batch, so the whole deletion is atomic.
+const deleteBudgetWithRelations = async (budgetID: string) => {
+  const [transactions, invitations] = await Promise.all([
+    getDocs(collection(db, `budgets/${budgetID}/transactions`)),
+    getDocs(
+      query(collection(db, "invitations"), where("budgetID", "==", budgetID))
+    ),
+  ]);
+
+  const refs = [
+    ...transactions.docs.map((item) => item.ref),
+    ...invitations.docs.map((item) => item.ref),
+    doc(db, "budgets", budgetID),
+  ];
+
+  for (let start = 0; start < refs.length; start += MAX_BATCH_WRITES) {
+    const batch = writeBatch(db);
+
+    refs
+      .slice(start, start + MAX_BATCH_WRITES)
+      .forEach((ref) => batch.delete(ref));
+
+    await batch.commit();
+  }
+};
+
 export const deleteBudget = createAsyncThunk(
   "budgets/deleteBudget",
   async (id: string, { getState }) => {
@@ -117,35 +150,15 @@ export const deleteBudget = createAsyncThunk(
 
     if (!currentUserID) return;
 
-    const transactions = await getDocs(
-      collection(db, `budgets/${id}/transactions`)
-    );
+    const budgetSnap = await getDoc(doc(db, "budgets", id));
 
-    const invitations = await getDocs(
-      query(collection(db, "invitations"), where("budgetID", "==", id))
-    );
-
-    for (const invitation of invitations.docs) {
-      await deleteDoc(doc(db, "invitations", invitation.id));
+    if (!budgetSnap.exists() || budgetSnap.data().ownerID !== currentUserID) {
+      throw Error("Unauthorized action");
     }
 
-    for (const transaction of transactions.docs) {
-      await deleteDoc(doc(db, `budgets/${id}/transactions`, transaction.id));
-    }
+    await deleteBudgetWithRelations(id);
 
-    const budgets = await getDocs(
-      query(collection(db, "budgets"), where("ownerID", "==", currentUserID))
-    );
-
-    for (const budget of budgets.docs) {
-      if (budget.id === id) {
-        await deleteDoc(doc(db, "budgets", budget.id));
-      }
-    }
-
-    return {
-      id,
-    };
+    return { id };
   }
 );
 
@@ -162,26 +175,11 @@ export const deleteAllBudgets = createAsyncThunk(
       query(collection(db, "budgets"), where("ownerID", "==", currentUserID))
     );
 
-    const deletedBudgetsIDs = [];
+    await Promise.all(
+      budgets.docs.map((budget) => deleteBudgetWithRelations(budget.id))
+    );
 
-    for (const budget of budgets.docs) {
-      const transactions = await getDocs(
-        collection(db, `budgets/${budget.id}/transactions`)
-      );
-
-      for (const transaction of transactions.docs) {
-        await deleteDoc(
-          doc(db, `budgets/${budget.id}/transactions`, transaction.id)
-        );
-      }
-
-      for (const budget of budgets.docs) {
-        await deleteDoc(doc(db, "budgets", budget.id));
-        deletedBudgetsIDs.push(budget.id);
-      }
-    }
-
-    return { deletedBudgetsIDs };
+    return { deletedBudgetsIDs: budgets.docs.map((budget) => budget.id) };
   }
 );
 
@@ -333,7 +331,7 @@ export const fetchTransactions = createAsyncThunk(
         ({
           id: doc.id,
           ...doc.data(),
-        } as Transaction)
+        }) as Transaction
     );
     return transactions;
   }

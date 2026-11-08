@@ -24,7 +24,9 @@ export default function RootLayout({
         <Providers>
           <Header />
           <Wrapper>
-            <main className="overflow-hidden pt-24 px-24 max-md:px-10">{children}</main>
+            <main className="overflow-hidden pt-24 px-24 max-md:px-10">
+              {children}
+            </main>
           </Wrapper>
           <Footer />
         </Providers>

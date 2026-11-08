@@ -63,10 +63,14 @@ export const invertAndPlay = ({
     }
   );
 
-  animation.ready.then(() => {
-    onTransitionStart && onTransitionStart(elem);
-  });
-  animation.onfinish = () => {
+  animation.ready
+    .then(() => {
+      onTransitionStart && onTransitionStart(elem);
+    })
+    // `ready` rejects when the animation is cancelled; handled by oncancel below.
+    .catch(() => {});
+  // A cancelled animation (e.g. interrupted by another one) still ends the transition.
+  animation.onfinish = animation.oncancel = () => {
     onTransitionEnd && onTransitionEnd(elem);
   };
 };

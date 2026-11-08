@@ -41,7 +41,7 @@ export const fetchInvitations = createAsyncThunk(
     const querySnapshot = await getDocs(invitationsQuery);
 
     const budgets = querySnapshot.docs.map(
-      (doc) => ({ ...doc.data() } as Budget)
+      (doc) => ({ ...doc.data() }) as Budget
     );
 
     return budgets;

@@ -3,9 +3,9 @@ import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { decideInvitation } from "../redux/invitationsSlice";
 import useOnUnMountAnimation from "../hooks/useOnUnMountAnimation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { toast } from "react-toastify";
 import Warning from "../components/Warning";
 import Button from "../components/Button";
+import { reportThunkResult } from "../utils/reportThunkResult";
 
 export default function Notifications() {
   const dispatch = useAppDispatch();
@@ -17,13 +17,18 @@ export default function Notifications() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleDecideInvitation = useCallback(
-    (id: string, decision: "accept" | "decline") => {
-      dispatch(
-        decideInvitation({
-          invitationID: id,
-          decision,
-        })
+    async (id: string, decision: "accept" | "decline") => {
+      const result = await dispatch(
+        decideInvitation({ invitationID: id, decision })
       );
+
+      return reportThunkResult(result, {
+        success:
+          decision === "accept"
+            ? "The budget has been added to your dashboard."
+            : "The invitation has been declined.",
+        error: "Something went wrong. Please try again.",
+      });
     },
     [dispatch]
   );
@@ -33,16 +38,6 @@ export default function Notifications() {
       containerElem: containerRef.current,
       startGroupAnim: elemsCount,
     }
-  );
-
-  const notifyJoinedBudget = useCallback(
-    () => toast.success("The budget has been added to your dashboard"),
-    []
-  );
-
-  const notifyRejectedInvitation = useCallback(
-    () => toast.error("The invitation has been deleted"),
-    []
   );
 
   useEffect(() => {
@@ -85,7 +80,6 @@ export default function Notifications() {
                     id: item.invitationID,
                     secondArg: "accept",
                   });
-                  notifyJoinedBudget();
                 }}
                 additionalStyles="self-center max-md:my-2 bg-green-700 hover:bg-green-800"
               >
@@ -104,7 +98,6 @@ export default function Notifications() {
                     secondArg: "decline",
                     animDir: "fadeInLeft",
                   });
-                  notifyRejectedInvitation();
                 }}
                 additionalStyles="self-center max-md:my-2 bg-red-700 hover:bg-red-800"
               >

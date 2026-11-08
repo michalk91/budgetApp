@@ -6,9 +6,11 @@ import { addCategory, deleteCategory } from "../redux/budgetsSlice";
 import type { CategoriesProps } from "../types";
 import Button from "./Button";
 import { useIDfromPathname } from "../hooks/useIDfromPathname";
+import { useConfirm } from "./ConfirmProvider";
 
 export default function Categories({ type }: CategoriesProps) {
   const dispatch = useAppDispatch();
+  const confirm = useConfirm();
 
   const budgetID = useIDfromPathname();
 
@@ -120,7 +122,7 @@ export default function Categories({ type }: CategoriesProps) {
         {categoryToDelete !== "" && (
           <div className="mt-5 max-md:-mt-1">
             <Button
-              handleClick={(e) => {
+              handleClick={async (e) => {
                 e.preventDefault();
 
                 if (
@@ -129,6 +131,12 @@ export default function Categories({ type }: CategoriesProps) {
                   !allowManageCategories.includes(userID)
                 )
                   return;
+
+                const confirmed = await confirm({
+                  title: `Delete the "${categoryToDelete}" category?`,
+                });
+
+                if (!confirmed) return;
 
                 dispatch(
                   deleteCategory({

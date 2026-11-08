@@ -223,7 +223,11 @@ export interface TableProps extends SortOptions {
   startSortAnimation?: Record<string, any>[];
   handleDeleteRowID?: string;
   handleDeleteRowSecondArg?: any;
-  handleDeleteRow?: (id: string, handleDeleteRowSecondArg: any) => void;
+  /** Resolves to false when the deletion failed, so the row is restored. */
+  handleDeleteRow?: (
+    id: string,
+    handleDeleteRowSecondArg: any
+  ) => Promise<boolean>;
   addedElemID?: string;
 }
 

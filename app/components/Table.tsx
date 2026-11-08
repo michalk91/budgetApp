@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { SortOptions, TableProps } from "../types";
 import { TbArrowsSort, TbArrowsUp, TbArrowsDown } from "react-icons/tb";
 import Pagination from "./Pagination";
@@ -37,8 +37,6 @@ export default function Table({
 }: TableProps) {
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
-  const [clickedCell, setClickedCell] = useState("");
-
   const handleSort = useCallback(
     (sortBy: string, sortDirection: "ascending" | "descending" | "without") => {
       setSort &&
@@ -48,7 +46,7 @@ export default function Table({
               ...state,
               sortBy,
               sortDirection,
-            } as SortOptions)
+            }) as SortOptions
         );
       setSortGlobal && setSortGlobal({ sortBy, sortDirection });
     },
@@ -212,18 +210,31 @@ export default function Table({
         <table className="table-fixed w-full text-sm text-left text-fg-muted  ">
           <thead className="text-xs text-fg-subtle uppercase bg-surface-sunken border-line border-t-2">
             <tr>
-              {headerCells.map((cell) => (
-                <th
-                  key={cell.name}
-                  scope="col"
-                  className={`select-none px-6 py-3 ${responsiveBreakpoint}:hidden`}
-                >
-                  <div className="flex items-center text-xs">
-                    <div>{cell.name}</div>
-                    {cell.sortBy !== undefined && (
-                      <div
+              {headerCells.map((cell) => {
+                const isSorted =
+                  cell.sortBy === sortBy && sortDirection !== "without";
+
+                return (
+                  <th
+                    key={cell.name}
+                    scope="col"
+                    aria-sort={
+                      isSorted
+                        ? sortDirection === "ascending"
+                          ? "ascending"
+                          : "descending"
+                        : undefined
+                    }
+                    className={`select-none ${
+                      cell.sortBy === undefined ? "px-6 py-3" : "p-0"
+                    } ${responsiveBreakpoint}:hidden`}
+                  >
+                    {cell.sortBy === undefined ? (
+                      <div className="text-xs">{cell.name}</div>
+                    ) : (
+                      <button
+                        type="button"
                         onClick={() => {
-                          setClickedCell(cell.name);
                           enableTransition();
                           updateTransitionDimensions();
 
@@ -233,28 +244,27 @@ export default function Table({
                               sortDirection === "without"
                                 ? "ascending"
                                 : sortDirection === "ascending"
-                                ? "descending"
-                                : "without"
+                                  ? "descending"
+                                  : "without"
                             );
                         }}
-                        className="pl-2 text-2xl hover:cursor-pointer"
+                        className="flex w-full items-center px-6 py-3 text-xs uppercase hover:text-fg"
                       >
-                        {sortDirection === "without" ? (
-                          <TbArrowsSort />
-                        ) : cell.name === clickedCell &&
-                          sortDirection === "ascending" ? (
-                          <TbArrowsDown />
-                        ) : cell.name === clickedCell &&
-                          sortDirection === "descending" ? (
-                          <TbArrowsUp />
-                        ) : (
-                          <TbArrowsSort />
-                        )}
-                      </div>
+                        {cell.name}
+                        <span className="pl-2 text-2xl" aria-hidden="true">
+                          {!isSorted ? (
+                            <TbArrowsSort />
+                          ) : sortDirection === "ascending" ? (
+                            <TbArrowsDown />
+                          ) : (
+                            <TbArrowsUp />
+                          )}
+                        </span>
+                      </button>
                     )}
-                  </div>
-                </th>
-              ))}
+                  </th>
+                );
+              })}
             </tr>
           </thead>
 
