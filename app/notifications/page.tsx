@@ -5,6 +5,7 @@ import useOnUnMountAnimation from "../hooks/useOnUnMountAnimation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import Warning from "../components/Warning";
+import Button from "../components/Button";
 
 export default function Notifications() {
   const dispatch = useAppDispatch();
@@ -72,8 +73,8 @@ export default function Notifications() {
               </p>
             </div>
             <div className="flex flex-wrap justify-center item-center p-8">
-              <button
-                onClick={() => {
+              <Button
+                handleClick={() => {
                   if (!containerRef.current) return;
 
                   updateDeleteRowDimensions();
@@ -86,12 +87,12 @@ export default function Notifications() {
                   });
                   notifyJoinedBudget();
                 }}
-                className="self-center bg-green-700 hover:bg-green-800 text-white font-bold py-2 my-2 mx-2 px-6 rounded-full max-md:px-6 max-md:py-4"
+                additionalStyles="self-center max-md:my-2 bg-green-700 hover:bg-green-800"
               >
                 Accept
-              </button>
-              <button
-                onClick={() => {
+              </Button>
+              <Button
+                handleClick={() => {
                   if (!containerRef.current) return;
 
                   updateDeleteRowDimensions();
@@ -105,10 +106,10 @@ export default function Notifications() {
                   });
                   notifyRejectedInvitation();
                 }}
-                className="self-center bg-red-700 hover:bg-red-800 text-white font-bold py-2 my-2 mx-2 px-6 rounded-full max-md:px-6 max-md:py-4"
+                additionalStyles="self-center max-md:my-2 bg-red-700 hover:bg-red-800"
               >
                 Decline
-              </button>
+              </Button>
             </div>
           </div>
         ))

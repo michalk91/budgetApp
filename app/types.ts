@@ -231,6 +231,10 @@ export interface ButtonProps {
   children: React.ReactNode;
   handleClick?: (e: SyntheticEvent) => void;
   additionalStyles?: string;
+  type?: "button" | "submit" | "reset";
+  disabled?: boolean;
+  /** No horizontal margin and no extra mobile spacing, for buttons stacked in forms. */
+  compact?: boolean;
 }
 
 export interface UsersWithPermissions {

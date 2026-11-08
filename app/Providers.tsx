@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import { PersistGate } from "redux-persist/integration/react";
@@ -6,7 +7,8 @@ import { persistStore } from "redux-persist";
 import { ThemeProvider } from "next-themes";
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  let persistor = persistStore(store);
+  // Create the persistor once; calling persistStore on every render re-runs rehydration.
+  const [persistor] = useState(() => persistStore(store));
 
   return (
     <ThemeProvider

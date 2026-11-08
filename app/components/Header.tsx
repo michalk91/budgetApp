@@ -21,7 +21,7 @@ export default function Header() {
 
   const closeMenu = () => setIsOpen(false);
 
-  const singOut = () => {
+  const signOut = () => {
     dispatch(logoutUser());
   };
 
@@ -100,7 +100,7 @@ export default function Header() {
               variant="danger"
               onClick={() => {
                 closeMenu();
-                singOut();
+                signOut();
               }}
             >
               Logout

@@ -7,6 +7,7 @@ import { useAppDispatch } from "../redux/hooks";
 import { useAppSelector } from "../redux/hooks";
 import Link from "next/link";
 import Loader from "../components/Loader";
+import Button from "../components/Button";
 import { useRouter } from "next/navigation";
 import { resetCreateAccountStatus } from "../redux/usersSlice";
 import { toast } from "react-toastify";
@@ -235,18 +236,13 @@ const Register = () => {
           </div>
         </div>
 
-        {registerStatus !== "loading" ? (
-          <button
-            type="submit"
-            className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 mx-3 my-5 px-6 rounded-full "
-          >
-            Sign up
-          </button>
-        ) : (
-          <button className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 my-5 mx-3 px-6 rounded-full ">
-            <Loader />
-          </button>
-        )}
+        <Button
+          type="submit"
+          disabled={registerStatus === "loading"}
+          additionalStyles="w-36 my-5 mx-3 max-md:py-2 max-md:my-5 bg-blue-500 hover:bg-blue-700"
+        >
+          {registerStatus === "loading" ? <Loader /> : "Sign up"}
+        </Button>
 
         <p className="text-m text-center">
           Already have an account?

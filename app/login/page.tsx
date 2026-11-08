@@ -12,6 +12,7 @@ import {
   resetLoginStatus,
 } from "../redux/usersSlice";
 import Loader from "../components/Loader";
+import Button from "../components/Button";
 import { toast } from "react-toastify";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 
@@ -129,20 +130,13 @@ const Login = () => {
           </div>
         </div>
 
-        {loginStatus !== "loading" ? (
-          <>
-            <button
-              type="submit"
-              className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 my-5 mx-3 px-6 rounded-full "
-            >
-              Login
-            </button>
-          </>
-        ) : (
-          <button className="bg-blue-500 w-36 hover:bg-blue-700 text-white font-bold py-2 my-5 mx-3 px-6 rounded-full ">
-            <Loader />
-          </button>
-        )}
+        <Button
+          type="submit"
+          disabled={loginStatus === "loading"}
+          additionalStyles="w-36 my-5 mx-3 max-md:py-2 max-md:my-5 bg-blue-500 hover:bg-blue-700"
+        >
+          {loginStatus === "loading" ? <Loader /> : "Login"}
+        </Button>
         <p className="text-m text-center">
           No account yet?
           <Link
@@ -153,22 +147,14 @@ const Login = () => {
           </Link>
         </p>
 
-        {loginStatus !== "loadingAnonymous" ? (
-          <button
-            type="button"
-            className="bg-green-600 w-3/4 min-w-fit whitespace-nowrap hover:bg-green-800 text-white font-bold py-2 mt-6 px-6 rounded-full -mb-4 max-md:mb-4"
-            onClick={(e) => handleAnonymousLogin(e)}
-          >
-            Login as anonymous
-          </button>
-        ) : (
-          <button
-            type="button"
-            className="bg-green-600 w-3/4 min-w-fit whitespace-nowrap hover:bg-green-800 text-white font-bold py-2 mt-6 px-6 rounded-full -mb-4 max-md:mb-4"
-          >
-            <Loader />
-          </button>
-        )}
+        <Button
+          type="button"
+          disabled={loginStatus === "loadingAnonymous"}
+          handleClick={handleAnonymousLogin}
+          additionalStyles="w-3/4 min-w-fit whitespace-nowrap mx-0 mt-6 -mb-4 max-md:py-2 max-md:mt-6 max-md:mb-4 bg-green-600 hover:bg-green-800"
+        >
+          {loginStatus === "loadingAnonymous" ? <Loader /> : "Login as anonymous"}
+        </Button>
       </form>
     </section>
   );

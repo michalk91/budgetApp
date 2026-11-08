@@ -149,15 +149,15 @@ export default function Categories({ type }: CategoriesProps) {
             >
               Delete
             </Button>
-            <button
-              onClick={(e) => {
+            <Button
+              handleClick={(e) => {
                 e.preventDefault();
                 setCategoryToDelete("");
               }}
-              className="bg-green-600 hover:bg-green-800 text-white font-bold py-2 mx-1 px-6 rounded-full max-md:px-6 max-md:py-4"
+              additionalStyles="mx-1 bg-green-600 hover:bg-green-800"
             >
               Cancel
-            </button>
+            </Button>
           </div>
         )}
       </div>

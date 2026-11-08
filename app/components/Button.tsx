@@ -6,13 +6,19 @@ export default function Button({
   children,
   handleClick,
   additionalStyles,
+  type,
+  disabled,
+  compact = false,
 }: ButtonProps) {
   return (
     <button
+      type={type}
+      disabled={disabled}
       onClick={handleClick}
       // cn() lets additionalStyles override the defaults (e.g. text color of disabled buttons).
       className={cn(
         "text-white font-bold py-2 my-2 mx-2 px-6 rounded-full max-md:px-6 max-md:py-4 max-md:my-6",
+        compact && "mx-0 max-md:my-2 max-md:py-2",
         additionalStyles
       )}
     >

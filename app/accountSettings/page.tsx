@@ -6,6 +6,15 @@ import ChangeEmail from "../components/ChangeEmail";
 import RemoveUser from "../components/RemoveUser";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { resetRemoveUserStatus } from "../redux/usersSlice";
+import Button from "../components/Button";
+import { cn } from "../utils/cn";
+
+// Not available to anonymous users.
+const accountEditOptions = [
+  { action: "change-username", label: "Change username" },
+  { action: "change-email", label: "Change e-mail" },
+  { action: "change-password", label: "Change password" },
+];
 
 export default function Account() {
   const dispatch = useAppDispatch();
@@ -26,46 +35,28 @@ export default function Account() {
       <div className="w-full rounded-md p-8  text-center border-solid border-2 border-blue-400 shadow-xl">
         {active === "" && (
           <>
-            <button
-              onClick={() =>
-                !loggedInAsAnonymous && setActive("change-username")
-              }
-              className={`w-full my-2 font-bold py-2 rounded-full ${
-                loggedInAsAnonymous
-                  ? "cursor-not-allowed bg-primary-disabled text-on-disabled"
-                  : "bg-blue-500 hover:bg-blue-700 text-white"
-              }`}
-            >
-              Change username
-            </button>
-            <button
-              onClick={() => !loggedInAsAnonymous && setActive("change-email")}
-              className={`w-full my-2 font-bold py-2 rounded-full ${
-                loggedInAsAnonymous
-                  ? "cursor-not-allowed bg-primary-disabled text-on-disabled"
-                  : "bg-blue-500 hover:bg-blue-700 text-white"
-              }`}
-            >
-              Change e-mail
-            </button>
-            <button
-              onClick={() =>
-                !loggedInAsAnonymous && setActive("change-password")
-              }
-              className={`w-full my-2 font-bold py-2 rounded-full ${
-                loggedInAsAnonymous
-                  ? "cursor-not-allowed bg-primary-disabled text-on-disabled"
-                  : "bg-blue-500 hover:bg-blue-700 text-white"
-              }`}
-            >
-              Change password
-            </button>
-            <button
-              onClick={() => setActive("remove-user")}
-              className={`w-full my-2 text-white font-bold py-2 rounded-full bg-red-500 hover:bg-red-700 `}
+            {accountEditOptions.map(({ action, label }) => (
+              <Button
+                key={action}
+                compact
+                handleClick={() => !loggedInAsAnonymous && setActive(action)}
+                additionalStyles={cn(
+                  "w-full",
+                  loggedInAsAnonymous
+                    ? "cursor-not-allowed bg-primary-disabled text-on-disabled"
+                    : "bg-blue-500 hover:bg-blue-700"
+                )}
+              >
+                {label}
+              </Button>
+            ))}
+            <Button
+              compact
+              handleClick={() => setActive("remove-user")}
+              additionalStyles="w-full bg-red-500 hover:bg-red-700"
             >
               Delete account
-            </button>
+            </Button>
           </>
         )}
         {active === "change-password" && (

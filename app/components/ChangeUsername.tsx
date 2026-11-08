@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { toast } from "react-toastify";
 import type { ChangeComponentsProps } from "../types";
 import { changeUsername } from "../redux/usersSlice";
+import Button from "./Button";
 
 export default function ChangeUsername({ setActive }: ChangeComponentsProps) {
   const dispatch = useAppDispatch();
@@ -58,19 +59,21 @@ export default function ChangeUsername({ setActive }: ChangeComponentsProps) {
         </div>
 
         <div className="text-center pt-4">
-          <button
-            className="w-4/5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 my-2 px-6 rounded-full "
+          <Button
             type="submit"
+            compact
+            additionalStyles="w-4/5 bg-blue-500 hover:bg-blue-700"
           >
             Confirm
-          </button>
-          <button
-            onClick={() => setActive("")}
-            className="w-4/5 bg-red-500 hover:bg-red-700 text-white font-bold py-2 my-2 px-6 rounded-full "
+          </Button>
+          <Button
             type="button"
+            compact
+            handleClick={() => setActive("")}
+            additionalStyles="w-4/5 bg-red-500 hover:bg-red-700"
           >
             Cancel
-          </button>
+          </Button>
         </div>
       </form>
     </>
