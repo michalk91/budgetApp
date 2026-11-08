@@ -287,7 +287,7 @@ export default function ShowBudgets() {
                 <tr
                   key={budget.budgetID}
                   data-id={budget.budgetID}
-                  className={`hover:bg-gray-100 bg-white border-b `}
+                  className={`hover:bg-surface-muted bg-surface border-b `}
                   ref={(node) => {
                     index === activeIndex ? animateElemCallback(node) : null;
                   }}
@@ -310,9 +310,9 @@ export default function ShowBudgets() {
                     data-cell="amount"
                     className={`${
                       (budget.budgetValue as number) < 0
-                        ? "text-red-600"
-                        : "text-black"
-                    } text-black px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center`}
+                        ? "text-negative"
+                        : "text-fg"
+                    } px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center`}
                   >
                     {formatter(
                       budget.budgetValue as number,
@@ -324,8 +324,8 @@ export default function ShowBudgets() {
                     data-cell="owner"
                     className={`font-bold ${
                       budget.ownerID === userID
-                        ? "text-green-600"
-                        : "text-blue-700"
+                        ? "text-positive"
+                        : "text-accent"
                     } px-6 py-6 max-lg:block max-lg:before:content-[attr(data-cell)':_'] max-lg:before:font-bold max-lg:before:uppercase max-lg:text-center`}
                   >
                     {budget.ownerID === userID ? "You" : budget.ownerUsername}
@@ -345,7 +345,7 @@ export default function ShowBudgets() {
                         additionalStyles={
                           !addNewBudget
                             ? "bg-green-600 hover:bg-green-800"
-                            : "bg-green-200 hover:cursor-not-allowed"
+                            : "bg-success-disabled text-on-disabled hover:cursor-not-allowed"
                         }
                       >
                         Show details
@@ -369,7 +369,7 @@ export default function ShowBudgets() {
                         additionalStyles={
                           !addNewBudget
                             ? "bg-red-500 hover:bg-red-700"
-                            : "bg-red-200 hover:cursor-not-allowed"
+                            : "bg-danger-disabled text-on-disabled hover:cursor-not-allowed"
                         }
                       >
                         Delete
@@ -392,7 +392,7 @@ export default function ShowBudgets() {
                         additionalStyles={
                           !addNewBudget
                             ? "bg-blue-500 hover:bg-blue-700"
-                            : "bg-blue-200 hover:cursor-not-allowed"
+                            : "bg-primary-disabled text-on-disabled hover:cursor-not-allowed"
                         }
                       >
                         Leave
@@ -404,7 +404,7 @@ export default function ShowBudgets() {
           )}
           {!budgetLoaded && fetchBudgetsStatus === "loading" && (
             <tr>
-              <td colSpan={5} className="h-full w-full p-10 bg-white">
+              <td colSpan={5} className="h-full w-full p-10 bg-surface">
                 <ArrowsLoader />
               </td>
             </tr>
@@ -422,7 +422,7 @@ export default function ShowBudgets() {
                 }}
                 additionalStyles={
                   globalSearchKeywords !== ""
-                    ? "bg-blue-200 hover:hover:cursor-not-allowed"
+                    ? "bg-primary-disabled text-on-disabled hover:cursor-not-allowed"
                     : "bg-blue-700 hover:bg-blue-900"
                 }
               >
@@ -445,7 +445,7 @@ export default function ShowBudgets() {
                       additionalStyles={`w-36
                       ${
                         globalSearchKeywords !== ""
-                          ? "bg-red-200 hover:hover:cursor-not-allowed"
+                          ? "bg-danger-disabled text-on-disabled hover:cursor-not-allowed"
                           : "bg-red-700 hover:bg-red-900"
                       }`}
                     >
@@ -470,7 +470,7 @@ export default function ShowBudgets() {
                       additionalStyles={`w-36
                       ${
                         globalSearchKeywords !== ""
-                          ? "bg-blue-200 hover:hover:cursor-not-allowed"
+                          ? "bg-primary-disabled text-on-disabled hover:cursor-not-allowed"
                           : "bg-blue-600 hover:bg-blue-800"
                       }`}
                     >

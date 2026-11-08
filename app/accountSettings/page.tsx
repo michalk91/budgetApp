@@ -30,20 +30,20 @@ export default function Account() {
               onClick={() =>
                 !loggedInAsAnonymous && setActive("change-username")
               }
-              className={`w-full my-2 text-white font-bold py-2 rounded-full ${
+              className={`w-full my-2 font-bold py-2 rounded-full ${
                 loggedInAsAnonymous
-                  ? "cursor-not-allowed bg-blue-300 "
-                  : "bg-blue-500 hover:bg-blue-700"
+                  ? "cursor-not-allowed bg-primary-disabled text-on-disabled"
+                  : "bg-blue-500 hover:bg-blue-700 text-white"
               }`}
             >
               Change username
             </button>
             <button
               onClick={() => !loggedInAsAnonymous && setActive("change-email")}
-              className={`w-full my-2 text-white font-bold py-2 rounded-full ${
+              className={`w-full my-2 font-bold py-2 rounded-full ${
                 loggedInAsAnonymous
-                  ? "cursor-not-allowed bg-blue-300 "
-                  : "bg-blue-500 hover:bg-blue-700"
+                  ? "cursor-not-allowed bg-primary-disabled text-on-disabled"
+                  : "bg-blue-500 hover:bg-blue-700 text-white"
               }`}
             >
               Change e-mail
@@ -52,10 +52,10 @@ export default function Account() {
               onClick={() =>
                 !loggedInAsAnonymous && setActive("change-password")
               }
-              className={`w-full my-2 text-white font-bold py-2 rounded-full ${
+              className={`w-full my-2 font-bold py-2 rounded-full ${
                 loggedInAsAnonymous
-                  ? "cursor-not-allowed bg-blue-300 "
-                  : "bg-blue-500 hover:bg-blue-700"
+                  ? "cursor-not-allowed bg-primary-disabled text-on-disabled"
+                  : "bg-blue-500 hover:bg-blue-700 text-white"
               }`}
             >
               Change password

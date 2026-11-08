@@ -1,6 +1,6 @@
 export default function ArrowsLoader() {
   return (
-    <div className="w-full h-full text-black grid grid-cols-1 grid-rows-1 place-items-center">
+    <div className="w-full h-full text-fg grid grid-cols-1 grid-rows-1 place-items-center">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="50"

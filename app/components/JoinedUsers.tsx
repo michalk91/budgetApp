@@ -147,7 +147,7 @@ export default function JoinedUsers() {
             <tr
               key={user.userID}
               data-id={user.userID}
-              className={`hover:bg-gray-100 bg-white border-b `}
+              className={`hover:bg-surface-muted bg-surface border-b `}
             >
               <td
                 data-cell="username"
@@ -192,7 +192,7 @@ export default function JoinedUsers() {
                           e.target.value === "yes" ? true : false,
                       }))
                     }
-                    className="px-2 mt-2 py-1 rounded-xl -ml-3 max-w-full max-lg:ml-1 bg-white border-2 "
+                    className="px-2 mt-2 py-1 rounded-xl -ml-3 max-w-full max-lg:ml-1 bg-surface border-2 "
                     value={
                       editedUserPermissions.allowManageCategories ? "yes" : "no"
                     }
@@ -233,7 +233,7 @@ export default function JoinedUsers() {
                           e.target.value === "yes" ? true : false,
                       }))
                     }
-                    className="px-2 py-1 mt-2 rounded-xl -ml-3 max-w-full max-lg:ml-1 bg-white border-2 "
+                    className="px-2 py-1 mt-2 rounded-xl -ml-3 max-w-full max-lg:ml-1 bg-surface border-2 "
                     name="choice"
                     value={
                       editedUserPermissions.allowManageAllTransactions
@@ -260,7 +260,7 @@ export default function JoinedUsers() {
                     additionalStyles={
                       editedUserPermissions.id === ""
                         ? "bg-red-500 hover:bg-red-700"
-                        : "bg-red-200 hover:cursor-not-allowed"
+                        : "bg-danger-disabled text-on-disabled hover:cursor-not-allowed"
                     }
                   >
                     Delete
@@ -277,7 +277,7 @@ export default function JoinedUsers() {
                     additionalStyles={
                       editedUserPermissions.id === ""
                         ? "bg-blue-500 hover:bg-blue-700"
-                        : "bg-blue-200 hover:cursor-not-allowed"
+                        : "bg-primary-disabled text-on-disabled hover:cursor-not-allowed"
                     }
                   >
                     Edit
@@ -331,7 +331,7 @@ export default function JoinedUsers() {
               additionalStyles={` mt-8 w-36   ${
                 editedUserPermissions.id === ""
                   ? "bg-red-700 hover:bg-red-700 hover:bg-red-800"
-                  : "bg-red-200 hover:cursor-not-allowed"
+                  : "bg-danger-disabled text-on-disabled hover:cursor-not-allowed"
               }`}
             >
               Delete All

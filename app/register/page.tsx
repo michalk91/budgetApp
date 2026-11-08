@@ -97,13 +97,13 @@ const Register = () => {
         <div className="p-2">
           <label
             htmlFor="username"
-            className="inline-block w-full text-sm font-medium text-gray-500 transition-all duration-200 ease-in-out group-focus-within:text-blue-400"
+            className="inline-block w-full text-sm font-medium text-fg-muted transition-all duration-200 ease-in-out group-focus-within:text-blue-400"
           >
             Username:
           </label>
           <div className="relative flex items-center">
             <input
-              className="peer h-10 w-full rounded-md bg-gray-50 px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
+              className="peer h-10 w-full rounded-md bg-field px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-field-focus focus:ring-2 focus:ring-blue-400"
               id="username"
               autoComplete="username"
               name="username"
@@ -122,7 +122,7 @@ const Register = () => {
         <div className="p-2">
           <label
             htmlFor="email"
-            className="inline-block w-full text-sm font-medium text-gray-500 transition-all duration-200 ease-in-out group-focus-within:text-blue-400"
+            className="inline-block w-full text-sm font-medium text-fg-muted transition-all duration-200 ease-in-out group-focus-within:text-blue-400"
           >
             Email address:
           </label>
@@ -131,7 +131,7 @@ const Register = () => {
               id="email"
               autoComplete="email"
               name="email"
-              className="peer h-10 w-full rounded-md bg-gray-50 px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
+              className="peer h-10 w-full rounded-md bg-field px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-field-focus focus:ring-2 focus:ring-blue-400"
               type="email"
               value={email}
               onChange={(e) =>
@@ -149,7 +149,7 @@ const Register = () => {
         <div className="p-2">
           <label
             htmlFor="password"
-            className="inline-block w-full text-sm font-medium text-gray-500 transition-all duration-200 ease-in-out group-focus-within:text-blue-400"
+            className="inline-block w-full text-sm font-medium text-fg-muted transition-all duration-200 ease-in-out group-focus-within:text-blue-400"
           >
             Password:
           </label>
@@ -158,7 +158,7 @@ const Register = () => {
               id="password"
               name="password"
               autoComplete="new-password"
-              className="peer h-10 w-full rounded-md bg-gray-50 px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
+              className="peer h-10 w-full rounded-md bg-field px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-field-focus focus:ring-2 focus:ring-blue-400"
               type={showEnteredPassword ? "text" : "password"}
               value={password}
               onChange={(e) =>
@@ -193,7 +193,7 @@ const Register = () => {
         <div className="p-2">
           <label
             htmlFor="repeat-password"
-            className="inline-block w-full text-sm font-medium text-gray-500 transition-all duration-200 ease-in-out group-focus-within:text-blue-400"
+            className="inline-block w-full text-sm font-medium text-fg-muted transition-all duration-200 ease-in-out group-focus-within:text-blue-400"
           >
             Repeat password:
           </label>
@@ -202,7 +202,7 @@ const Register = () => {
               id="repeat-password"
               name="repeat-password"
               autoComplete="new-password"
-              className="peer h-10 w-full rounded-md bg-gray-50 px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
+              className="peer h-10 w-full rounded-md bg-field px-4 outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-field-focus focus:ring-2 focus:ring-blue-400"
               type={showRepeatedPassword ? "text" : "password"}
               value={repeatPassword}
               onChange={(e) =>
@@ -251,7 +251,7 @@ const Register = () => {
         <p className="text-m text-center">
           Already have an account?
           <Link
-            className="text-blue-500 text-xl hover:text-blue-800 m-2"
+            className="text-link text-xl hover:text-link-active m-2"
             href="/login"
           >
             Sign in

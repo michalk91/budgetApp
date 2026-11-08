@@ -71,7 +71,7 @@ const Login = () => {
         <div className="p-2">
           <label
             htmlFor="email-address"
-            className="inline-block w-full text-sm font-medium text-gray-500 transition-all duration-200 ease-in-out group-focus-within:text-blue-400"
+            className="inline-block w-full text-sm font-medium text-fg-muted transition-all duration-200 ease-in-out group-focus-within:text-blue-400"
           >
             Your e-mail address:
           </label>
@@ -86,7 +86,7 @@ const Login = () => {
               onChange={(e) =>
                 setLoginData((state) => ({ ...state, email: e.target.value }))
               }
-              className="peer h-10 w-full rounded-md bg-gray-50 px-4  outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
+              className="peer h-10 w-full rounded-md bg-field px-4  outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-field-focus focus:ring-2 focus:ring-blue-400"
             />
           </div>
         </div>
@@ -94,7 +94,7 @@ const Login = () => {
         <div className="p-2">
           <label
             htmlFor="password"
-            className="inline-block w-full text-sm font-medium text-gray-500 transition-all duration-200 ease-in-out group-focus-within:text-blue-400"
+            className="inline-block w-full text-sm font-medium text-fg-muted transition-all duration-200 ease-in-out group-focus-within:text-blue-400"
           >
             Your password:
           </label>
@@ -112,7 +112,7 @@ const Login = () => {
                   password: e.target.value,
                 }))
               }
-              className="peer h-10 w-full rounded-md bg-gray-50 px-4  outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-white focus:ring-2 focus:ring-blue-400"
+              className="peer h-10 w-full rounded-md bg-field px-4  outline-none drop-shadow-sm transition-all duration-200 ease-in-out focus:bg-field-focus focus:ring-2 focus:ring-blue-400"
             />
             {password !== "" && (
               <div
@@ -146,7 +146,7 @@ const Login = () => {
         <p className="text-m text-center">
           No account yet?
           <Link
-            className="text-blue-500 text-xl hover:text-blue-800 m-2"
+            className="text-link text-xl hover:text-link-active m-2"
             href="/register"
           >
             Register

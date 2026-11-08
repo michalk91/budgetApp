@@ -46,7 +46,7 @@ export default function SelectedBudget() {
     <div className="flex flex-col items-center w-full mt-6 relative max-md:mt-2">
       <div
         ref={animateElemCallback}
-        className={`bg-white min-w-full ${
+        className={`bg-surface min-w-full ${
           animate ? "" : "animate-decreaseWidth"
         } relative text-center`}
       >

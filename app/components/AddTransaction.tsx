@@ -79,7 +79,7 @@ export default function AddTransaction({
   ]);
 
   return (
-    <tr className="bg-gray-100 max-xl:text-center">
+    <tr className="bg-surface-muted max-xl:text-center">
       <td className="px-6 py-6 max-xl:block">
         <span className="font-bold text-xl mx-auto">
           {type === "expense" ? "New expense" : "New income"}
@@ -97,7 +97,7 @@ export default function AddTransaction({
               category: e.target.value,
             }));
           }}
-          className="bg-white px-2 py-1 rounded-xl -ml-2 border-2 "
+          className="bg-surface px-2 py-1 rounded-xl -ml-2 border-2 "
           value={category}
           name="choice"
         >
@@ -124,7 +124,7 @@ export default function AddTransaction({
           type="number"
           value={amount}
           placeholder="amount"
-          className="px-2 py-1 -ml-1 rounded-xl bg-white max-w-32 border-2 "
+          className="px-2 py-1 -ml-1 rounded-xl bg-surface max-w-32 border-2 "
         ></input>
       </td>
       <td className="pl-6 max-xl:hidden">You</td>

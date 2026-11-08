@@ -220,12 +220,12 @@ export default function ShowTransactions({
               data-id={transaction.id}
               className={
                 editedTransaction.id === transaction.id
-                  ? `bg-gray-100 border-b   ${
+                  ? `bg-surface-muted border-b   ${
                       transaction.type === "expense"
                         ? ""
                         : " border-l-4 border-l-green-500"
                     } `
-                  : `hover:bg-gray-100 bg-white border-b  ${
+                  : `hover:bg-surface-muted bg-surface border-b  ${
                       transaction.type === "expense"
                         ? ""
                         : "border-l-4 border-l-green-500"
@@ -257,7 +257,7 @@ export default function ShowTransactions({
                         category: e.target.value,
                       }))
                     }
-                    className="px-2 py-1 rounded-xl -ml-3 max-w-full max-xl:ml-1 bg-white border-2 "
+                    className="px-2 py-1 rounded-xl -ml-3 max-w-full max-xl:ml-1 bg-surface border-2 "
                     defaultValue={transaction.category}
                     name="choice"
                   >
@@ -280,8 +280,8 @@ export default function ShowTransactions({
                 data-cell="amount"
                 className={`${
                   transaction.type === "expense"
-                    ? "text-red-600"
-                    : "text-green-600"
+                    ? "text-negative"
+                    : "text-positive"
                 } px-6 py-6 max-xl:block max-xl:before:content-[attr(data-cell)':_'] max-xl:before:font-bold max-xl:before:uppercase max-xl:text-center`}
               >
                 {editedTransaction.id !== transaction.id ? (
@@ -299,7 +299,7 @@ export default function ShowTransactions({
                       }))
                     }
                     defaultValue={transaction.amount}
-                    className="px-2 -ml-[10px] py-1 rounded-xl -ml-[11px] max-w-40 max-xl:ml-1 max-md:max-w-32 bg-white border-2 "
+                    className="px-2 -ml-[10px] py-1 rounded-xl -ml-[11px] max-w-40 max-xl:ml-1 max-md:max-w-32 bg-surface border-2 "
                   ></input>
                 )}
               </td>
@@ -308,8 +308,8 @@ export default function ShowTransactions({
                 data-cell="owner"
                 className={`font-bold ${
                   transaction.ownerID === userID
-                    ? "text-green-600"
-                    : "text-blue-700"
+                    ? "text-positive"
+                    : "text-accent"
                 } px-6 py-4 max-xl:block max-xl:before:content-[attr(data-cell)':_'] max-xl:before:font-bold max-xl:before:uppercase max-xl:text-center`}
               >
                 {transaction.ownerID === userID
@@ -338,7 +338,7 @@ export default function ShowTransactions({
                         }))
                       }
                       defaultValue={transaction.comment}
-                      className="p-2 w-5/6 rounded-xl border-2 -ml-2 max-xl:w-full border-2"
+                      className="p-2 w-5/6 rounded-xl border-2 -ml-2 max-xl:w-full"
                       name="comment"
                       id="comment"
                     ></textarea>
@@ -377,7 +377,7 @@ export default function ShowTransactions({
                         transaction.ownerID === userID ||
                         userID === budgetOwnerID)
                         ? "bg-red-500 hover:bg-red-700"
-                        : "bg-red-200 hover:cursor-not-allowed"
+                        : "bg-danger-disabled text-on-disabled hover:cursor-not-allowed"
                     }
                   >
                     Delete
@@ -403,7 +403,7 @@ export default function ShowTransactions({
                         transaction.ownerID === userID ||
                         userID === budgetOwnerID)
                         ? "bg-blue-500 hover:bg-blue-700"
-                        : "bg-blue-200 hover:cursor-not-allowed"
+                        : "bg-primary-disabled text-on-disabled hover:cursor-not-allowed"
                     }
                   >
                     Edit
@@ -453,7 +453,7 @@ export default function ShowTransactions({
               additionalStyles={
                 editedTransaction.id === ""
                   ? "bg-blue-600 hover:bg-blue-900"
-                  : "bg-blue-300 hover:cursor-not-allowed"
+                  : "bg-primary-disabled text-on-disabled hover:cursor-not-allowed"
               }
             >
               Add expense
@@ -467,7 +467,7 @@ export default function ShowTransactions({
               additionalStyles={
                 editedTransaction.id === ""
                   ? "bg-green-700 hover:bg-green-800"
-                  : "bg-green-300 hover:cursor-not-allowed"
+                  : "bg-success-disabled text-on-disabled hover:cursor-not-allowed"
               }
             >
               Add Income
@@ -491,7 +491,7 @@ export default function ShowTransactions({
                     ${
                       editedTransaction.id === ""
                         ? "bg-red-700 hover:bg-red-800"
-                        : "bg-red-300 hover:cursor-not-allowed"
+                        : "bg-danger-disabled text-on-disabled hover:cursor-not-allowed"
                     }`}
                 >
                   Delete All

@@ -89,7 +89,7 @@ export default function ShowSelectedBudget() {
                 valueFromStore={budgetValue}
                 title="Budget amount"
                 titleClass={
-                  budgetValue > 0 ? " text-lime-600" : " text-rose-500"
+                  budgetValue > 0 ? " text-positive" : " text-negative"
                 }
               />
               <BudgetAddDate budgetDate={budgetAddDate} />
@@ -101,7 +101,7 @@ export default function ShowSelectedBudget() {
                 title="Expenses"
                 valueFromStore={expensesFromStore}
                 titleClass={
-                  expensesFromStore === 0 ? " text-lime-600" : " text-rose-500"
+                  expensesFromStore === 0 ? " text-positive" : " text-negative"
                 }
               />
               <DisplayAmount
@@ -109,12 +109,12 @@ export default function ShowSelectedBudget() {
                 title="Incomes"
                 valueFromStore={incomesFromStore}
                 titleClass={
-                  incomesFromStore > 0 ? " text-lime-600" : " text-rose-500"
+                  incomesFromStore > 0 ? " text-positive" : " text-negative"
                 }
               />
             </div>
             {
-              <span className="text-center mb-8 mt-3 text-lg text-blue-700 flex items-center justify-center flex-wrap">
+              <span className="text-center mb-8 mt-3 text-lg text-accent flex items-center justify-center flex-wrap">
                 <RiAdminFill />
                 {userID !== ownerID ? (
                   <p className="pl-2">

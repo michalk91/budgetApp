@@ -76,7 +76,7 @@ const Pagination = ({
           onClick={() => handlePagination(data)}
           className={`px-3 py-1 my-2 mx-1 rounded-full   ${
             currentPage === data
-              ? "bg-slate-400 cursor-default"
+              ? "bg-selected cursor-default"
               : "bg-transparent hover:underline underline-offset-4"
           }`}
         >

@@ -53,13 +53,13 @@ export default function Categories({ type }: CategoriesProps) {
                 category === categoryToDelete
                   ? `border-solid border-2  py-2 px-4 m-1 rounded-full ${
                       type === "expense"
-                        ? "bg-red-200  border-red-400"
-                        : "bg-green-200  border-green-400"
+                        ? "bg-danger-soft  border-red-400"
+                        : "bg-success-soft  border-green-400"
                     }  cursor-pointer `
                   : `border-solid border-2 py-2 px-4 m-1 rounded-full ${
                       type === "expense"
-                        ? "hover:bg-red-200 border-red-400"
-                        : "hover:bg-green-200 border-green-400"
+                        ? "hover:bg-danger-soft border-red-400"
+                        : "hover:bg-success-soft border-green-400"
                     }  cursor-pointer`
               }
             >
@@ -78,7 +78,7 @@ export default function Categories({ type }: CategoriesProps) {
               required
               type="text"
               placeholder="new category"
-              className="font-bold py-2 mr-3 px-4 rounded-xl bg-white border-2 border-black"
+              className="font-bold py-2 mr-3 px-4 rounded-xl bg-surface border-2 border-line-strong"
             ></input>
 
             <Button
@@ -105,11 +105,11 @@ export default function Categories({ type }: CategoriesProps) {
 
                 inputRef.current.value = "";
               }}
-              additionalStyles={`text-white font-bold py-2 px-6 rounded-full mt-4 max-md:px-6 max-md:py-4 ${
+              additionalStyles={`mt-4 ${
                 userID !== ownerID &&
                 userID &&
                 !allowManageCategories.includes(userID)
-                  ? "cursor-not-allowed bg-blue-300 "
+                  ? "cursor-not-allowed bg-primary-disabled text-on-disabled"
                   : "bg-blue-500 hover:bg-blue-700"
               }`}
             >
@@ -139,11 +139,11 @@ export default function Categories({ type }: CategoriesProps) {
 
                 setCategoryToDelete("");
               }}
-              additionalStyles={`text-white font-bold py-2 mx-1 px-6 rounded-full max-md:px-6 max-md:py-4 ${
+              additionalStyles={`mx-1 ${
                 userID !== ownerID &&
                 userID &&
                 !allowManageCategories.includes(userID)
-                  ? "cursor-not-allowed bg-red-300 "
+                  ? "cursor-not-allowed bg-danger-disabled text-on-disabled"
                   : "bg-red-600 hover:bg-red-800"
               } `}
             >

@@ -1,22 +1,25 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import Link from "next/link";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { logoutUser } from "../redux/usersSlice";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import useTouchOutside from "../hooks/useTouchOutside";
 import { fetchInvitations } from "../redux/invitationsSlice";
+import NavLink from "./NavLink";
+import NavItem from "./NavItem";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Header() {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const pathname = usePathname();
   const loginStatus = useAppSelector((state) => state.user.loginStatus);
   const userName = useAppSelector((state) => state.user.username);
   const invitations = useAppSelector((state) => state.invitations.budgets);
 
   const [isOpen, setIsOpen] = useState(false);
+
+  const closeMenu = () => setIsOpen(false);
 
   const singOut = () => {
     dispatch(logoutUser());
@@ -53,7 +56,7 @@ export default function Header() {
 
   return (
     <header ref={menuRef} className="fixed top-0 w-full z-10 h-20 max-md:h-16">
-      <div className="absolute top-0 left-0 bottom-0 right-0 bg-slate-300 z-10"></div>
+      <div className="absolute top-0 left-0 bottom-0 right-0 bg-chrome z-10"></div>
       {loginStatus === "succeeded" && userName && (
         <p
           className={`absolute max-md:text-xl text-2xl pl-6 z-40  top-2/4 -translate-y-2/4`}
@@ -74,91 +77,48 @@ export default function Header() {
         </button>
       </div>
       <ul
-        className={`flex relative bg-slate-300 w-full lg:h-full max-lg:border-t-2 border-gray-400 max-lg:py-6  items-center transition duration-500 z-30 lg:visible justify-end max-lg:flex-col max-lg:item-center max-lg:z-0 max-lg:absolute max-lg:top-1/1 md:pr-2
+        className={`flex relative bg-chrome w-full lg:h-full max-lg:border-t-2 border-line max-lg:py-6  items-center transition duration-500 z-30 lg:visible justify-end max-lg:flex-col max-lg:item-center max-lg:z-0 max-lg:absolute max-lg:top-1/1 md:pr-2
         ${!isOpen ? "max-lg:-translate-y-full" : "max-lg:translate-y-0"}`}
       >
-        {loginStatus === "succeeded" && (
+        {loginStatus === "succeeded" ? (
           <>
-            <li className="mr-6 max-lg:p-6 max-md:mr-0">
-              <Link
-                onClick={() => setIsOpen(false)}
-                className={` ${
-                  pathname === "/" ? "text-blue-800" : "text-blue-500"
-                } max-md:text-xl text-2xl hover:text-blue-800`}
-                href="/"
-              >
-                Dashboard
-              </Link>
-            </li>
-            <li className="mr-6 max-lg:p-6 max-md:mr-0">
-              <Link
-                onClick={() => setIsOpen(false)}
-                className={`${
-                  invitations.length > 0 ? "before:content-['•_']" : ""
-                } ${
-                  pathname === "/notifications"
-                    ? "text-blue-800"
-                    : "text-blue-500"
-                } max-md:text-xl text-2xl hover:text-blue-800`}
-                href="/notifications"
-              >
-                Notifications
-              </Link>
-            </li>
-            <li className="mr-6 max-lg:p-6 max-md:mr-0">
-              <Link
-                onClick={() => setIsOpen(false)}
-                className={` ${
-                  pathname === "/accountSettings"
-                    ? "text-blue-800"
-                    : "text-blue-500"
-                } max-md:text-xl text-2xl hover:text-blue-800`}
-                href="/accountSettings"
-              >
-                Account
-              </Link>
-            </li>
-            <li className="mr-6 max-lg:p-6 max-md:mr-0">
-              <Link
-                onClick={() => {
-                  setIsOpen(false);
-                  singOut();
-                }}
-                className="text-red-500 text-2xl hover:text-red-800 max-md:text-xl"
-                href="/"
-              >
-                Logout
-              </Link>
-            </li>
+            <NavLink href="/" onClick={closeMenu}>
+              Dashboard
+            </NavLink>
+            <NavLink
+              href="/notifications"
+              onClick={closeMenu}
+              className={invitations.length > 0 ? "before:content-['•_']" : ""}
+            >
+              Notifications
+            </NavLink>
+            <NavLink href="/accountSettings" onClick={closeMenu}>
+              Account
+            </NavLink>
+            <NavLink
+              href="/"
+              variant="danger"
+              onClick={() => {
+                closeMenu();
+                singOut();
+              }}
+            >
+              Logout
+            </NavLink>
+          </>
+        ) : (
+          <>
+            <NavLink href="/register" onClick={closeMenu}>
+              Register
+            </NavLink>
+            <NavLink href="/login" onClick={closeMenu}>
+              Login
+            </NavLink>
           </>
         )}
-        {loginStatus !== "succeeded" && (
-          <li className="mr-6 max-lg:p-6 max-md:mr-0">
-            <Link
-              onClick={() => setIsOpen(false)}
-              className={` ${
-                pathname === "/register" ? "text-blue-800" : "text-blue-500"
-              } text-2xl hover:text-blue-800 max-md:text-xl`}
-              href="/register"
-            >
-              Register
-            </Link>
-          </li>
-        )}
-
-        {loginStatus !== "succeeded" && (
-          <li className="mr-6 max-lg:p-6 max-md:mr-0">
-            <Link
-              onClick={() => setIsOpen(false)}
-              className={` ${
-                pathname === "/login" ? "text-blue-800" : "text-blue-500"
-              } text-2xl hover:text-blue-800 max-md:text-xl`}
-              href="/login"
-            >
-              Login
-            </Link>
-          </li>
-        )}
+        <NavItem className="flex items-center">
+          <ThemeToggle />
+        </NavItem>
       </ul>
     </header>
   );

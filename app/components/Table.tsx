@@ -123,14 +123,14 @@ export default function Table({
       <span className="ml-2 font-bold text-xl mx-auto max-md:text-lg">
         {title}
       </span>
-      <div className="relative bg-gray-200 text-center overflow-visible border-2 border-slate-300 rounded-lg max-md:mb-6 shadow-xl">
+      <div className="relative bg-surface-sunken text-center overflow-visible border-2 border-line rounded-lg max-md:mb-6 shadow-xl">
         <div
           className={`mt-4 hidden ${responsiveBreakpoint}:p-4 ${responsiveBreakpoint}:flex flex-wrap justify-center items-center`}
         >
           <p>Sort by: </p>
           {sortDirection !== "without" && (
             <select
-              className="px-2 py-1 m-2 rounded-xl max-w-full bg-white border-gray-300 border-2"
+              className="px-2 py-1 m-2 rounded-xl max-w-full bg-surface border-line border-2"
               onChange={(e) => handleSort(e.target.value, sortDirection)}
               value={sortBy}
               name="choice"
@@ -146,7 +146,7 @@ export default function Table({
             </select>
           )}
           <select
-            className="px-2 py-1 ml-1 self-center rounded-xl max-w-full bg-white border-gray-300 border-2"
+            className="px-2 py-1 ml-1 self-center rounded-xl max-w-full bg-surface border-line border-2"
             onChange={(e) =>
               handleSort(
                 sortBy,
@@ -173,13 +173,13 @@ export default function Table({
                   handleSearch && handleSearch(e);
                   handleSearchGlobal && handleSearchGlobal(e.target.value);
                 }}
-                className="px-2 py-1 rounded-xl max-lg: ml-1 max-lg:max-w-32 bg-white border-gray-300 border-2 "
+                className="px-2 py-1 rounded-xl max-lg: ml-1 max-lg:max-w-32 bg-surface border-line border-2 "
               ></input>
             </div>
             <div className="flex items-center justify-center flex-wrap py-2">
               <p>Show per page: </p>
               <select
-                className="px-2 py-1 rounded-xl max-lg: ml-1 max-lg:max-w-32 bg-white border-gray-300 border-2  "
+                className="px-2 py-1 rounded-xl max-lg: ml-1 max-lg:max-w-32 bg-surface border-line border-2  "
                 onChange={(e) => {
                   setRowsPerPage &&
                     setRowsPerPage(
@@ -209,8 +209,8 @@ export default function Table({
           </div>
         </div>
 
-        <table className="table-fixed w-full text-sm text-left text-gray-500  ">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-200 border-gray-300 border-t-2">
+        <table className="table-fixed w-full text-sm text-left text-fg-muted  ">
+          <thead className="text-xs text-fg-subtle uppercase bg-surface-sunken border-line border-t-2">
             <tr>
               {headerCells.map((cell) => (
                 <th
@@ -260,11 +260,11 @@ export default function Table({
 
           <tbody ref={tableBodyRef}>
             {emptyTableCondition && (
-              <tr className={"bg-gray-100 border-b "}>
+              <tr className={"bg-surface-muted border-b "}>
                 <td
                   align="center"
                   colSpan={headerCells.length}
-                  className="px-6 py-6 max-lg:block bg-white"
+                  className="px-6 py-6 max-lg:block bg-surface"
                 >
                   <span className="ml-2 font-bold text-xl mx-auto">
                     {emptyTableTitle}
@@ -274,11 +274,11 @@ export default function Table({
             )}
 
             {notFound ? (
-              <tr className={"bg-gray-100 border-b "}>
+              <tr className={"bg-surface-muted border-b "}>
                 <td
                   align="center"
                   colSpan={headerCells.length}
-                  className="px-6 py-6 max-lg:block bg-white"
+                  className="px-6 py-6 max-lg:block bg-surface"
                 >
                   <span className="ml-2 font-bold text-xl mx-auto">
                     Not found

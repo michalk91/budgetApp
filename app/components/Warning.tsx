@@ -4,7 +4,7 @@ import type { WarningProps } from "../types";
 export default function Warning({ text, additionalStyles }: WarningProps) {
   return (
     <div
-      className={`p-10 bg-white rounded-lg shadow-xl ${
+      className={`p-10 bg-surface rounded-lg shadow-xl ${
         additionalStyles ? additionalStyles : ""
       }`}
     >

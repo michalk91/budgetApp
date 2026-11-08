@@ -58,7 +58,7 @@ export default function Notifications() {
           <div
             key={item.invitationID}
             data-id={item.invitationID}
-            className="flex flex-wrap justify-between bg-white rounded-lg m-4 shadow-xl w-full p-2"
+            className="flex flex-wrap justify-between bg-surface rounded-lg m-4 shadow-xl w-full p-2"
           >
             <div className="p-8 self-center">
               <p>

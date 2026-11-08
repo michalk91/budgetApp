@@ -63,7 +63,7 @@ export default function SubNavigation({ activeOption }: SubNavigationProps) {
                 position && setPosition(position);
                 dispatch(setSelectedOption(item));
               }}
-              className={`p-4 hover:cursor-pointer hover:text-slate-600`}
+              className={`p-4 hover:cursor-pointer hover:text-fg-hover`}
             >
               {`${item}`}
             </p>
@@ -71,7 +71,7 @@ export default function SubNavigation({ activeOption }: SubNavigationProps) {
               <div className="absolute z-20 left-1/2 -translate-x-2/4 w-[150px]">
                 <span
                   ref={handleRefs}
-                  className="block -mt-3 h-[5px] bg-slate-700 rounded-full"
+                  className="block -mt-3 h-[5px] bg-indicator rounded-full"
                 ></span>
               </div>
             )}
@@ -85,7 +85,7 @@ export default function SubNavigation({ activeOption }: SubNavigationProps) {
                   position && setPosition(position);
                   dispatch(setSelectedOption(item));
                 }}
-                className={`p-4 hover:cursor-pointer hover:text-slate-600`}
+                className={`p-4 hover:cursor-pointer hover:text-fg-hover`}
               >
                 {`${item}`}
               </p>
@@ -93,7 +93,7 @@ export default function SubNavigation({ activeOption }: SubNavigationProps) {
                 <div className="absolute z-20 left-1/2 -translate-x-2/4 w-[150px]">
                   <span
                     ref={handleRefs}
-                    className="block -mt-3 h-[5px] bg-slate-700 rounded-full"
+                    className="block -mt-3 h-[5px] bg-indicator rounded-full"
                   ></span>
                 </div>
               )}

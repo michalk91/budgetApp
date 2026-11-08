@@ -1,6 +1,14 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
+import {
+  tailwindTokenColors,
+  themeTokens,
+  tokenCssVars,
+  tokenVar,
+} from "./app/theme/tokens";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -8,6 +16,7 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      colors: tailwindTokenColors,
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -31,6 +40,14 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(({ addBase }) => {
+      addBase({
+        ":root": tokenCssVars(themeTokens.light),
+        ".dark": tokenCssVars(themeTokens.dark),
+        "*, ::before, ::after": { borderColor: tokenVar("line-subtle") },
+      });
+    }),
+  ],
 };
 export default config;

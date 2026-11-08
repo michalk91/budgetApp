@@ -1,9 +1,13 @@
 import { Chart } from "react-google-charts";
 import { useAppSelector } from "../redux/hooks";
 import Warning from "./Warning";
+import { useTheme } from "next-themes";
+import { themeTokens } from "../theme/tokens";
 
 export default function ExpensesCharts() {
   const transactions = useAppSelector((state) => state.budgets.transactions);
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
 
   const expensesFromDataBase = transactions.reduce(
     (acc, transaction) => {
@@ -27,8 +31,16 @@ export default function ExpensesCharts() {
 
   const data = [["Expense", "Amount"], ...expensesFromDataBase];
 
+  const colors = themeTokens[isDark ? "dark" : "light"];
+  const textStyle = { color: colors.fg };
+
   const options = {
     is3D: true,
+    backgroundColor: colors.surface,
+    legend: { textStyle },
+    titleTextStyle: textStyle,
+    hAxis: { textStyle },
+    vAxis: { textStyle, gridlines: { color: colors.line } },
   };
 
   return (
@@ -38,7 +50,7 @@ export default function ExpensesCharts() {
           <span className="ml-2 font-bold text-xl mx-auto">
             Expenses Visualization
           </span>
-          <section className="overflow-hidden border-2 border-slate-300 rounded-lg shadow-xl">
+          <section className="overflow-hidden border-2 border-line rounded-lg shadow-xl">
             <Chart
               chartType="PieChart"
               data={data}

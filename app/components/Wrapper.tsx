@@ -5,6 +5,7 @@ import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { resetLoginStatus } from "../redux/usersSlice";
 import "react-toastify/dist/ReactToastify.css";
 import { useCallback, useEffect } from "react";
+import { useTheme } from "next-themes";
 
 export default function Wrapper({
   children,
@@ -12,6 +13,7 @@ export default function Wrapper({
   children: React.ReactNode;
 }>) {
   const dispatch = useAppDispatch();
+  const { resolvedTheme } = useTheme();
 
   const loginStatus = useAppSelector((state) => state.user.loginStatus);
 
@@ -40,7 +42,7 @@ export default function Wrapper({
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="light"
+        theme={resolvedTheme === "dark" ? "dark" : "light"}
         transition={Bounce}
       />
     </>
